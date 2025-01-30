@@ -3,7 +3,7 @@ import vue from "@vitejs/plugin-vue"
 import { fileURLToPath, URL } from "url"
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/portfolio-jessem/",
+  base: "/next-shape/",
   plugins: [vue()],
   resolve: {
     alias: [
