@@ -3,6 +3,8 @@ import "./style.css"
 import App from "./App.vue"
 import PrimeVue from "primevue/config"
 import Aura from "@primevue/themes/aura"
+import "primeicons/primeicons.css"
+import Ripple from "primevue/ripple"
 
 const app = createApp(App)
 app.use(PrimeVue, {
@@ -10,4 +12,5 @@ app.use(PrimeVue, {
     preset: Aura,
   },
 })
+app.directive("ripple", Ripple)
 app.mount("#app")
