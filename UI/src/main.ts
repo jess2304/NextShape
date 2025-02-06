@@ -5,6 +5,7 @@ import PrimeVue from "primevue/config"
 import Aura from "@primevue/themes/aura"
 import "primeicons/primeicons.css"
 import Ripple from "primevue/ripple"
+import router from "./router"
 
 const app = createApp(App)
 app.use(PrimeVue, {
@@ -12,5 +13,6 @@ app.use(PrimeVue, {
     preset: Aura,
   },
 })
+app.use(router)
 app.directive("ripple", Ripple)
 app.mount("#app")

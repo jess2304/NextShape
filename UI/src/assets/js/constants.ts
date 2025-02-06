@@ -7,26 +7,32 @@ export const NAVBAR_ELEMENTS = [
     items: [
       {
         label: "Calculatrice d'IMC",
+        route: "/calculatrice-imc",
       },
       {
         label: "Calculatrice de calories",
+        route: "/calculatrice-calories",
       },
     ],
   },
   {
     label: "Historique",
     icon: "pi pi-history",
+    route: "/historique",
   },
   {
     label: "Évolution",
     icon: "pi pi-chart-line",
+    route: "/evolution",
   },
   {
     label: "Prédiction",
     icon: "pi pi-chart-bar",
+    route: "/prediction",
   },
   {
     label: "Contact",
     icon: "pi pi-envelope",
+    route: "/contact",
   },
 ]

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RouterView } from "vue-router"
 import NavBarComponent from "./components/NavBarComponent.vue"
 </script>
 
@@ -7,7 +8,9 @@ import NavBarComponent from "./components/NavBarComponent.vue"
     <header class="z-3">
       <NavBarComponent class="shadow-2 m-1" />
     </header>
-    <main class="flex-grow-1 flex flex-column p-4"></main>
+    <main class="flex-grow-1 flex flex-column p-4">
+      <router-view />
+    </main>
     <footer class="z-3 shadow-2 text-center"></footer>
   </div>
 </template>
