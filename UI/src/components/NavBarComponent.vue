@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Menubar from "primevue/menubar"
 import Button from "primevue/button"
+import { RouterLink } from "vue-router"
 import { NAVBAR_ELEMENTS } from "@/assets/js/constants"
 </script>
 <template>
@@ -13,7 +14,7 @@ import { NAVBAR_ELEMENTS } from "@/assets/js/constants"
       <Button text label="Next Shape" class="text-4xl no-hover p-0"
     /></template>
     <template #item="{ item, props, hasSubmenu }">
-      <router-link
+      <RouterLink
         v-if="item.route"
         v-slot="{ href, navigate }"
         :to="item.route"
@@ -23,7 +24,7 @@ import { NAVBAR_ELEMENTS } from "@/assets/js/constants"
           <span v-if="item.icon" :class="item.icon" class="text-xl" />
           <span>{{ item.label }}</span>
         </a>
-      </router-link>
+      </RouterLink>
 
       <a
         v-else
