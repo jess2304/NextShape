@@ -34,9 +34,6 @@ import { PRESENTATION_TEXT, SUBTITLE, TITLE } from "@/assets/js/constants"
         />
       </div>
     </section>
-
-    <!-- SECTION PRÉSENTATION -->
-
     <section class="text-center px-8 py-6">
       <h2 class="text-3xl font-bold">
         Pourquoi choisir <span class="text-blue-500">NextShape</span> ?
