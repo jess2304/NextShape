@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router"
 import NavBarComponent from "./components/NavBarComponent.vue"
+import FooterComponent from "./components/FooterComponent.vue"
 </script>
 
 <template>
@@ -11,7 +12,9 @@ import NavBarComponent from "./components/NavBarComponent.vue"
     <main class="flex-grow-1 overflow-auto p-4">
       <router-view />
     </main>
-    <footer class="z-3 shadow-2 text-center"></footer>
+    <footer class="surface-100 z-3 shadow-2 text-center">
+      <FooterComponent />
+    </footer>
   </div>
 </template>
 <style scoped></style>

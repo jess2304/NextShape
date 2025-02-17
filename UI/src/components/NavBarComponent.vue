@@ -9,9 +9,9 @@ import { NAVBAR_ELEMENTS } from "@/assets/js/constants"
     <template #start>
       <img
         src="/nextshape.png"
-        alt="Next Shape Icon"
+        alt="NextShape Icon"
         class="w-1 flex-shrink-0" />
-      <Button text label="Next Shape" class="text-4xl no-hover p-0"
+      <Button text label="NextShape" class="text-4xl no-hover p-0"
     /></template>
     <template #item="{ item, props, hasSubmenu }">
       <RouterLink
