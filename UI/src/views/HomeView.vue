@@ -48,11 +48,7 @@ import { PRESENTATION_TEXT, SUBTITLE, TITLE } from "@/assets/js/constants"
     <section class="px-8 py-6 flex justify-content-center gap-4">
       <Card class="w-5 md:w-3 lg:w-3">
         <template #header>
-          <img
-            alt="user header"
-            src="../../public/IMC&Calories.png"
-            class="w-full"
-          />
+          <img alt="user header" src="/IMC&Calories.png" class="w-full" />
         </template>
         <template #title>Calcule</template>
         <template #subtitle>Ton IMC & Tes besoins en calories</template>
@@ -71,11 +67,7 @@ import { PRESENTATION_TEXT, SUBTITLE, TITLE } from "@/assets/js/constants"
       </Card>
       <Card class="w-5 md:w-3 lg:w-3">
         <template #header>
-          <img
-            alt="user header"
-            src="../../public/Evolution.png"
-            class="w-full"
-          />
+          <img alt="user header" src="/Evolution.png" class="w-full" />
         </template>
         <template #title>Analyse</template>
         <template #subtitle>L'évolution de ton corps</template>
