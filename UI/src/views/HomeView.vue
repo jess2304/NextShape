@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from "primevue/button"
 import Panel from "primevue/panel"
+import Card from "primevue/card"
 import { PRESENTATION_TEXT, SUBTITLE, TITLE } from "@/assets/js/constants"
 </script>
 
@@ -43,6 +44,54 @@ import { PRESENTATION_TEXT, SUBTITLE, TITLE } from "@/assets/js/constants"
           {{ PRESENTATION_TEXT }}
         </p>
       </Panel>
+    </section>
+    <section class="px-8 py-6 flex justify-content-center gap-4">
+      <Card class="w-5 md:w-3 lg:w-3">
+        <template #header>
+          <img
+            alt="user header"
+            src="../../public/IMC&Calories.png"
+            class="w-full"
+          />
+        </template>
+        <template #title>Calcule</template>
+        <template #subtitle>Ton IMC & Tes besoins en calories</template>
+        <template #content>
+          <ul class="m-0">
+            <li>
+              <strong>IMC :</strong> Indicateur du poids idéal selon la taille,
+              utile pour évaluer les risques de surpoids ou de maigreur.
+            </li>
+            <li>
+              <strong>Besoins caloriques :</strong> Quantité d'énergie
+              nécessaire au corps selon l'âge, le poids et l'activité.
+            </li>
+          </ul>
+        </template>
+      </Card>
+      <Card class="w-5 md:w-3 lg:w-3">
+        <template #header>
+          <img
+            alt="user header"
+            src="../../public/Evolution.png"
+            class="w-full"
+          />
+        </template>
+        <template #title>Analyse</template>
+        <template #subtitle>L'évolution de ton corps</template>
+        <template #content>
+          <ul class="m-0">
+            <li>
+              Visualise tes progrès pour rester motivé et ajuster tes efforts en
+              fonction des résultats obtenus.
+            </li>
+            <li>
+              Analyse ton évolution pour identifier les tendances et adapter ton
+              alimentation et ton activité physique efficacement.
+            </li>
+          </ul>
+        </template>
+      </Card>
     </section>
   </div>
 </template>
