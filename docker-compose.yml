@@ -1,0 +1,55 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres
+    container_name: nextshape_db
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Django Backend
+  backend:
+    build:
+      context: ./WS
+      dockerfile: Dockerfile
+    container_name: nextshape_backend
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "
+        python manage.py migrate &&
+        python manage.py loaddata api/fixtures/initial_user.json &&
+        python manage.py loaddata api/fixtures/initial_healthrecords.json &&
+        python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./WS:/app
+
+  # Vue.js Frontend
+  frontend:
+    build:
+      context: ./UI
+      dockerfile: Dockerfile
+    container_name: nextshape_frontend
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    command: >
+      sh -c "npm install && npm run dev -- --host"
+    volumes:
+      - ./UI:/app
+
+volumes:
+  pg_data:
