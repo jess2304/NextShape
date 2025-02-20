@@ -1,0 +1,28 @@
+[
+  {
+    "model": "api.healthrecord",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "weight": 70.5,
+      "height": 175.0,
+      "age": 30,
+      "gender": "M",
+      "activity_level": "moderate",
+      "creation_date": "2025-02-19T14:45:07Z"
+    }
+  },
+  {
+    "model": "api.healthrecord",
+    "pk": 2,
+    "fields": {
+      "user": 1,
+      "weight": 65.0,
+      "height": 165.0,
+      "age": 28,
+      "gender": "F",
+      "activity_level": "active",
+      "creation_date": "2025-02-19T14:45:07Z"
+    }
+  }
+]
