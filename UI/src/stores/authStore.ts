@@ -1,5 +1,5 @@
 import { defineStore } from "pinia"
-import { registerUser } from "@/services/apiService"
+import { registerUser, loginUser } from "@/services/apiService"
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -24,13 +24,25 @@ export const useAuthStore = defineStore("auth", {
         password: userData.password,
       }
       try {
-        console.log(payload)
         const response = await registerUser(payload)
         return response.data
       } catch (error: any) {
         throw (
           error.response?.data?.message ||
           "Une erreur est survenue lors de l'inscription. Veuillez vérifier vos données."
+        )
+      }
+    },
+    async login(credentials: any) {
+      try {
+        const response = await loginUser(credentials)
+        const { user, token } = response.data
+        this.setUser(user, token)
+        return response.data
+      } catch (error: any) {
+        throw (
+          error.response?.data?.message ||
+          "Une erreur est survenue lors de la connexion. Veuillez vérifier vos identifiants."
         )
       }
     },

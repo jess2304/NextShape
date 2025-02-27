@@ -14,3 +14,5 @@ export const fetchHealthRecords = async () => {
 
 export const registerUser = async (userData) =>
   await axios.post(`${API_URL}register/`, userData)
+export const loginUser = async (credentials) =>
+  await axios.post(`${API_URL}login/`, credentials)

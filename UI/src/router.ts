@@ -5,7 +5,6 @@ import CalculatriceIMCView from "@/views/CalculatriceIMCView.vue"
 import CalculatriceCaloriesView from "@/views/CalculatriceCaloriesView.vue"
 import HistoriqueView from "@/views/HistoriqueView.vue"
 import EvolutionView from "@/views/EvolutionView.vue"
-import PredictionView from "@/views/PredictionView.vue"
 import ContactView from "@/views/ContactView.vue"
 import NotFoundView from "@/views/NotFoundView.vue"
 import ConnexionView from "@/views/ConnexionView.vue"
@@ -25,7 +24,6 @@ const routes = [
   },
   { path: "/historique", name: "historique", component: HistoriqueView },
   { path: "/evolution", name: "evolution", component: EvolutionView },
-  { path: "/prediction", name: "prediction", component: PredictionView },
   { path: "/contact", name: "contact", component: ContactView },
   { path: "/inscription", component: InscriptionView },
   { path: "/connexion", component: ConnexionView },

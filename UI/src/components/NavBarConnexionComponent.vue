@@ -52,8 +52,8 @@ function logoutUser() {
           @click="userMenu.toggle($event)"
         />
         <span class="font-bold"
-          >{{ authStore.user?.firstName }} <br />
-          {{ authStore.user?.lastName }}</span
+          >{{ authStore.user?.first_name }} <br />
+          {{ authStore.user?.last_name }}</span
         >
         <Menu ref="userMenu" :model="userMenuItems" popup />
       </div>

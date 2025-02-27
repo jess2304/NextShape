@@ -26,11 +26,6 @@ export const NAVBAR_ELEMENTS = [
     route: "/evolution",
   },
   {
-    label: "Prédiction",
-    icon: "pi pi-chart-bar",
-    route: "/prediction",
-  },
-  {
     label: "Contact",
     icon: "pi pi-envelope",
     route: "/contact",
