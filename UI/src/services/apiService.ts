@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API_URL = "http://127.0.0.1:8000/api/health_records/"
+const API_URL = "http://127.0.0.1:8000/api/"
 
 export const fetchHealthRecords = async () => {
   try {
@@ -11,3 +11,6 @@ export const fetchHealthRecords = async () => {
     return []
   }
 }
+
+export const registerUser = async (userData) =>
+  await axios.post(`${API_URL}register/`, userData)

@@ -3,6 +3,7 @@ import Menubar from "primevue/menubar"
 import Button from "primevue/button"
 import { RouterLink } from "vue-router"
 import { NAVBAR_ELEMENTS } from "@/assets/js/constants"
+import NavBarConnexionComponent from "@/components/NavBarConnexionComponent.vue"
 </script>
 <template>
   <Menubar :model="NAVBAR_ELEMENTS">
@@ -37,6 +38,9 @@ import { NAVBAR_ELEMENTS } from "@/assets/js/constants"
         <span>{{ item.label }}</span>
         <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down" />
       </a>
+    </template>
+    <template #end>
+      <NavBarConnexionComponent />
     </template>
   </Menubar>
 </template>

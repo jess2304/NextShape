@@ -8,6 +8,8 @@ import EvolutionView from "@/views/EvolutionView.vue"
 import PredictionView from "@/views/PredictionView.vue"
 import ContactView from "@/views/ContactView.vue"
 import NotFoundView from "@/views/NotFoundView.vue"
+import ConnexionView from "@/views/ConnexionView.vue"
+import InscriptionView from "@/views/InscriptionView.vue"
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
@@ -25,6 +27,8 @@ const routes = [
   { path: "/evolution", name: "evolution", component: EvolutionView },
   { path: "/prediction", name: "prediction", component: PredictionView },
   { path: "/contact", name: "contact", component: ContactView },
+  { path: "/inscription", component: InscriptionView },
+  { path: "/connexion", component: ConnexionView },
   { path: "/:pathMatch(.*)*", component: NotFoundView },
 ]
 

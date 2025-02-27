@@ -1,5 +1,22 @@
-from django.contrib.auth.models import User
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+
+class CustomUser(AbstractUser):
+    """
+    Modèle Custom pour l'utilisateur.
+    """
+
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
+
+    def __str__(self):
+        return self.email
 
 
 class HealthRecord(models.Model):
@@ -17,7 +34,7 @@ class HealthRecord(models.Model):
         ("very_active", "Très actif (athlète ou métier très physique)"),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     weight = models.FloatField()
     height = models.FloatField()
     age = models.IntegerField()
