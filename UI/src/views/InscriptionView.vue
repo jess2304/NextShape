@@ -12,6 +12,8 @@ import { useAuthStore } from "@/stores/authStore"
 const toast = useToast()
 const authStore = useAuthStore()
 
+const today = new Date()
+
 const formData = ref({
   firstName: null,
   lastName: null,
@@ -156,6 +158,7 @@ const validateAndProceed = async () => {
           showIcon
           dateFormat="dd/mm/yy"
           :invalid="invalidData.birthDate"
+          :maxDate="today"
         />
       </div>
       <div class="field col-12 md:col-6">
