@@ -3,10 +3,9 @@ import { RouterView } from "vue-router"
 import NavBarComponent from "./components/NavBarComponent.vue"
 import FooterComponent from "./components/FooterComponent.vue"
 import { useAuthStore } from "@/stores/authStore"
-
+import Toast from "primevue/toast"
 // Appel du store d'authentification pour charger l'utilisateur en cours.
 const authStore = useAuthStore()
-authStore.loadStoredUser()
 </script>
 
 <template>
@@ -20,6 +19,7 @@ authStore.loadStoredUser()
     <footer class="surface-100 z-3 shadow-2 text-center">
       <FooterComponent />
     </footer>
+    <Toast />
   </div>
 </template>
 <style scoped></style>
