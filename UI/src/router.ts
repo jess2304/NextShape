@@ -9,6 +9,7 @@ import ContactView from "@/views/ContactView.vue"
 import NotFoundView from "@/views/NotFoundView.vue"
 import ConnexionView from "@/views/ConnexionView.vue"
 import InscriptionView from "@/views/InscriptionView.vue"
+import ProfilView from "@/views/ProfilView.vue"
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
@@ -27,6 +28,7 @@ const routes = [
   { path: "/contact", name: "contact", component: ContactView },
   { path: "/inscription", component: InscriptionView },
   { path: "/connexion", component: ConnexionView },
+  { path: "/profil", component: ProfilView },
   { path: "/:pathMatch(.*)*", component: NotFoundView },
 ]
 

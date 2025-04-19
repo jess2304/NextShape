@@ -8,33 +8,38 @@ import Calendar from "primevue/calendar"
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
 import { useAuthStore } from "@/stores/authStore"
+import router from "@/router"
 
+// Appel des stores
 const toast = useToast()
 const authStore = useAuthStore()
-
+// Constante de la date d'aujourd'hui (contrôle calendrier)
 const today = new Date()
 
+// Init du formulaire
 const formData = ref({
-  firstName: null,
-  lastName: null,
-  birthDate: null,
+  first_name: null,
+  last_name: null,
+  birth_date: null,
   email: null,
   confirmEmail: null,
-  phone: null,
+  phone_number: null,
   password: null,
   confirmPassword: null,
 })
 
+// Init des données insérées et invalides
 const invalidData = ref({
-  firstName: false,
-  lastName: false,
-  birthDate: false,
+  first_name: false,
+  last_name: false,
+  birth_date: false,
   email: false,
   confirmEmail: false,
   password: false,
   confirmPassword: false,
 })
 
+// Valider les données et passer l'inscription au Backend
 const validateAndProceed = async () => {
   Object.keys(invalidData.value).forEach(
     (key) => (invalidData.value[key] = false)
@@ -43,9 +48,9 @@ const validateAndProceed = async () => {
   // Checker si les champs obligatoires sont renseignés
   let requiredHasError = false
   let requiredFields = [
-    "firstName",
-    "lastName",
-    "birthDate",
+    "first_name",
+    "last_name",
+    "birth_date",
     "email",
     "confirmEmail",
     "password",
@@ -101,20 +106,20 @@ const validateAndProceed = async () => {
       await authStore.register(formData.value)
       toast.add({
         severity: "success",
-        summary: "Inscription finalisée",
-        detail: "Félicitation ! Vous êtes inscrit à NextShape.",
+        summary: "Félicitation ! Vous êtes inscrit à NextShape.",
         life: 5000,
       })
       formData.value = {
-        firstName: null,
-        lastName: null,
-        birthDate: null,
+        first_name: null,
+        last_name: null,
+        birth_date: null,
         email: null,
         confirmEmail: null,
-        phone: null,
+        phone_number: null,
         password: null,
         confirmPassword: null,
       }
+      router.push("/connexion")
     } catch (error) {
       toast.add({
         severity: "error",
@@ -136,36 +141,36 @@ const validateAndProceed = async () => {
         <label>Prénom *</label>
         <InputText
           class="w-full"
-          v-model="formData.firstName"
+          v-model="formData.first_name"
           placeholder="Votre prénom"
-          :invalid="invalidData.firstName"
+          :invalid="invalidData.first_name"
         />
       </div>
       <div class="field col-12 md:col-6">
         <label>Nom *</label>
         <InputText
           class="w-full"
-          v-model="formData.lastName"
+          v-model="formData.last_name"
           placeholder="Votre nom"
-          :invalid="invalidData.lastName"
+          :invalid="invalidData.last_name"
         />
       </div>
       <div class="field col-12 md:col-6">
         <label>Date de naissance *</label>
         <Calendar
           class="w-full"
-          v-model="formData.birthDate"
+          v-model="formData.birth_date"
           showIcon
           dateFormat="dd/mm/yy"
-          :invalid="invalidData.birthDate"
+          :invalid="invalidData.birth_date"
           :maxDate="today"
         />
       </div>
       <div class="field col-12 md:col-6">
         <label>Téléphone</label>
         <InputMask
-          id="phone"
-          v-model="formData.phone"
+          id="phone_number"
+          v-model="formData.phone_number"
           mask="(+33) 9-99-99-99-99"
           placeholder="(+33) 0-00-00-00-00"
           fluid

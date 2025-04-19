@@ -8,12 +8,16 @@ import { useToast } from "primevue/usetoast"
 import Button from "primevue/button"
 import Toast from "primevue/toast"
 
+// Initialisation des credentials et les données invalides.
 const credentials = ref({ email: null, password: null })
 const invalidData = ref({ email: false, password: false })
+
+// Appel des stores et des routers
 const authStore = useAuthStore()
 const toast = useToast()
 const router = useRouter()
 
+// Valider l'insertion et passer la connexion au Backend.
 const validateAndProceed = async () => {
   Object.keys(invalidData.value).forEach(
     (key) => (invalidData.value[key] = false)
@@ -28,7 +32,7 @@ const validateAndProceed = async () => {
       requiredHasError = true
     }
   })
-
+  // Alerte champs obligatoires
   if (requiredHasError) {
     toast.add({
       severity: "error",
@@ -47,7 +51,6 @@ const validateAndProceed = async () => {
       toast.add({
         severity: "error",
         summary: "Erreur Lors de la connexion",
-        detail: String(error),
         life: 5000,
       })
     }
@@ -58,7 +61,7 @@ const validateAndProceed = async () => {
 <template>
   <div class="card p-4 surface-card shadow-2 border-round-lg w-6 mx-auto">
     <h2 class="text-5xl text-center text-primary">Connexion</h2>
-    <div class="formgrid grid">
+    <form class="formgrid grid" @submit.prevent="validateAndProceed">
       <div class="field col-12 md:col-6">
         <label>Email</label>
         <InputText
@@ -83,10 +86,10 @@ const validateAndProceed = async () => {
           class="mx-2"
           label="Se connecter"
           icon="pi pi-arrow-right"
-          @click="validateAndProceed"
+          type="submit"
         />
       </div>
-    </div>
+    </form>
     <Toast />
   </div>
 </template>

@@ -8,8 +8,11 @@ import Ripple from "primevue/ripple"
 import router from "./router"
 import ToastService from "primevue/toastservice"
 import { createPinia } from "pinia"
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate"
+import ConfirmationService from "primevue/confirmationservice"
 
 const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 const app = createApp(App)
 app.use(PrimeVue, {
   theme: {
@@ -19,5 +22,6 @@ app.use(PrimeVue, {
 app.use(router)
 app.use(ToastService)
 app.use(pinia)
+app.use(ConfirmationService)
 app.directive("ripple", Ripple)
 app.mount("#app")

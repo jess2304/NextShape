@@ -2,15 +2,6 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import HealthRecord
-
-
-class HealthRecordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HealthRecord
-        fields = "__all__"
-
-
 # Appel du modèle de l'utilisateur
 User = get_user_model()
 
@@ -79,6 +70,8 @@ class LoginSerializer(serializers.Serializer):
                 "first_name": user.first_name,
                 "last_name": user.last_name,
                 "email": user.email,
+                "birth_date": user.birth_date,
+                "phone_number": user.phone_number,
             },
         }
 
@@ -93,3 +86,63 @@ class LoginSerializer(serializers.Serializer):
         Retourne le format final de la réponse.
         """
         return instance
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    birth_date = serializers.DateField(
+        input_formats=[
+            "%Y-%m-%d",
+            "%Y-%m-%dT%H:%M:%S.%fZ",
+            "%Y-%m-%d %H:%M:%S.%f",
+            "%m/%d/%Y %H:%M:%S",
+        ],
+        required=False,
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            "first_name",
+            "last_name",
+            "birth_date",
+            "email",
+            "phone_number",
+            "password",
+        ]
+        extra_kwargs = {
+            "email": {"required": False},
+            "phone_number": {"required": False},
+            "birth_date": {"required": False},
+            "first_name": {"required": False},
+            "last_name": {"required": False},
+            "password": {"write_only": True, "required": False},
+        }
+
+    def validate_phone_number(self, value):
+        if value in [None, ""]:
+            return None
+        if (
+            User.objects.exclude(pk=self.instance.pk)
+            .filter(phone_number=value)
+            .exists()
+        ):
+            raise serializers.ValidationError(
+                "Ce numéro de téléphone est déjà utilisé."
+            )
+        return value
+
+    def update(self, instance, validated_data):
+        # Traiter le mot de passe séparément
+        password = validated_data.pop("password", None)
+
+        if password:
+            instance.set_password(password)
+        # Si l'email est mis à jour, mettez aussi à jour le username.
+        new_email = validated_data.get("email", None)
+
+        if new_email:
+            instance.username = new_email
+        if "phone_number" in validated_data and validated_data["phone_number"] == "":
+            validated_data["phone_number"] = None
+        # Mettre à jour les autres champs
+        return super().update(instance, validated_data)
