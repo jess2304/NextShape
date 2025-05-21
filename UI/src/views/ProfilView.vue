@@ -8,106 +8,84 @@ import Button from "primevue/button"
 import Dialog from "primevue/dialog"
 import InputText from "primevue/inputtext"
 import Password from "primevue/password"
-import Calendar from "primevue/calendar"
+import DatePicker from "primevue/datepicker"
 import InputMask from "primevue/inputmask"
 import ConfirmPopup from "primevue/confirmpopup"
 import { useConfirm } from "primevue/useconfirm"
+import { showToast } from "@/assets/js/utils"
 
 const toast = useToast()
-const today = new Date()
 const confirm = useConfirm()
+const today = new Date()
 
-// Appel du profil
 const authStore = useAuthStore()
 const userData = computed(() => authStore.user)
 
-const formattedBirthDate = computed(() => {
-  // Donne la date bien formatée
-  const rawDate = authStore.user?.birth_date
-  if (rawDate) {
-    const date = new Date(rawDate)
-    return date.toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    })
-  }
-  return "N/A"
-})
-
-// Variables pour la modale d'édition
+// Gestion des modifications
 const editDialogVisible = ref(false)
 const fieldToEdit = ref("")
 const fieldValue = ref("")
 
-// Titre du dialog en fonction du champ à éditer
-const dialogHeader = computed(() => {
-  switch (fieldToEdit.value) {
-    case "name":
-      return "Modifier Nom & Prénom"
-    case "birth_date":
-      return "Modifier la date de naissance"
-    case "email":
-      return "Modifier l'Email"
-    case "phone_number":
-      return "Modifier le Numéro de téléphone"
-    case "password":
-      return "Saisissez votre nouveau mot de passe"
-    default:
-      return ""
-  }
+const editableFields = [
+  { key: "last_name", label: "Nom" },
+  { key: "first_name", label: "Prénom" },
+  { key: "birth_date", label: "Date de naissance" },
+  { key: "email", label: "Adresse Email" },
+  { key: "phone_number", label: "Téléphone" },
+]
+
+const formattedBirthDate = computed(() => {
+  const rawDate = userData.value?.birth_date
+  if (!rawDate) return "N/A"
+  return new Date(rawDate).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  })
 })
 
-// Ouvre le dialog en fonction du champ à modifier
+const getDialogHeader = (field: string): string => {
+  const label = editableFields.find((f) => f.key === field)?.label
+  return label
+    ? `Modifier ${label}`
+    : field === "password"
+    ? "Saisissez votre nouveau mot de passe"
+    : ""
+}
+
 const openEditDialog = (field: string) => {
   fieldToEdit.value = field
-  // Initialiser la valeur à éditer depuis userData
-  if (field === "last_name") {
-    fieldValue.value = userData.value.last_name
-  } else if (field === "first_name") {
-    fieldValue.value = userData.value.first_name
-  } else if (field === "birth_date") {
-    fieldValue.value = userData.value.birth_date || ""
-  } else if (field === "email") {
-    fieldValue.value = userData.value.email || ""
-  } else if (field === "phone_number") {
-    fieldValue.value = userData.value.phone_number || ""
-  } else if (field === "password") {
-    fieldValue.value = ""
-  }
+  fieldValue.value =
+    userData.value?.[field as keyof typeof userData.value] ?? ""
   editDialogVisible.value = true
 }
 
-// Annuler la modification
 const cancelEdit = () => {
   editDialogVisible.value = false
+  fieldToEdit.value = ""
+  fieldValue.value = ""
 }
 
-// Sauvegarder les modifications
 const saveEdit = async () => {
   try {
     await authStore.updateProfileField(fieldToEdit.value, fieldValue.value)
-    // Fermer dialog
-    editDialogVisible.value = false
-    toast.add({
-      severity: "success",
-      summary: "Modification réalisée avec succès",
-      life: 5000,
-    })
+    showToast(toast, "success", "Succès", "Modification enregistrée.")
+    cancelEdit()
   } catch (error) {
-    toast.add({
-      severity: "error",
-      summary: "Erreur Lors de la modification de votre profil",
-      life: 5000,
-    })
+    showToast(
+      toast,
+      "error",
+      "Erreur",
+      "Erreur lors de la mise à jour du profil."
+    )
   }
 }
 
-const confirmDeleteAccount = (event) => {
+const confirmDeleteAccount = (event: Event) => {
   confirm.require({
-    target: event.currentTarget,
+    target: event.currentTarget as HTMLElement | undefined,
     message:
-      "Êtes vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+      "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
     icon: "pi pi-exclamation-triangle",
     rejectProps: {
       label: "Annuler",
@@ -116,21 +94,19 @@ const confirmDeleteAccount = (event) => {
     },
     acceptProps: {
       label: "Supprimer définitivement",
+      severity: "danger",
     },
     accept: async () => {
       try {
         await authStore.deleteAccount()
-        toast.add({
-          severity: "success",
-          summary: "Vous avez supprimé définitivement votre compte. Au revoir.",
-          life: 5000,
-        })
+        showToast(toast, "success", "Succès", "Votre compte a été supprimé.")
       } catch (error) {
-        toast.add({
-          severity: "error",
-          summary: "Erreur Lors de la suppression du compte.",
-          life: 5000,
-        })
+        showToast(
+          toast,
+          "error",
+          "Erreur",
+          "Échec de la suppression du compte."
+        )
       }
     },
     reject: () => {},
@@ -141,87 +117,35 @@ const confirmDeleteAccount = (event) => {
 <template>
   <Card class="w-6 mx-auto">
     <template #title>
-      <span class="text-3xl font-bold"
-        ><strong
-          >Profil de {{ userData?.first_name || "N/A" }}
-          {{ userData?.last_name || "N/A" }}</strong
-        ></span
-      >
+      <span class="text-3xl font-bold">
+        Profil de {{ userData?.first_name || "N/A" }}
+        {{ userData?.last_name || "N/A" }}
+      </span>
     </template>
+
     <template #content>
       <div class="flex flex-column gap-2 mt-3">
-        <div class="flex align-items-center justify-content-between">
-          <!-- Nom -->
-          <div><strong>Nom :</strong> {{ userData?.last_name || "N/A" }}</div>
-          <Button
-            label="Modifier"
-            icon="pi pi-pencil"
-            rounded
-            text
-            @click="openEditDialog('last_name')"
-          />
-        </div>
-        <hr />
-        <!-- Prénom -->
-        <div class="flex align-items-center justify-content-between">
+        <div
+          v-for="field in editableFields"
+          :key="field.key"
+          class="flex align-items-center justify-content-between"
+        >
           <div>
-            <strong>Prénom :</strong> {{ userData?.first_name || "N/A" }}
+            <strong>{{ field.label }} :</strong>
+            <span v-if="field.key === 'birth_date'">{{
+              formattedBirthDate
+            }}</span>
+            <span v-else>{{ userData?.[field.key] || "N/A" }}</span>
           </div>
           <Button
             label="Modifier"
             icon="pi pi-pencil"
             rounded
             text
-            @click="openEditDialog('first_name')"
+            @click="openEditDialog(field.key)"
           />
         </div>
-        <hr />
-        <!-- Date de naissance -->
-        <div class="flex align-items-center justify-content-between">
-          <div>
-            <strong>Date de naissance :</strong>
-            {{ formattedBirthDate }}
-          </div>
-          <Button
-            label="Modifier"
-            icon="pi pi-pencil"
-            rounded
-            text
-            @click="openEditDialog('birth_date')"
-          />
-        </div>
-        <hr />
-        <!-- Email -->
-        <div class="flex align-items-center justify-content-between">
-          <div>
-            <strong>Email :</strong>
-            {{ userData?.email || "N/A" }}
-          </div>
-          <Button
-            label="Modifier"
-            icon="pi pi-pencil"
-            rounded
-            text
-            @click="openEditDialog('email')"
-          />
-        </div>
-        <hr />
-        <!-- Téléphone -->
-        <div class="flex align-items-center justify-content-between">
-          <div>
-            <strong>Téléphone :</strong>
-            {{ userData?.phone_number || "N/A" }}
-          </div>
-          <Button
-            label="Modifier"
-            icon="pi pi-pencil"
-            rounded
-            text
-            @click="openEditDialog('phone_number')"
-          />
-        </div>
-        <hr />
-        <!-- Bouton Changer de mot de passe -->
+        <hr class="w-full" />
         <div class="flex align-items-center justify-content-end mt-3 gap-2">
           <Button
             label="Changer le mot de passe"
@@ -230,7 +154,7 @@ const confirmDeleteAccount = (event) => {
             severity="secondary"
             @click="openEditDialog('password')"
           />
-          <ConfirmPopup></ConfirmPopup>
+          <ConfirmPopup />
           <Button
             label="Supprimer mon compte"
             size="small"
@@ -245,52 +169,43 @@ const confirmDeleteAccount = (event) => {
   <!-- Dialog de modification -->
   <Dialog
     v-model:visible="editDialogVisible"
-    :header="dialogHeader"
+    :header="getDialogHeader(fieldToEdit)"
     modal
     :closable="false"
   >
-    <div v-if="fieldToEdit === 'password'">
-      <label class="block mb-2">{{ dialogHeader }}</label>
-      <Password v-model="fieldValue" toggleMask class="w-full" />
-    </div>
-    <div v-else-if="fieldToEdit === 'birth_date'">
-      <label class="block mb-2">{{ dialogHeader }}</label>
-      <Calendar
-        class="w-full"
+    <div class="field">
+      <label class="block mb-2">{{ getDialogHeader(fieldToEdit) }}</label>
+
+      <Password
+        v-if="fieldToEdit === 'password'"
         v-model="fieldValue"
+        toggleMask
+        class="w-full"
+      />
+      <DatePicker
+        v-else-if="fieldToEdit === 'birth_date'"
+        v-model="fieldValue as unknown as Date"
+        class="w-full"
         showIcon
         dateFormat="dd/mm/yy"
         :maxDate="today"
       />
-    </div>
-    <div v-else-if="fieldToEdit === 'phone_number'">
-      <label class="block mb-2">{{ dialogHeader }}</label>
       <InputMask
+        v-else-if="fieldToEdit === 'phone_number'"
         id="phone_number"
         v-model="fieldValue"
         mask="(+33) 9-99-99-99-99"
         placeholder="(+33) 0-00-00-00-00"
-        fluid
+        class="w-full"
       />
+      <InputText v-else v-model="fieldValue" class="w-full" />
     </div>
-    <div v-else>
-      <label class="block mb-2">{{ dialogHeader }}</label>
-      <InputText v-model="fieldValue" class="w-full" />
-    </div>
+
     <template #footer>
-      <Button
-        label="Annuler"
-        icon="pi pi-times"
-        class="p-button-text"
-        @click="cancelEdit"
-      />
-      <Button
-        label="Sauvegarder"
-        icon="pi pi-check"
-        class="p-button-text"
-        @click="saveEdit"
-      />
+      <Button label="Annuler" icon="pi pi-times" text @click="cancelEdit" />
+      <Button label="Sauvegarder" icon="pi pi-check" text @click="saveEdit" />
     </template>
   </Dialog>
+
   <Toast />
 </template>

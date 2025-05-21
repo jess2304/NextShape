@@ -21,3 +21,20 @@ export const dateTransformer: AxiosRequestTransformer = (data) => {
   }
   return data
 }
+
+export const validateRequiredFields = (data: any, fields: string[]): string[] =>
+  fields.filter((field) => !data[field])
+
+export const showToast = (
+  toast: any,
+  severity: "success" | "error" | "info",
+  summary: string,
+  detail = ""
+) => {
+  toast.add({
+    severity,
+    summary,
+    detail,
+    life: 5000,
+  })
+}

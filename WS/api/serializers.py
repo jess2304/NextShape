@@ -1,3 +1,6 @@
+from typing import cast
+
+from api.models import CustomUser
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -59,6 +62,7 @@ class LoginSerializer(serializers.Serializer):
         password = data.get("password")
         # Récupérer l'utilisateur correspondant à l'email
         user = User.objects.filter(email=email).first()
+        user = cast(CustomUser, user)
         if user is None or not user.check_password(password):
             raise serializers.ValidationError("Identifiants incorrects.")
         # Générer un Token JWT pour l'utilisateur.
@@ -119,7 +123,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         }
 
     def validate_phone_number(self, value):
-        if value in [None, ""]:
+        if not value:
             return None
         if (
             User.objects.exclude(pk=self.instance.pk)
@@ -137,7 +141,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 
         if password:
             instance.set_password(password)
-        # Si l'email est mis à jour, mettez aussi à jour le username.
+        # Si l'email est mis à jour, mettre aussi à jour le username.
         new_email = validated_data.get("email", None)
 
         if new_email:
@@ -146,3 +150,46 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             validated_data["phone_number"] = None
         # Mettre à jour les autres champs
         return super().update(instance, validated_data)
+
+
+class EmailCodeRequestRegistrationSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                "Il existe déjà un utilisateur avec ce mail."
+            )
+        return value
+
+
+class EmailCodeRequestResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Aucun utilisateur avec cet email.")
+        return value
+
+
+class EmailCodeVerificationSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=6)
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate_email(self, value):
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Aucun utilisateur avec cet email.")
+        return value
+
+    def save(self):
+        email = self.validated_data["email"]
+        password = self.validated_data["password"]
+        user = User.objects.get(email=email)
+        user.set_password(password)
+        user.save()
+        return user

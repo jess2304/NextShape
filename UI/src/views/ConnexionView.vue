@@ -7,10 +7,21 @@ import { useAuthStore } from "@/stores/authStore"
 import { useToast } from "primevue/usetoast"
 import Button from "primevue/button"
 import Toast from "primevue/toast"
+import ResetPasswordModalComponent from "@/components/ResetPasswordModalComponent.vue"
+import { showToast, validateRequiredFields } from "@/assets/js/utils"
+
+interface Credentials {
+  email: string | null
+  password: string | null
+}
 
 // Initialisation des credentials et les données invalides.
-const credentials = ref({ email: null, password: null })
-const invalidData = ref({ email: false, password: false })
+const credentials = ref<Credentials>({ email: null, password: null })
+const invalidFields = ref<Record<string, boolean>>({
+  email: false,
+  password: false,
+})
+const resetPasswordVisible = ref(false)
 
 // Appel des stores et des routers
 const authStore = useAuthStore()
@@ -19,42 +30,35 @@ const router = useRouter()
 
 // Valider l'insertion et passer la connexion au Backend.
 const validateAndProceed = async () => {
-  Object.keys(invalidData.value).forEach(
-    (key) => (invalidData.value[key] = false)
-  )
-
   // Checker si les champs obligatoires sont renseignés
-  let requiredHasError = false
-  let requiredFields = ["email", "password"]
-  requiredFields.forEach((field) => {
-    if (!credentials.value[field]) {
-      invalidData.value[field] = true
-      requiredHasError = true
-    }
-  })
+  const missingFields = validateRequiredFields(credentials.value, [
+    "email",
+    "password",
+  ])
+
   // Alerte champs obligatoires
-  if (requiredHasError) {
-    toast.add({
-      severity: "error",
-      summary: "Erreur",
-      detail: "Veuillez remplir les champs obligatoires",
-      life: 5000,
-    })
+  if (missingFields.length) {
+    showToast(
+      toast,
+      "error",
+      "Erreur",
+      "Veuillez remplir les champs obligatoires"
+    )
+    return
   }
-  // Si tout est validé on passe à la connexion
-  if (!requiredHasError) {
-    try {
-      await authStore.login(credentials.value)
-      router.push("/")
-      credentials.value = { email: null, password: null }
-    } catch (error) {
-      toast.add({
-        severity: "error",
-        summary: "Erreur Lors de la connexion",
-        life: 5000,
-      })
-    }
+  // Tout est reseigné, on passe à la connexion
+  try {
+    await authStore.login(credentials.value)
+    const redirectPath = router.currentRoute.value.query.redirect || "/"
+    router.push(redirectPath as string)
+    credentials.value = { email: null, password: null }
+  } catch (error) {
+    showToast(toast, "error", "Erreur lors de la connexion")
   }
+}
+
+const openResetPasswordModal = () => {
+  resetPasswordVisible.value = true
 }
 </script>
 
@@ -63,13 +67,13 @@ const validateAndProceed = async () => {
     <h2 class="text-5xl text-center text-primary">Connexion</h2>
     <form class="formgrid grid" @submit.prevent="validateAndProceed">
       <div class="field col-12 md:col-6">
-        <label>Email</label>
+        <label>Adresse Email</label>
         <InputText
           class="w-full"
           type="email"
           v-model="credentials.email"
           placeholder="Votre email"
-          :invalid="invalidData.email"
+          :invalid="invalidFields.email"
         />
       </div>
       <div class="field col-12 md:col-6">
@@ -77,9 +81,14 @@ const validateAndProceed = async () => {
         <Password
           class="w-full"
           v-model="credentials.password"
-          :invalid="invalidData.password"
+          :invalid="invalidFields.password"
           :feedback="false"
         />
+        <a
+          @click="openResetPasswordModal"
+          class="text-sm text-primary cursor-pointer"
+          >Mot de passe oublié ?</a
+        >
       </div>
       <div>
         <Button
@@ -89,6 +98,10 @@ const validateAndProceed = async () => {
           type="submit"
         />
       </div>
+      <ResetPasswordModalComponent
+        :visible="resetPasswordVisible"
+        @update:visible="resetPasswordVisible = $event"
+      />
     </form>
     <Toast />
   </div>

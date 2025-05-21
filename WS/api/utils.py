@@ -1,0 +1,51 @@
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.utils.crypto import get_random_string
+
+from .models import EmailVerificationCode
+
+
+def send_verification_email(email, code):
+    subject = " NextShape - Vérification de votre adresse email"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = [email]
+
+    text_content = f"""
+    Bonjour,
+
+    Nous devons vérifier que cette adresse email vous appartient bien pour poursuivre.
+
+    Voici votre code de vérification personnel : {code}
+
+    Ce code est valable pendant 10 minutes. Pour des raisons de sécurité, ne le partagez avec personne.
+
+    Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.
+
+    Merci de votre confiance,
+    L'équipe NextShape
+    """
+
+    html_content = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+        <p>Bonjour,</p>
+        <p>Nous devons vérifier que cette adresse email vous appartient bien pour poursuivre.</p>
+        <p>Voici votre <strong>code de vérification personnel</strong> :</p>
+        <h2 style="color: #2c3e50;">{code}</h2>
+        <p>Ce code est <strong>valable pendant 10 minutes</strong>. Pour des raisons de sécurité, ne le partagez avec personne.</p>
+        <p style="margin-top: 30px;">Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.</p>
+        <p>Merci de votre confiance,</p>
+        <p><strong>L'équipe NextShape</strong><br/>Prenez soin de vous, chaque jour.</p>
+    </body>
+    </html>
+    """
+
+    msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
+def generate_and_send_verification_code(email):
+    code = get_random_string(length=6, allowed_chars="0123456789")
+    EmailVerificationCode.objects.create(email=email, code=code)
+    send_verification_email(email, code)

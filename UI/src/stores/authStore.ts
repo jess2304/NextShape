@@ -1,25 +1,32 @@
 import { defineStore } from "pinia"
-import { registerUser, loginUser } from "@/services/apiService"
-import { updateProfile, deleteAccount } from "@/services/apiService"
+import {
+  sendVerificationCode,
+  verifyCode,
+  updateProfile,
+  deleteAccount,
+  resetPassword,
+  registerUser,
+  loginUser,
+} from "@/services/apiService"
 import router from "@/router"
+
+export interface User {
+  first_name: string
+  last_name: string
+  email: string
+  birth_date: string
+  phone_number: string
+}
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
-    user: null as {
-      first_name: string
-      last_name: string
-      email: string
-      birth_date: Date
-      phone_number: string
-    } | null,
+    user: null as User | null,
     token: null as string | null,
   }),
 
   actions: {
     async register(userData: any) {
       // Appelle le service pour enregistrer un nouvel utilisateur
-      const dateObj = new Date(userData.birth_date)
-      userData.birth_date = dateObj.toISOString().split("T")[0]
       const payload = {
         username: userData.email,
         first_name: userData.first_name,
@@ -33,13 +40,10 @@ export const useAuthStore = defineStore("auth", {
         const response = await registerUser(payload)
         return response.data
       } catch (error: any) {
-        throw (
-          error.response?.data?.message ||
-          "Une erreur est survenue lors de l'inscription. Veuillez vérifier vos données."
-        )
+        throw error.response?.data?.message || "Erreur lors de l'inscription."
       }
     },
-    async login(credentials: any) {
+    async login(credentials: { email: string; password: string }) {
       // Appelle le service pour se connecter
       try {
         const response = await loginUser(credentials)
@@ -47,21 +51,12 @@ export const useAuthStore = defineStore("auth", {
         this.setUser(user, access)
         return response.data
       } catch (error: any) {
-        throw (
-          error.response?.data?.message ||
-          "Une erreur est survenue lors de la connexion. Veuillez vérifier vos identifiants."
-        )
+        throw error.response?.data?.message || "Erreur lors de la connexion."
       }
     },
     setUser(
       // Setter pour mettre à jour les données de l'utilisateur.
-      userData: {
-        first_name: string
-        last_name: string
-        email: string
-        birth_date: Date
-        phone_number: string
-      },
+      userData: User,
       token: string
     ) {
       this.user = userData
@@ -75,13 +70,10 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async updateProfileField(field: string, value: any) {
+      const payload: Record<string, any> = { [field]: value }
       // Appelle le service pour modifier une valeur dans l'utilisateur.
       try {
-        const payload: Record<string, any> = {}
-        payload[field] = value
-
         const response = await updateProfile(payload, this.token)
-
         this.user = response.data
         return response.data
       } catch (error: any) {
@@ -103,7 +95,34 @@ export const useAuthStore = defineStore("auth", {
         throw error
       }
     },
+
+    async sendVerificationCode(
+      email: string,
+      context: "registration" | "reset-password"
+    ) {
+      try {
+        await sendVerificationCode(email, context)
+      } catch (error) {
+        throw error
+      }
+    },
+
+    async verifyCode(email: string, code: string): Promise<boolean> {
+      const response = await verifyCode(email, code)
+      return response
+    },
+
+    async resetPassword(email: string, newPassword: string) {
+      try {
+        const response = await resetPassword(email, newPassword)
+        console.log("response")
+        return response
+      } catch (error) {
+        throw error
+      }
+    },
   },
+
   persist: {
     paths: ["user", "token"],
     storage: localStorage,

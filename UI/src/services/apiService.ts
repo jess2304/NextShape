@@ -40,25 +40,79 @@ api.interceptors.response.use(
   }
 )
 
-export const registerUser = async (userData) =>
-  await api.post(`${API_URL}register/`, userData)
-
-export const loginUser = async (credentials) =>
-  await api.post(`${API_URL}login/`, credentials)
-
-export const updateProfile = async (userData, token) => {
-  const response = await api.patch(`${API_URL}profile/`, userData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-  return response
+export interface LoginResponse {
+  user: {
+    first_name: string
+    last_name: string
+    email: string
+    birth_date: string
+    phone_number: string
+  }
+  access: string
+}
+export interface VerifyCodeResponse {
+  valid: boolean
 }
 
-export const deleteAccount = async (token) => {
-  await api.delete(`${API_URL}delete-account/`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+const authHeader = (token: string | null) => ({
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+})
+
+// Inscription
+export const registerUser = async (userData: any) =>
+  await api.post(`${API_URL}register/`, userData)
+
+// Connexion
+export const loginUser = async (credentials: {
+  email: string
+  password: string
+}) => {
+  const response = await api.post<LoginResponse>(
+    `${API_URL}login/`,
+    credentials
+  )
+  return response.data
+}
+
+// Update du profil
+export const updateProfile = async (userData: any, token: string | null) => {
+  const response = await api.patch(
+    `${API_URL}profile/`,
+    userData,
+    authHeader(token)
+  )
+  return response.data
+}
+
+// Suppression du compte
+export const deleteAccount = async (token: string | null) =>
+  await api.delete(`${API_URL}delete-account/`, authHeader(token))
+
+// Envoi de code de vérification selon un contexte
+export const sendVerificationCode = async (
+  email: string,
+  context: "registration" | "reset-password"
+) => await api.post(`${API_URL}send-code-${context}/`, { email })
+
+// Verifier le code
+export const verifyCode = async (
+  email: string,
+  code: string
+): Promise<VerifyCodeResponse> => {
+  const response = await api.post(`${API_URL}verify-code/`, {
+    email,
+    code,
   })
+  return response.data
+}
+
+// Réinitialiser le mot de passe
+export const resetPassword = async (email: string, password: string) => {
+  const response = await api.post(`${API_URL}reset-password/`, {
+    email,
+    password,
+  })
+  return response.data
 }

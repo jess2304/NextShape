@@ -36,14 +36,14 @@ repos:
     rev: 23.1.0
     hooks:
       - id: black
-        language_version: python3.12
+        language_version: python3.11
 
   - repo: https://github.com/PyCQA/flake8
     rev: 5.0.4
     hooks:
       - id: flake8
         additional_dependencies: [mccabe, pycodestyle, pyflakes]
-        args: [--max-line-length=150, "--ignore=E203,E231"]
+        args: [--max-line-length=150, "--ignore=E203,E231,W503"]
 
 
   - repo: https://github.com/pre-commit/mirrors-mypy

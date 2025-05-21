@@ -4,20 +4,41 @@ import InputText from "primevue/inputtext"
 import InputMask from "primevue/inputmask"
 import Password from "primevue/password"
 import Button from "primevue/button"
-import Calendar from "primevue/calendar"
+import DatePicker from "primevue/datepicker"
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
 import { useAuthStore } from "@/stores/authStore"
 import router from "@/router"
+import CodeVerificationModalComponent from "@/components/CodeVerificationModalComponent.vue"
+import { validateRequiredFields, showToast } from "@/assets/js/utils"
+
+interface RegistrationForm {
+  first_name: string | null
+  last_name: string | null
+  birth_date: Date | null
+  email: string | null
+  confirmEmail: string | null
+  phone_number: string | null
+  password: string | null
+  confirmPassword: string | null
+}
+
+// Constante de la date d'aujourd'hui (contrôle calendrier)
+const today = new Date()
 
 // Appel des stores
 const toast = useToast()
 const authStore = useAuthStore()
-// Constante de la date d'aujourd'hui (contrôle calendrier)
-const today = new Date()
+
+// Constante pour faire apparaître la fenêtre modale de vérification de mail.
+const showModal = ref(false)
+const codeFromUser = ref("")
+const loading = ref(false)
+// Init des données insérées et invalides
+const invalidFields = ref<Record<string, boolean>>({})
 
 // Init du formulaire
-const formData = ref({
+const formData = ref<RegistrationForm>({
   first_name: null,
   last_name: null,
   birth_date: null,
@@ -28,25 +49,11 @@ const formData = ref({
   confirmPassword: null,
 })
 
-// Init des données insérées et invalides
-const invalidData = ref({
-  first_name: false,
-  last_name: false,
-  birth_date: false,
-  email: false,
-  confirmEmail: false,
-  password: false,
-  confirmPassword: false,
-})
-
 // Valider les données et passer l'inscription au Backend
 const validateAndProceed = async () => {
-  Object.keys(invalidData.value).forEach(
-    (key) => (invalidData.value[key] = false)
-  )
+  invalidFields.value = {}
 
   // Checker si les champs obligatoires sont renseignés
-  let requiredHasError = false
   let requiredFields = [
     "first_name",
     "last_name",
@@ -56,86 +63,110 @@ const validateAndProceed = async () => {
     "password",
     "confirmPassword",
   ]
-  requiredFields.forEach((field) => {
-    if (!formData.value[field]) {
-      invalidData.value[field] = true
-      requiredHasError = true
-    }
-  })
-
-  if (requiredHasError) {
-    toast.add({
-      severity: "error",
-      summary: "Erreur",
-      detail: "Veuillez remplir les champs obligatoires",
-      life: 5000,
-    })
+  const missingFields = validateRequiredFields(formData.value, requiredFields)
+  missingFields.forEach((field: string) => (invalidFields.value[field] = true))
+  if (missingFields.length) {
+    showToast(
+      toast,
+      "error",
+      "Erreur",
+      "Veuillez remplir les champs obligatoires"
+    )
+    return
   }
-
   // Checker si les mails sont identiques
   if (formData.value.email !== formData.value.confirmEmail) {
-    invalidData.value.email = true
-    invalidData.value.confirmEmail = true
-    toast.add({
-      severity: "error",
-      summary: "Erreur",
-      detail: "Les emails ne correspondent pas",
-      life: 5000,
-    })
+    invalidFields.value.email = true
+    invalidFields.value.confirmEmail = true
+    return showToast(
+      toast,
+      "error",
+      "Erreur",
+      "Les emails ne correspondent pas"
+    )
   }
 
   // Checker si les mots de passes sont identiques
   if (formData.value.password !== formData.value.confirmPassword) {
-    invalidData.value.password = true
-    invalidData.value.confirmPassword = true
-    toast.add({
-      severity: "error",
-      summary: "Erreur",
-      detail: "Les mots de passe ne correspondent pas",
-      life: 5000,
-    })
+    invalidFields.value.password = true
+    invalidFields.value.confirmPassword = true
+    return showToast(
+      toast,
+      "error",
+      "Erreur",
+      "Les mots de passe ne correspondent pas"
+    )
   }
 
   // Si tout est validé on passe à l'enregistrement
-  if (
-    !requiredHasError &&
-    formData.value.email == formData.value.confirmEmail &&
-    formData.value.password == formData.value.confirmPassword
-  ) {
-    try {
-      await authStore.register(formData.value)
-      toast.add({
-        severity: "success",
-        summary: "Félicitation ! Vous êtes inscrit à NextShape.",
-        life: 5000,
-      })
-      formData.value = {
-        first_name: null,
-        last_name: null,
-        birth_date: null,
-        email: null,
-        confirmEmail: null,
-        phone_number: null,
-        password: null,
-        confirmPassword: null,
-      }
-      router.push("/connexion")
-    } catch (error) {
-      toast.add({
-        severity: "error",
-        summary: "Erreur Lors de l'inscription",
-        detail: String(error),
-        life: 5000,
-      })
-    }
+  await sendCode()
+}
+
+const sendCode = async () => {
+  try {
+    await authStore.sendVerificationCode(formData.value.email, "registration")
+    showModal.value = true
+    showToast(
+      toast,
+      "info",
+      "Code envoyé",
+      "Un email contenant un code vous a été envoyé."
+    )
+  } catch (err) {
+    const detail =
+      err?.response?.data?.email?.[0] || "Échec de l'envoi du code."
+    showToast(toast, "error", "Erreur", detail)
+  } finally {
+    loading.value = false
   }
+}
+
+const handleCodeValidation = async (code: string) => {
+  codeFromUser.value = code
+  const isValid = await authStore.verifyCode(formData.value.email, code)
+
+  if (!isValid) {
+    return showToast(
+      toast,
+      "error",
+      "Code incorrect",
+      "Le code est invalide ou expiré."
+    )
+  }
+
+  try {
+    await authStore.register(formData.value)
+    showToast(
+      toast,
+      "success",
+      "Succès",
+      "Votre inscription a été un succès. Bienvenue sur NextShape !"
+    )
+    resetForm()
+    router.push("/connexion")
+  } catch (error) {
+    showToast(toast, "error", "Erreur", String(error))
+  }
+}
+
+const resetForm = () => {
+  formData.value = {
+    first_name: null,
+    last_name: null,
+    birth_date: null,
+    email: null,
+    confirmEmail: null,
+    phone_number: null,
+    password: null,
+    confirmPassword: null,
+  }
+  showModal.value = false
 }
 </script>
 
 <template>
   <div class="card p-4 surface-card shadow-2 border-round-lg w-6 mx-auto">
     <h2 class="text-5xl text-center text-primary">Inscription</h2>
-
     <div class="formgrid grid">
       <div class="field col-12 md:col-6">
         <label>Prénom *</label>
@@ -143,7 +174,7 @@ const validateAndProceed = async () => {
           class="w-full"
           v-model="formData.first_name"
           placeholder="Votre prénom"
-          :invalid="invalidData.first_name"
+          :invalid="invalidFields.first_name"
         />
       </div>
       <div class="field col-12 md:col-6">
@@ -152,17 +183,17 @@ const validateAndProceed = async () => {
           class="w-full"
           v-model="formData.last_name"
           placeholder="Votre nom"
-          :invalid="invalidData.last_name"
+          :invalid="invalidFields.last_name"
         />
       </div>
       <div class="field col-12 md:col-6">
         <label>Date de naissance *</label>
-        <Calendar
+        <DatePicker
           class="w-full"
           v-model="formData.birth_date"
           showIcon
           dateFormat="dd/mm/yy"
-          :invalid="invalidData.birth_date"
+          :invalid="invalidFields.birth_date"
           :maxDate="today"
         />
       </div>
@@ -177,23 +208,23 @@ const validateAndProceed = async () => {
         />
       </div>
       <div class="field col-12 md:col-6">
-        <label>Email *</label>
+        <label>Adresse Email *</label>
         <InputText
           class="w-full"
           type="email"
           v-model="formData.email"
           placeholder="Votre email"
-          :invalid="invalidData.email"
+          :invalid="invalidFields.email"
         />
       </div>
       <div class="field col-12 md:col-6">
-        <label>Confirmez votre email *</label>
+        <label>Confirmez votre adresse email *</label>
         <InputText
           class="w-full"
           type="email"
           v-model="formData.confirmEmail"
           placeholder="Confirmez l'email"
-          :invalid="invalidData.confirmEmail"
+          :invalid="invalidFields.confirmEmail"
         />
       </div>
       <div class="field col-12 md:col-6">
@@ -202,16 +233,16 @@ const validateAndProceed = async () => {
           class="w-full"
           v-model="formData.password"
           toggleMask
-          :invalid="invalidData.password"
+          :invalid="invalidFields.password"
         />
       </div>
       <div class="field col-12 md:col-6">
-        <label for="confirmPassword">Confirmer Mot de passe *</label>
+        <label for="confirmPassword">Confirmez votre mot de passe *</label>
         <Password
           class="w-full"
           v-model="formData.confirmPassword"
           toggleMask
-          :invalid="invalidData.confirmPassword"
+          :invalid="invalidFields.confirmPassword"
         />
       </div>
       <div>
@@ -220,10 +251,16 @@ const validateAndProceed = async () => {
           label="Confirmer l'inscription"
           icon="pi pi-arrow-right"
           @click="validateAndProceed"
+          :loading="loading"
         />
       </div>
+      <CodeVerificationModalComponent
+        :visible="showModal"
+        @update:visible="showModal = $event"
+        @validated="handleCodeValidation"
+        @sendBack="sendCode"
+      />
     </div>
-
     <Toast />
   </div>
 </template>

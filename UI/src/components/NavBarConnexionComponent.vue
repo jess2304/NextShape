@@ -22,7 +22,7 @@ const userMenuItems = computed(() => [
   { label: "Déconnexion", icon: "pi pi-sign-out", command: logoutUser },
 ])
 
-function logoutUser() {
+const logoutUser = () => {
   authStore.logout()
   router.push("/connexion")
 }

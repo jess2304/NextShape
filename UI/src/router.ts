@@ -10,6 +10,7 @@ import NotFoundView from "@/views/NotFoundView.vue"
 import ConnexionView from "@/views/ConnexionView.vue"
 import InscriptionView from "@/views/InscriptionView.vue"
 import ProfilView from "@/views/ProfilView.vue"
+import { useAuthStore } from "@/stores/authStore"
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
@@ -17,24 +18,48 @@ const routes = [
     path: "/calculatrice-imc",
     name: "calculatrice-imc",
     component: CalculatriceIMCView,
+    meta: { requiresAuth: true },
   },
   {
     path: "/calculatrice-calories",
     name: "calculatrice-calories",
     component: CalculatriceCaloriesView,
+    meta: { requiresAuth: true },
   },
-  { path: "/historique", name: "historique", component: HistoriqueView },
-  { path: "/evolution", name: "evolution", component: EvolutionView },
+  {
+    path: "/historique",
+    name: "historique",
+    component: HistoriqueView,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: "/evolution",
+    name: "evolution",
+    component: EvolutionView,
+    meta: { requiresAuth: true },
+  },
   { path: "/contact", name: "contact", component: ContactView },
   { path: "/inscription", component: InscriptionView },
   { path: "/connexion", component: ConnexionView },
-  { path: "/profil", component: ProfilView },
+  { path: "/profil", component: ProfilView, meta: { requiresAuth: true } },
   { path: "/:pathMatch(.*)*", component: NotFoundView },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+// Protection des routes privées
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  if (to.meta.requiresAuth && !authStore.token) {
+    next({ path: "/connexion", query: { redirect: to.fullPath } })
+  } else {
+    next()
+  }
 })
 
 export default router
