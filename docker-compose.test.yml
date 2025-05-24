@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    container_name: nextshape_test_db
+    restart: always
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_test_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./WS
+    container_name: nextshape_test_backend
+    depends_on:
+      - db
+    environment:
+      - ENV=test
+      - DJANGO_SECRET_KEY=test
+      - DATABASE_NAME=test_db
+      - DATABASE_USER=test_user
+      - DATABASE_PASSWORD=test_pass
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+    volumes:
+      - ./WS:/app
+    command: ./entrypoint.sh
+
+volumes:
+  pg_test_data:

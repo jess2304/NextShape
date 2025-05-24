@@ -4,6 +4,8 @@ FROM python:3.11
 # Dossier de travail
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y netcat-openbsd
+
 # Copier et installer les dépendances
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -11,8 +13,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copier le projet
 COPY . .
 
+COPY wait.sh .
+
+# Donner les droits d'exécution au script d'entrée
+RUN chmod +x wait.sh
+RUN chmod +x entrypoint.sh
+
+# Définir le script comme point d'entrée
+ENTRYPOINT ["./entrypoint.sh"]
+
 # Exposer le port de Django
 EXPOSE 8000
-
-# Commande de démarrage
-CMD ["python", "manage.py","runserver", "0.0.0.0:8000"]
