@@ -14,4 +14,4 @@ while ! nc -z $HOST $PORT; do
 done
 
 echo "The DataBase is ready."
-exec $CMD
+exec "$@"
