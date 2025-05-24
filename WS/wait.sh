@@ -2,7 +2,6 @@
 
 HOST_PORT=$1
 shift
-CMD="$@"
 
 HOST=$(echo $HOST_PORT | cut -d: -f1)
 PORT=$(echo $HOST_PORT | cut -d: -f2)

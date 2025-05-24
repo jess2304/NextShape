@@ -5,7 +5,7 @@ set -e
 
 echo "ENV = $ENV"
 
-sh wait.sh $DATABASE_HOST:$DATABASE_PORT -- echo "PostgreSQL DataBase is ready."
+sh wait.sh $DATABASE_HOST:$DATABASE_PORT echo "PostgreSQL DataBase is ready."
 
 # Apply migrations
 echo "Apply the migrations"
