@@ -12,7 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le projet
 COPY . .
-
 COPY wait.sh .
 
 # Donner les droits d'exécution au script d'entrée
