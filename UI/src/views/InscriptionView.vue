@@ -123,29 +123,31 @@ const sendCode = async () => {
 
 const handleCodeValidation = async (code: string) => {
   codeFromUser.value = code
-  const isValid = await authStore.verifyCode(formData.value.email, code)
-
-  if (!isValid) {
-    return showToast(
-      toast,
-      "error",
-      "Code incorrect",
-      "Le code est invalide ou expiré."
-    )
-  }
+  loading.value = true
 
   try {
-    await authStore.register(formData.value)
-    showToast(
-      toast,
-      "success",
-      "Succès",
-      "Votre inscription a été un succès. Bienvenue sur NextShape !"
-    )
-    resetForm()
-    router.push("/connexion")
-  } catch (error) {
-    showToast(toast, "error", "Erreur", String(error))
+    const response = await authStore.verifyCode(formData.value.email, code)
+    if (!response.success) {
+      showToast(toast, "error", "Erreur", response.message)
+      return
+    }
+    try {
+      await authStore.register(formData.value)
+      showToast(
+        toast,
+        "success",
+        "Succès",
+        "Votre inscription a été un succès. Bienvenue sur NextShape !"
+      )
+      resetForm()
+      router.push("/connexion")
+    } catch (registrationError) {
+      showToast(toast, "error", "Erreur", String(registrationError))
+    }
+  } catch (verificationError) {
+    showToast(toast, "error", "Erreur", "Erreur lors de la vérification")
+  } finally {
+    loading.value = false
   }
 }
 

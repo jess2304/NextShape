@@ -143,7 +143,6 @@ class SendCodeForResetPasswordView(APIView):
 
     def post(self, request):
         serializer = EmailCodeRequestResetPasswordSerializer(data=request.data)
-        print(serializer.is_valid())
         if serializer.is_valid():
             email = serializer.validated_data["email"]
             generate_and_send_verification_code(email)
@@ -174,9 +173,19 @@ class VerifyCodeView(APIView):
         code = serializer.validated_data["code"]
 
         try:
-            entry = EmailVerificationCode.objects.filter(email=email, code=code).latest(
+            entry = EmailVerificationCode.objects.filter(email=email).latest(
                 "created_at"
             )
+
+            if entry.code != code:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "Code incorrect",
+                        "data": {"valid": False},
+                    },
+                    status.HTTP_200_OK,
+                )
 
             if entry.is_expired():
                 return Response(
