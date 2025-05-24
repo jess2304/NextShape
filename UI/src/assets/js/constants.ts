@@ -1,4 +1,4 @@
-// constants.ts is a file for all the CONSTANTS we can use in the Frontend application
+// constants.ts est un fichier présentant toutes les constantes du projet.
 
 export const NAVBAR_ELEMENTS = [
   {
@@ -24,11 +24,6 @@ export const NAVBAR_ELEMENTS = [
     label: "Évolution",
     icon: "pi pi-chart-line",
     route: "/evolution",
-  },
-  {
-    label: "Prédiction",
-    icon: "pi pi-chart-bar",
-    route: "/prediction",
   },
   {
     label: "Contact",

@@ -1,26 +1,39 @@
-from django.contrib.auth.models import User
+import datetime
+
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
-class HealthRecord(models.Model):
+class CustomUser(AbstractUser):
     """
-    Informations de santé de l'utilisateur
-    -Le poids est en Kg
-    -La taille est en cm
+    Modèle Custom pour l'utilisateur.
     """
 
-    ACTIVITY_LEVEL_CHOICES = [
-        ("sedentary", "Sédentaire (peu ou pas d'exercice)"),
-        ("light", "Léger (1-3 séances de sport par semaine)"),
-        ("moderate", "Modéré (3-5 séances de sport par semaine)"),
-        ("active", "Actif (sport quotidien ou travail physique)"),
-        ("very_active", "Très actif (athlète ou métier très physique)"),
-    ]
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    weight = models.FloatField()
-    height = models.FloatField()
-    age = models.IntegerField()
-    gender = models.CharField(max_length=10, choices=[("M", "Homme"), ("F", "Femme")])
-    activity_level = models.CharField(max_length=50, choices=ACTIVITY_LEVEL_CHOICES)
-    creation_date = models.DateTimeField(auto_now_add=True)
+    # L'email sera utilisé comme identifiant au lieu du username
+    USERNAME_FIELD = "email"
+
+    # Champs requis lors de la création d'un utilisateur
+    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
+
+    def __str__(self):
+        """
+        Affiche l'email lorsqu'on convertit un utilisateur en str
+        """
+        return self.email
+
+
+class EmailVerificationCode(models.Model):
+    email = models.EmailField()
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        return self.created_at < timezone.now() - datetime.timedelta(minutes=10)
+
+    def __str__(self):
+        return f"{self.email} - {self.code}"
