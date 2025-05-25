@@ -4,7 +4,7 @@ FROM python:3.11
 # Dossier de travail
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y netcat-openbsd
+RUN apt-get update && apt-get install -y curl
 
 # Copier et installer les dépendances
 COPY requirements.txt .
