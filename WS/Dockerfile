@@ -18,7 +18,7 @@ COPY wait.sh .
 RUN chmod +x wait.sh entrypoint.sh
 
 # Définir le script comme point d'entrée
-ENTRYPOINT ["sh", "entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 # Exposer le port de Django
 EXPOSE 8000

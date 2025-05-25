@@ -1,11 +1,8 @@
-#!/bin/sh
-
-# Stop on error
-set -e
+#!/usr/bin/env bash
 
 echo "ENV = $ENV"
 
-sh wait.sh "$DATABASE_HOST:$DATABASE_PORT" python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+./wait.sh "$DATABASE_HOST:$DATABASE_PORT"
 
 # Apply migrations
 echo "Apply the migrations"
@@ -17,7 +14,7 @@ if [ "$ENV" = "dev" ]; then
 elif [ "$ENV" = "test" ]; then
     echo "Testing mode"
     exec pytest --disable-warnings --cov=api
-elif [ "$ENV" = "test" ]; then
+elif [ "$ENV" = "prod" ]; then
     echo "Production mode"
     exec gunicorn next_shape_ws.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120
 else
