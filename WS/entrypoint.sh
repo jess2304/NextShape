@@ -5,7 +5,7 @@ set -e
 
 echo "ENV = $ENV"
 
-sh wait.sh $DATABASE_HOST:$DATABASE_PORT echo "PostgreSQL DataBase is ready."
+sh wait.sh "$DATABASE_HOST:$DATABASE_PORT" python manage.py migrate && python manage.py runserver 0.0.0.0:8000
 
 # Apply migrations
 echo "Apply the migrations"
