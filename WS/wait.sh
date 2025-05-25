@@ -8,7 +8,7 @@ PORT=$(echo $HOST_PORT | cut -d: -f2)
 
 echo "Waiting for DataBase for $HOST:$PORT..."
 
-while ! nc -z $HOST $PORT; do
+until curl --silent --fail http://$HOST:$PORT > /dev/null; do
   sleep 0.5
 done
 
