@@ -24,12 +24,14 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout code
+      - name: Cloning the repository
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Installing Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
-      - name: Run tests in Docker
+      - name: Testing on Docker
         run: |
           docker-compose -f docker-compose.yml --env-file .env -p nextshape_test up --abort-on-container-exit --build
