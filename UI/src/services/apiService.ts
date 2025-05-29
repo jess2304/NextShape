@@ -4,7 +4,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { useToast } from "primevue/usetoast"
 import router from "@/router"
 
-const API_URL = "http://127.0.0.1:8000/api/"
+const API_URL = import.meta.env.VITE_API_URL
 
 const api = axios.create({
   baseURL: API_URL,

@@ -1,11 +1,15 @@
+version: "3.9"
+
 services:
   # PostgreSQL Database
   db:
     image: postgres
     container_name: nextshape_db
     restart: always
-    env_file:
-      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
       - pg_data:/var/lib/postgresql/data
     ports:
@@ -15,37 +19,34 @@ services:
   backend:
     build:
       context: ./WS
-      dockerfile: Dockerfile
     container_name: nextshape_backend
-    restart: always
-    env_file:
-      - .env
-    environment:
-      - ENV=dev
     depends_on:
       - db
-    ports:
-      - "8000:8000"
+    environment:
+      ENV: ${ENV}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
     volumes:
       - ./WS:/app
+    ports:
+      - "8000:8000"
+    command: ./entrypoint.sh
 
   # Vue.js Frontend
   frontend:
     build:
       context: ./UI
-      dockerfile: Dockerfile
     container_name: nextshape_frontend
-    restart: always
-    env_file:
-      - .env
+    environment:
+      - NODE_ENV=prod
+    ports:
+      - "5173:80"
     depends_on:
       - backend
-    ports:
-      - "5173:5173"
-    command: >
-      sh -c "npm install && npm run dev -- --host"
-    volumes:
-      - ./UI:/app
 
 volumes:
   pg_data:
