@@ -1,5 +1,5 @@
 # Utiliser une image Node.js pour builder Vue.js
-FROM node:18
+FROM node:18 AS builder
 
 # Définir le dossier de travail
 WORKDIR /app
@@ -10,9 +10,14 @@ RUN npm install
 
 # Copier le reste du projet
 COPY . .
+RUN npm run build
 
-# Exposer le port Vue.js
-EXPOSE 5173
+# Étape de prod : utiliser Nginx pour servir l'app
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Exposer le port attendu par Render
+EXPOSE 80
 
 # Démarrer le serveur
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["nginx", "-g", "daemon off;"]

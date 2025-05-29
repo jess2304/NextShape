@@ -3,7 +3,7 @@ import vue from "@vitejs/plugin-vue"
 import { fileURLToPath, URL } from "url"
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/next-shape/",
+  base: "/",
   plugins: [vue()],
   resolve: {
     alias: [
