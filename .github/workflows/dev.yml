@@ -31,7 +31,17 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
-
+      - name: Initializing the environment variables for the tests
+        run: |
+          echo "ENV=test" >> .env
+          echo "DJANGO_SECRET_KEY=test" >> .env
+          echo "DATABASE_NAME=test_db" >> .env
+          echo "DATABASE_USER=test_user" >> .env
+          echo "DATABASE_PASSWORD=test_pass" >> .env
+          echo "DATABASE_HOST=db" >> .env
+          echo "DATABASE_PORT=5432" >> .env
       - name: Testing on Docker
         run: |
           docker-compose -f docker-compose.yml --env-file .env -p nextshape_test up --abort-on-container-exit --build
+      - name: Deleting the environment variables
+        run: rm .env
