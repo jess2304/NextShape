@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue"
 import Dialog from "primevue/dialog"
 import Button from "primevue/button"
@@ -63,7 +63,7 @@ const sendCode = async () => {
       "Code envoyé",
       "Un code vous a été envoyé par e-mail."
     )
-  } catch (err) {
+  } catch (err: any) {
     const detail =
       err?.response?.data?.email?.[0] ||
       "Échec de l'envoi du code. Veuillez réessayer."
@@ -128,8 +128,7 @@ const updatePassword = async () => {
   try {
     const response = await authStore.resetPassword(
       email.value,
-      newPassword.value,
-      code.value
+      newPassword.value
     )
     showToast(toast, "success", "Succès", response.message)
     emits("validated", { email: email.value })

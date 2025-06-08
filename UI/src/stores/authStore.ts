@@ -18,6 +18,7 @@ export interface User {
   email: string
   birth_date: string
   phone_number: string
+  [key: string]: string
 }
 
 export const useAuthStore = defineStore("auth", {
