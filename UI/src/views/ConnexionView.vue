@@ -48,7 +48,10 @@ const validateAndProceed = async () => {
   }
   // Tout est reseigné, on passe à la connexion
   try {
-    await authStore.login(credentials.value)
+    await authStore.login({
+      email: credentials.value.email || "",
+      password: credentials.value.password || "",
+    })
     const redirectPath = router.currentRoute.value.query.redirect || "/"
     router.push(redirectPath as string)
     credentials.value = { email: null, password: null }

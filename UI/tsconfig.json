@@ -1,8 +1,19 @@
 {
-  "files": [],
-  "references": [{ "path": "./tsconfig.node.json" }],
   "compilerOptions": {
-    "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["node"]
-  }
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM"],
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "skipLibCheck": true
+  },
+  "include": ["src", "vite.config.ts"],
+  "exclude": ["node_modules"]
 }

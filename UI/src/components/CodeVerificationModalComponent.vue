@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue"
 import Dialog from "primevue/dialog"
 import Button from "primevue/button"
@@ -7,7 +7,12 @@ import InputOtp from "primevue/inputotp"
 const props = defineProps({
   visible: Boolean,
 })
-const emits = defineEmits(["update:visible", "validated", "cancelled"])
+const emits = defineEmits([
+  "update:visible",
+  "validated",
+  "cancelled",
+  "sendBack",
+])
 
 const code = ref("")
 const error = ref("")

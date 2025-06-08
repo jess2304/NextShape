@@ -89,7 +89,7 @@ class LoginSerializer(serializers.Serializer):
         """
         Retourne le format final de la réponse.
         """
-        return instance
+        return instance["user"]
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):

@@ -104,7 +104,10 @@ const validateAndProceed = async () => {
 
 const sendCode = async () => {
   try {
-    await authStore.sendVerificationCode(formData.value.email, "registration")
+    await authStore.sendVerificationCode(
+      formData.value.email || "",
+      "registration"
+    )
     showModal.value = true
     showToast(
       toast,
@@ -112,7 +115,7 @@ const sendCode = async () => {
       "Code envoyé",
       "Un email contenant un code vous a été envoyé."
     )
-  } catch (err) {
+  } catch (err: any) {
     const detail =
       err?.response?.data?.email?.[0] || "Échec de l'envoi du code."
     showToast(toast, "error", "Erreur", detail)
@@ -126,7 +129,10 @@ const handleCodeValidation = async (code: string) => {
   loading.value = true
 
   try {
-    const response = await authStore.verifyCode(formData.value.email, code)
+    const response = await authStore.verifyCode(
+      formData.value.email || "",
+      code
+    )
     if (!response.success) {
       showToast(toast, "error", "Erreur", response.message)
       return
