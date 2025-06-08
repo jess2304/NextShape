@@ -3,6 +3,8 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .response import error_response, success_response
 from .serializers import (
@@ -55,14 +57,79 @@ class LoginView(APIView):
         """
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            return success_response(
-                data=serializer.validated_data,
+            data: dict = serializer.validated_data
+            response = success_response(
+                data=serializer.data,
                 message="Connexion réussie",
                 status_code=200,
             )
+            response.set_cookie(
+                key="access_token",
+                value=data["access"],
+                max_age=30 * 60,
+                httponly=True,
+                secure=True,
+                samesite="Lax",
+                path="/",
+            )
+            response.set_cookie(
+                key="refresh_token",
+                value=data["refresh"],
+                max_age=24 * 60 * 60,
+                httponly=True,
+                secure=True,
+                samesite="Lax",
+                path="/",
+            )
+            return response
         return error_response(
             errors=serializer.errors, message="Échec de la connexion", status_code=400
         )
+
+
+class CheckAuthenticationView(APIView):
+    """
+    Vue pour vérifier s'il est réellement connecté.
+    """
+
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        return Response({"authenticated": request.user.is_authenticated}, status=200)
+
+
+class RefreshAccessView(APIView):
+    """
+    Vue pour rafraîchir l'accès en cas d'expiration depuis refresh_token en cookie
+    """
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        refresh_token = request.COOKIES.get("refresh_token")
+
+        if not refresh_token:
+            return error_response(message="Refresh token manquant", status_code=401)
+
+        try:
+            refresh = RefreshToken(refresh_token)
+            access_token = refresh.access_token
+        except TokenError:
+            return error_response(message="Refresh token invalide", status_code=401)
+
+        response = success_response(message="Nouveau token généré avec succès.")
+
+        response.set_cookie(
+            key="access_token",
+            value=str(access_token),
+            max_age=30 * 60,
+            httponly=True,
+            secure=True,
+            samesite="Lax",
+            path="/",
+        )
+
+        return response
 
 
 class UpdateProfileView(APIView):
