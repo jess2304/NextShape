@@ -8,6 +8,7 @@ import {
   registerUser,
   loginUser,
   checkAuthentication,
+  VerifyCodeResponse,
 } from "@/services/apiService"
 import router from "@/router"
 
@@ -112,7 +113,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async verifyCode(email: string, code: string): Promise<boolean> {
+    async verifyCode(email: string, code: string): Promise<VerifyCodeResponse> {
       const response = await verifyCode(email, code)
       return response
     },
@@ -127,8 +128,5 @@ export const useAuthStore = defineStore("auth", {
     },
   },
 
-  persist: {
-    paths: ["user"],
-    storage: localStorage,
-  },
+  persist: true,
 })

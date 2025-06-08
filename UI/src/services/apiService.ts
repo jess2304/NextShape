@@ -43,7 +43,7 @@ api.interceptors.response.use(
 )
 
 export interface LoginResponse {
-  user: {
+  data: {
     first_name: string
     last_name: string
     email: string
@@ -53,7 +53,8 @@ export interface LoginResponse {
   access: string
 }
 export interface VerifyCodeResponse {
-  valid: boolean
+  success: boolean
+  message: string
 }
 
 // Inscription
