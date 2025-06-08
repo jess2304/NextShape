@@ -7,6 +7,7 @@ import {
   resetPassword,
   registerUser,
   loginUser,
+  checkAuthentication,
 } from "@/services/apiService"
 import router from "@/router"
 
@@ -21,7 +22,6 @@ export interface User {
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as User | null,
-    token: null as string | null,
   }),
 
   actions: {
@@ -47,8 +47,8 @@ export const useAuthStore = defineStore("auth", {
       // Appelle le service pour se connecter
       try {
         const response = await loginUser(credentials)
-        const { user, access } = response.data
-        this.setUser(user, access)
+        const user = response.data
+        this.setUser(user)
         return response.data
       } catch (error: any) {
         throw error.response?.data?.message || "Erreur lors de la connexion."
@@ -56,24 +56,29 @@ export const useAuthStore = defineStore("auth", {
     },
     setUser(
       // Setter pour mettre à jour les données de l'utilisateur.
-      userData: User,
-      token: string
+      userData: User
     ) {
       this.user = userData
-      this.token = token
     },
 
     logout() {
       // Déconnexion de l'utilisateur.
       this.user = null
-      this.token = null
+    },
+
+    async checkAuthentication() {
+      const isAuthenticated = await checkAuthentication()
+      if (!isAuthenticated) {
+        this.logout()
+      }
+      return isAuthenticated
     },
 
     async updateProfileField(field: string, value: any) {
       const payload: Record<string, any> = { [field]: value }
       // Appelle le service pour modifier une valeur dans l'utilisateur.
       try {
-        const response = await updateProfile(payload, this.token)
+        const response = await updateProfile(payload)
         this.user = response.data
         return response.data
       } catch (error: any) {
@@ -87,7 +92,7 @@ export const useAuthStore = defineStore("auth", {
     async deleteAccount() {
       // Appelle le service pour supprimer tout un compte utilisateur.
       try {
-        await deleteAccount(this.token)
+        await deleteAccount()
         this.logout()
         // Rediriger vers la page de connexion
         router.push("/")
@@ -115,7 +120,6 @@ export const useAuthStore = defineStore("auth", {
     async resetPassword(email: string, newPassword: string) {
       try {
         const response = await resetPassword(email, newPassword)
-        console.log("response")
         return response
       } catch (error) {
         throw error
@@ -124,7 +128,7 @@ export const useAuthStore = defineStore("auth", {
   },
 
   persist: {
-    paths: ["user", "token"],
+    paths: ["user"],
     storage: localStorage,
   },
 })

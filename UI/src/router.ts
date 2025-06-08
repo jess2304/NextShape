@@ -52,14 +52,16 @@ const router = createRouter({
 })
 
 // Protection des routes privées
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
-  if (to.meta.requiresAuth && !authStore.token) {
-    next({ path: "/connexion", query: { redirect: to.fullPath } })
-  } else {
-    next()
+  if (to.meta.requiresAuth) {
+    const isAuthenticated = await authStore.checkAuthentication()
+    if (!isAuthenticated) {
+      next({ path: "/connexion", query: { redirect: to.fullPath } })
+    }
   }
+  return next()
 })
 
 export default router
