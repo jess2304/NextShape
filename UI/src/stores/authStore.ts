@@ -7,6 +7,7 @@ import {
   resetPassword,
   registerUser,
   loginUser,
+  logoutUser,
   checkAuthentication,
   VerifyCodeResponse,
 } from "@/services/apiService"
@@ -63,15 +64,20 @@ export const useAuthStore = defineStore("auth", {
       this.user = userData
     },
 
-    logout() {
+    async logout() {
       // Déconnexion de l'utilisateur.
-      this.user = null
+      try {
+        await logoutUser()
+      } catch {
+      } finally {
+        this.user = null
+        router.push("/connexion")
+      }
     },
-
     async checkAuthentication() {
       const isAuthenticated = await checkAuthentication()
       if (!isAuthenticated) {
-        this.logout()
+        await this.logout()
       }
       return isAuthenticated
     },
@@ -95,7 +101,7 @@ export const useAuthStore = defineStore("auth", {
       // Appelle le service pour supprimer tout un compte utilisateur.
       try {
         await deleteAccount()
-        this.logout()
+        await this.logout()
         // Rediriger vers la page de connexion
         router.push("/")
       } catch (error) {

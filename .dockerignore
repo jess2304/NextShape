@@ -1,0 +1,26 @@
+# Exclure les secrets
+.env
+
+# Node / Vue
+UI/node_modules/
+UI/.vite/
+UI/dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django
+WS/__pycache__/
+WS/migrations/
+WS/db.sqlite3
+
+# Git
+.git
+.gitignore
+
+# Certs
+*.pem
+!WS/brevo.pem
