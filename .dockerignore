@@ -23,4 +23,4 @@ WS/db.sqlite3
 
 # Certs
 *.pem
-!WS/brevo.pem
+WS/brevo.pem

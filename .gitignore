@@ -197,4 +197,4 @@ dist-ssr
 *.sln
 *.sw?
 
-*.pem
+WS/brevo.pem
