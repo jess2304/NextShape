@@ -42,7 +42,7 @@ jobs:
           echo "DATABASE_PORT=5432" >> .env
       - name: Recreate brevo.pem
         run: |
-          echo "${{ secrets.BREVO_PEM }}" > ./WS/config/brevo.pem
+          echo "${{ secrets.BREVO_PEM }}" > ./WS/brevo.pem
       - name: Testing on Docker
         run: |
           docker-compose -f docker-compose.yml --env-file .env -p nextshape_test up --abort-on-container-exit --build
