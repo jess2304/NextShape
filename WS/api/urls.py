@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     CheckAuthenticationView,
     DeleteAccountView,
+    IMCRecordView,
     LoginView,
     RefreshAccessView,
     RegisterView,
@@ -39,4 +40,5 @@ urlpatterns = [
     ),
     path("verify-code/", VerifyCodeView.as_view(), name="verify-code"),
     path("reset-password/", ResetPasswordView.as_view(), name="reset-password"),
+    path("calculate-imc/", IMCRecordView.as_view(), name="calculate-imc"),
 ]

@@ -1,4 +1,4 @@
-from api.models import EmailVerificationCode
+from api.models import EmailVerificationCode, ProgressRecord
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -11,6 +11,7 @@ from .serializers import (
     EmailCodeRequestRegistrationSerializer,
     EmailCodeRequestResetPasswordSerializer,
     EmailCodeVerificationSerializer,
+    IMCRecordSerializer,
     LoginSerializer,
     RegisterSerializer,
     ResetPasswordSerializer,
@@ -293,7 +294,7 @@ class ResetPasswordView(APIView):
 
     def post(self, request):
         """
-        Gère la requête PATCH de modification du mot de passe.
+        Gère la requête POST de modification du mot de passe.
         """
         serializer = ResetPasswordSerializer(data=request.data)
         if serializer.is_valid():
@@ -304,5 +305,37 @@ class ResetPasswordView(APIView):
         return error_response(
             errors=serializer.errors,
             message="Échec de la réinitialisation du mot de passe",
+            status_code=400,
+        )
+
+
+class IMCRecordView(APIView):
+    """
+    Vue pour calculer et enregistrer les infos IMC
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """
+        Gère la requête POST pour la création d'un nouveau Record et pour retourner l'IMC trouvé
+        """
+        serializer = IMCRecordSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            record: ProgressRecord = serializer.save()
+            return success_response(
+                message="Enregistrement IMC effectué avec succès",
+                data={
+                    "imc": record.imc,
+                    "weight_kg": record.weight_kg,
+                    "date": record.date,
+                },
+                status_code=201,
+            )
+        return error_response(
+            errors=serializer.errors,
+            message="Échec de l'enregistrement IMC",
             status_code=400,
         )

@@ -1,7 +1,8 @@
 from typing import cast
 
-from api.models import CustomUser
+from api.models import CustomUser, ProgressRecord
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -193,3 +194,40 @@ class ResetPasswordSerializer(serializers.Serializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class IMCRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgressRecord
+        fields = ["weight_kg", "height_cm"]
+
+    def validate(self, data):
+        if data["weight_kg"] <= 0:
+            raise serializers.ValidationError("Le poids doit être supérieur à 0.")
+        if data["height_cm"] <= 0:
+            raise serializers.ValidationError("La taille doit être supérieure à 0.")
+
+        user = self.context["request"].user
+        today = timezone.now().date()
+
+        if ProgressRecord.objects.filter(user=user, date=today).exists():
+            raise serializers.ValidationError(
+                "Un enregistrement existe déjà pour aujourd'hui. Vous pouvez directement le modifier."
+            )
+
+        return data
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        height_cm = validated_data["height_cm"]
+        weight_kg = validated_data["weight_kg"]
+
+        imc = round(weight_kg / ((height_cm / 100) ** 2), 2)
+
+        return ProgressRecord.objects.create(
+            user=user,
+            weight_kg=weight_kg,
+            height_cm=height_cm,
+            imc=imc,
+            date=timezone.now().date(),
+        )
