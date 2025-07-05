@@ -10,6 +10,9 @@ RUN npm install
 
 # Copier le reste du projet
 COPY . .
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
+
 RUN npm run build
 
 # Étape de prod : utiliser Nginx pour servir l'app

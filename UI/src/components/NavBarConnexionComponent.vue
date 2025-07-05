@@ -19,13 +19,12 @@ const userMenuItems = computed(() => [
     icon: "pi pi-user",
     command: () => router.push("/profil"),
   },
-  { label: "Déconnexion", icon: "pi pi-sign-out", command: logoutUser },
+  {
+    label: "Déconnexion",
+    icon: "pi pi-sign-out",
+    command: async () => await authStore.logout(),
+  },
 ])
-
-const logoutUser = () => {
-  authStore.logout()
-  router.push("/connexion")
-}
 </script>
 <template>
   <div class="flex items-center gap-2">

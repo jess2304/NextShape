@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosRequestTransformer } from "axios"
 import { dateTransformer } from "@/assets/js/utils"
 import { useAuthStore } from "@/stores/authStore"
 import router from "@/router"
+import { cp } from "fs"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -74,6 +75,11 @@ export const loginUser = async (credentials: {
     credentials
   )
   return response.data
+}
+
+// Déconnexion
+export const logoutUser = async () => {
+  await api.post(`${API_URL}logout/`)
 }
 
 export const checkAuthentication = async () => {

@@ -14,6 +14,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 COPY wait.sh .
 
+# Ajouter le certificat Brevo
+COPY brevo.pem /usr/local/share/ca-certificates/brevo.crt
+RUN update-ca-certificates
+
 # Donner les droits d'exécution au script d'entrée
 RUN chmod +x wait.sh entrypoint.sh
 

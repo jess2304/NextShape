@@ -88,6 +88,20 @@ class LoginView(APIView):
         )
 
 
+class LogoutView(APIView):
+    """
+    Vue pour se déconnecter proprement en supprimant les cookies
+    """
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        response = Response({"detail": "Déconnecté."}, status=status.HTTP_200_OK)
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+        return response
+
+
 class CheckAuthenticationView(APIView):
     """
     Vue pour vérifier s'il est réellement connecté.
