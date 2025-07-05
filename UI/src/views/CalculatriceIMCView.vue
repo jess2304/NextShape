@@ -50,15 +50,6 @@ const submit = async () => {
     })
   }
 }
-
-const severityIMC = computed(() => {
-  const imc = progressStore.progressRecord?.imc
-  if (imc) {
-    if (imc >= 18.5 && imc <= 24.9) return "success"
-    else if (imc < 18.5 || (imc >= 25 && imc <= 29.9)) return "warn"
-    else return "danger"
-  }
-})
 </script>
 
 <template>
