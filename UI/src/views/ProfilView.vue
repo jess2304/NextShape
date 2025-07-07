@@ -13,6 +13,8 @@ import InputMask from "primevue/inputmask"
 import ConfirmPopup from "primevue/confirmpopup"
 import { useConfirm } from "primevue/useconfirm"
 import { showToast } from "@/assets/js/utils"
+import SelectButton from "primevue/selectbutton"
+import { GENDER } from "@/assets/js/constants"
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -29,6 +31,7 @@ const fieldValue = ref("")
 const editableFields = [
   { key: "last_name", label: "Nom" },
   { key: "first_name", label: "Prénom" },
+  { key: "gender", label: "Genre" },
   { key: "birth_date", label: "Date de naissance" },
   { key: "email", label: "Adresse Email" },
   { key: "phone_number", label: "Téléphone" },
@@ -44,10 +47,16 @@ const formattedBirthDate = computed(() => {
   })
 })
 
+const formattedGender = computed(() => {
+  const rawDate = userData.value?.gender
+  if (!rawDate) return "N/A"
+  return rawDate == GENDER[0].value ? GENDER[0].label : GENDER[1].label
+})
+
 const getDialogHeader = (field: string): string => {
   const label = editableFields.find((f) => f.key === field)?.label
   return label
-    ? `Modifier ${label}`
+    ? `Modifier votre ${label.toLowerCase()}`
     : field === "password"
     ? "Saisissez votre nouveau mot de passe"
     : ""
@@ -131,9 +140,12 @@ const confirmDeleteAccount = (event: Event) => {
           class="flex align-items-center justify-content-between"
         >
           <div>
-            <strong>{{ field.label }} :</strong>
+            <strong>{{ field.label }} : </strong>
             <span v-if="field.key === 'birth_date'">{{
               formattedBirthDate
+            }}</span>
+            <span v-else-if="field.key === 'gender'">{{
+              formattedGender
             }}</span>
             <span v-else>{{ userData?.[field.key] || "N/A" }}</span>
           </div>
@@ -176,8 +188,17 @@ const confirmDeleteAccount = (event: Event) => {
     <div class="field">
       <label class="block mb-2">{{ getDialogHeader(fieldToEdit) }}</label>
 
+      <SelectButton
+        v-if="fieldToEdit === 'gender'"
+        class="w-full"
+        v-model="fieldValue"
+        :options="GENDER"
+        optionLabel="label"
+        optionValue="value"
+        :defaultValue="userData?.gender"
+      />
       <Password
-        v-if="fieldToEdit === 'password'"
+        v-else-if="fieldToEdit === 'password'"
         v-model="fieldValue"
         toggleMask
         class="w-full"

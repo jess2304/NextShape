@@ -5,16 +5,19 @@ import InputMask from "primevue/inputmask"
 import Password from "primevue/password"
 import Button from "primevue/button"
 import DatePicker from "primevue/datepicker"
+import SelectButton from "primevue/selectbutton"
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
 import { useAuthStore } from "@/stores/authStore"
 import router from "@/router"
 import CodeVerificationModalComponent from "@/components/CodeVerificationModalComponent.vue"
 import { validateRequiredFields, showToast } from "@/assets/js/utils"
+import { GENDER } from "@/assets/js/constants"
 
 interface RegistrationForm {
   first_name: string | null
   last_name: string | null
+  gender: string
   birth_date: Date | null
   email: string | null
   confirmEmail: string | null
@@ -41,6 +44,7 @@ const invalidFields = ref<Record<string, boolean>>({})
 const formData = ref<RegistrationForm>({
   first_name: null,
   last_name: null,
+  gender: "H",
   birth_date: null,
   email: null,
   confirmEmail: null,
@@ -57,6 +61,7 @@ const validateAndProceed = async () => {
   let requiredFields = [
     "first_name",
     "last_name",
+    "gender",
     "birth_date",
     "email",
     "confirmEmail",
@@ -161,6 +166,7 @@ const resetForm = () => {
   formData.value = {
     first_name: null,
     last_name: null,
+    gender: "H",
     birth_date: null,
     email: null,
     confirmEmail: null,
@@ -192,6 +198,18 @@ const resetForm = () => {
           v-model="formData.last_name"
           placeholder="Votre nom"
           :invalid="invalidFields.last_name"
+        />
+      </div>
+      <div class="field col-12 md:col-6">
+        <label>Genre*</label>
+        <SelectButton
+          class="w-full"
+          v-model="formData.gender"
+          :invalid="invalidFields.gender"
+          :options="GENDER"
+          optionLabel="label"
+          optionValue="value"
+          defaultValue="H"
         />
       </div>
       <div class="field col-12 md:col-6">
@@ -253,15 +271,6 @@ const resetForm = () => {
           :invalid="invalidFields.confirmPassword"
         />
       </div>
-      <div>
-        <Button
-          class="mx-2"
-          label="Confirmer l'inscription"
-          icon="pi pi-arrow-right"
-          @click="validateAndProceed"
-          :loading="loading"
-        />
-      </div>
       <CodeVerificationModalComponent
         :visible="showModal"
         @update:visible="showModal = $event"
@@ -270,6 +279,14 @@ const resetForm = () => {
       />
     </div>
     <Toast />
+    <div>
+      <Button
+        label="Confirmer l'inscription"
+        icon="pi pi-arrow-right"
+        @click="validateAndProceed"
+        :loading="loading"
+      />
+    </div>
   </div>
 </template>
 <style>
