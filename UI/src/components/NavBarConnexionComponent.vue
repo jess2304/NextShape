@@ -50,8 +50,8 @@ const userMenuItems = computed(() => [
           shape="circle"
           @click="userMenu.toggle($event)"
         />
-        <span class="font-bold"
-          >{{ authStore.user?.first_name }} <br />
+        <span class="font-bold text-lg"
+          >{{ authStore.user?.first_name }}
           {{ authStore.user?.last_name }}</span
         >
         <Menu ref="userMenu" :model="userMenuItems" popup />

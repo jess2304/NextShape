@@ -168,6 +168,7 @@ class UpdateProfileView(APIView):
                     "first_name": updated_user.first_name,
                     "last_name": updated_user.last_name,
                     "email": updated_user.email,
+                    "gender": updated_user.gender,
                     "birth_date": updated_user.birth_date,
                     "phone_number": updated_user.phone_number,
                 },

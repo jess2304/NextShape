@@ -14,12 +14,13 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=1, blank=False, default="H")
 
     # L'email sera utilisé comme identifiant au lieu du username
     USERNAME_FIELD = "email"
 
     # Champs requis lors de la création d'un utilisateur
-    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
+    REQUIRED_FIELDS = ["username", "first_name", "last_name", "gender", "birth_date"]
 
     def __str__(self):
         """
