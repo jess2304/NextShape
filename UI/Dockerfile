@@ -18,7 +18,7 @@ RUN npm run build
 # Étape de prod : utiliser Nginx pour servir l'app
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
-
+COPY nginx.conf /etc/nginx/nginx.conf
 # Exposer le port attendu par Render
 EXPOSE 80
 

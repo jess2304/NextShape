@@ -12,6 +12,7 @@ import {
   VerifyCodeResponse,
 } from "@/services/apiService"
 import router from "@/router"
+import { useProgressRecord } from "@/stores/progressRecordStore"
 
 export interface User {
   first_name: string
@@ -52,6 +53,8 @@ export const useAuthStore = defineStore("auth", {
         const response = await loginUser(credentials)
         const user = response.data
         this.setUser(user)
+        const progressStore = useProgressRecord()
+        progressStore.$reset()
         return response.data
       } catch (error: any) {
         throw error.response?.data?.message || "Erreur lors de la connexion."
@@ -71,6 +74,8 @@ export const useAuthStore = defineStore("auth", {
       } catch {
       } finally {
         this.user = null
+        const progressStore = useProgressRecord()
+        progressStore.$reset()
         router.push("/connexion")
       }
     },

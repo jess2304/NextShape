@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -37,3 +38,21 @@ class EmailVerificationCode(models.Model):
 
     def __str__(self):
         return f"{self.email} - {self.code}"
+
+
+class ProgressRecord(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="progress_records",
+    )
+    date = models.DateField(default=timezone.now)
+    weight_kg = models.FloatField()
+    height_cm = models.FloatField()
+    imc = models.FloatField()
+    created_at = models.DateField(auto_now_add=True)
+    modified_at = models.DateField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "date")
+        ordering = ["-date"]
