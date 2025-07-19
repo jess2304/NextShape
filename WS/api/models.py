@@ -51,6 +51,10 @@ class ProgressRecord(models.Model):
     weight_kg = models.FloatField()
     height_cm = models.FloatField()
     imc = models.FloatField()
+    bmr = models.FloatField()
+    tdee = models.FloatField()
+    calories_recommandees = models.FloatField()
+    goal = models.CharField(max_length=20)
     created_at = models.DateField(auto_now_add=True)
     modified_at = models.DateField(auto_now=True)
 

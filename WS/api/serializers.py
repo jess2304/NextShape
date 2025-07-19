@@ -200,38 +200,99 @@ class ResetPasswordSerializer(serializers.Serializer):
         return user
 
 
-class IMCRecordSerializer(serializers.ModelSerializer):
+class CaloriesRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProgressRecord
-        fields = ["weight_kg", "height_cm"]
+        fields = [
+            "weight_kg",
+            "height_cm",
+            "goal",
+            "gender",
+            "age",
+            "activity_level",
+        ]
+
+    gender = serializers.ChoiceField(choices=["H", "F"])
+    age = serializers.IntegerField(min_value=10, max_value=100)
+    activity_level = serializers.ChoiceField(
+        choices=[
+            ("sedentaire", "Sédentaire"),
+            ("leger", "Léger"),
+            ("modere", "Modéré"),
+            ("intense", "Intense"),
+            ("tres_intense", "Très intense"),
+        ]
+    )
+    goal = serializers.ChoiceField(
+        choices=[
+            ("maintien", "Maintien"),
+            ("perte", "Perte de poids"),
+            ("prise", "Prise de masse"),
+        ]
+    )
 
     def validate(self, data):
         if data["weight_kg"] <= 0:
             raise serializers.ValidationError("Le poids doit être supérieur à 0.")
         if data["height_cm"] <= 0:
             raise serializers.ValidationError("La taille doit être supérieure à 0.")
+        if data["age"] <= 0:
+            raise serializers.ValidationError("L'âge doit être supérieur à 0.")
 
         user = self.context["request"].user
-        today = timezone.now().date()
+        today = timezone.localdate()
 
         if ProgressRecord.objects.filter(user=user, date=today).exists():
             raise serializers.ValidationError(
-                "Un enregistrement existe déjà pour aujourd'hui. Vous pouvez directement le modifier."
+                "Un enregistrement existe déjà pour aujourd’hui. Vous pouvez directement le modifier."
             )
 
         return data
 
     def create(self, validated_data):
         user = self.context["request"].user
-        height_cm = validated_data["height_cm"]
-        weight_kg = validated_data["weight_kg"]
+        weight = validated_data["weight_kg"]
+        height = validated_data["height_cm"]
+        age = validated_data["age"]
+        gender = validated_data["gender"]
+        level = validated_data["activity_level"]
+        goal = validated_data["goal"]
 
-        imc = round(weight_kg / ((height_cm / 100) ** 2), 2)
+        # BMR (Harris-Benedict revised by Miffin and St Jeor in 1990)
+        if gender == "H":
+            bmr = 10 * weight + 6.25 * height - 5 * age + 5
+        else:
+            bmr = 10 * weight + 6.25 * height - 5 * age - 161
+
+        # Facteurs selon le niveau d’activité
+        activity_factors = {
+            "sedentaire": 1.2,
+            "leger": 1.375,
+            "modere": 1.55,
+            "intense": 1.725,
+            "tres_intense": 1.9,
+        }
+        tdee = bmr * activity_factors.get(level, 1.2)
+
+        # goal calorique
+        if goal == "perte":
+            calories = tdee - 500
+        elif goal == "prise":
+            calories = tdee + 300
+        else:
+            calories = tdee
+
+        # IMC
+        imc = round(weight / ((height / 100) ** 2), 2)
 
         return ProgressRecord.objects.create(
             user=user,
-            weight_kg=weight_kg,
-            height_cm=height_cm,
+            weight_kg=weight,
+            height_cm=height,
             imc=imc,
-            date=timezone.now().date(),
+            bmr=round(bmr),
+            tdee=round(tdee),
+            calories_recommandees=round(calories),
+            goal=goal,
+            date=timezone.localdate(),
         )

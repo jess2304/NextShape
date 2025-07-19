@@ -17,6 +17,16 @@ const api = axios.create({
   ],
 })
 
+interface CaloriesResponse {
+  success: boolean
+  message: string
+  data: {
+    bmr: number
+    tdee: number
+    calories_recommandees: number
+  }
+}
+
 // Intercepteur de réponse
 api.interceptors.response.use(
   (response) => response,
@@ -136,13 +146,16 @@ export const resetPassword = async (email: string, password: string) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ProgressRecord services
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const calculateIMC = async (payload: {
-  weight_kg: number
-  height_cm: number
-}) => {
+export const calculateCalories = async (payload: {
+  gender: string | null
+  age: number | null
+  weight_kg: number | null
+  height_cm: number | null
+  activity_level: string | null
+  goal: string | null
+}): Promise<CaloriesResponse> => {
   try {
-    const response = await api.post(`${API_URL}calculate-imc/`, payload, {
+    const response = await api.post(`${API_URL}calculate-calories/`, payload, {
       withCredentials: true,
     })
     return response.data

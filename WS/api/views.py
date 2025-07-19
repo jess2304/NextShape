@@ -8,10 +8,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .response import error_response, success_response
 from .serializers import (
+    CaloriesRecordSerializer,
     EmailCodeRequestRegistrationSerializer,
     EmailCodeRequestResetPasswordSerializer,
     EmailCodeVerificationSerializer,
-    IMCRecordSerializer,
     LoginSerializer,
     RegisterSerializer,
     ResetPasswordSerializer,
@@ -324,33 +324,41 @@ class ResetPasswordView(APIView):
         )
 
 
-class IMCRecordView(APIView):
+class CaloriesRecordView(APIView):
     """
-    Vue pour calculer et enregistrer les infos IMC
+    Vue pour calculer et enregistrer les besoins caloriques + IMC dans ProgressRecord
     """
 
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         """
-        Gère la requête POST pour la création d'un nouveau Record et pour retourner l'IMC trouvé
+        Gère la requête POST pour la création d'un ProgressRecord avec IMC et Calories
         """
-        serializer = IMCRecordSerializer(
-            data=request.data, context={"request": request}
+        serializer = CaloriesRecordSerializer(
+            data=request.data,
+            context={"request": request},
         )
+
         if serializer.is_valid():
             record: ProgressRecord = serializer.save()
             return success_response(
-                message="Enregistrement IMC effectué avec succès",
+                message="Enregistrement calorique effectué avec succès",
                 data={
-                    "imc": record.imc,
                     "weight_kg": record.weight_kg,
+                    "height_cm": record.height_cm,
+                    "imc": record.imc,
                     "date": record.date,
+                    "bmr": record.bmr,
+                    "tdee": record.tdee,
+                    "calories_recommandees": record.calories_recommandees,
+                    "goal": record.goal,
                 },
                 status_code=201,
             )
+
         return error_response(
             errors=serializer.errors,
-            message="Échec de l'enregistrement IMC",
+            message="Échec de l'enregistrement des besoins caloriques",
             status_code=400,
         )
