@@ -7,6 +7,7 @@ from .views import (
     DeleteAccountView,
     LoginView,
     LogoutView,
+    ProgressRecordsView,
     RefreshAccessView,
     RegisterView,
     ResetPasswordView,
@@ -44,5 +45,11 @@ urlpatterns = [
     path("reset-password/", ResetPasswordView.as_view(), name="reset-password"),
     path(
         "calculate-calories/", CaloriesRecordView.as_view(), name="calculate-calories"
+    ),
+    path("progress-records/", ProgressRecordsView.as_view(), name="progress-records"),
+    path(
+        "progress-records/<int:primary_key>/",
+        ProgressRecordsView.as_view(),
+        name="progress-record-detail",
     ),
 ]

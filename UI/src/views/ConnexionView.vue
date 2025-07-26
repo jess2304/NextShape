@@ -9,11 +9,7 @@ import Button from "primevue/button"
 import Toast from "primevue/toast"
 import ResetPasswordModalComponent from "@/components/ResetPasswordModalComponent.vue"
 import { showToast, validateRequiredFields } from "@/assets/js/utils"
-
-interface Credentials {
-  email: string | null
-  password: string | null
-}
+import { Credentials } from "@/assets/js/interfaces"
 
 // Initialisation des credentials et les données invalides.
 const credentials = ref<Credentials>({ email: null, password: null })

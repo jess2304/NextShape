@@ -296,3 +296,92 @@ class CaloriesRecordSerializer(serializers.ModelSerializer):
             goal=goal,
             date=timezone.localdate(),
         )
+
+
+class ProgressRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgressRecord
+        fields = [
+            "id",
+            "date",
+            "weight_kg",
+            "height_cm",
+            "activity_level",
+            "imc",
+            "bmr",
+            "tdee",
+            "calories_recommandees",
+            "goal",
+            "created_at",
+            "modified_at",
+        ]
+        read_only_fields = [
+            "id",
+            "date",
+            "imc",
+            "bmr",
+            "tdee",
+            "calories_recommandees",
+            "created_at",
+            "modified_at",
+        ]
+
+    def update(self, instance, validated_data):
+        for attr in ["weight_kg", "height_cm", "goal", "activity_level"]:
+            if attr in validated_data:
+                setattr(instance, attr, validated_data[attr])
+
+        weight = instance.weight_kg
+        height = instance.height_cm
+        goal = instance.goal
+        level = instance.activity_level
+
+        user = instance.user
+        age = self._get_age(user.birth_date)
+        gender = user.gender
+
+        # Calcul BMR
+        if gender == "H":
+            bmr = 10 * weight + 6.25 * height - 5 * age + 5
+        else:
+            bmr = 10 * weight + 6.25 * height - 5 * age - 161
+
+        # Activité dynamique
+        activity_factors = {
+            "sedentaire": 1.2,
+            "leger": 1.375,
+            "modere": 1.55,
+            "intense": 1.725,
+            "tres_intense": 1.9,
+        }
+        tdee = bmr * activity_factors.get(level, 1.2)
+
+        # Calories recommandées selon objectif
+        if goal == "perte":
+            calories = tdee - 500
+        elif goal == "prise":
+            calories = tdee + 300
+        else:
+            calories = tdee
+
+        # IMC
+        imc = weight / ((height / 100) ** 2)
+
+        # Mise à jour des champs dérivés
+        instance.imc = round(imc, 2)
+        instance.bmr = round(bmr)
+        instance.tdee = round(tdee)
+        instance.calories_recommandees = round(calories)
+
+        instance.save()
+        return instance
+
+    def _get_age(self, birth_date):
+        from datetime import date
+
+        today = date.today()
+        return (
+            today.year
+            - birth_date.year
+            - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        )

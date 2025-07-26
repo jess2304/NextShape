@@ -13,6 +13,7 @@ from .serializers import (
     EmailCodeRequestResetPasswordSerializer,
     EmailCodeVerificationSerializer,
     LoginSerializer,
+    ProgressRecordSerializer,
     RegisterSerializer,
     ResetPasswordSerializer,
     UpdateProfileSerializer,
@@ -361,4 +362,52 @@ class CaloriesRecordView(APIView):
             errors=serializer.errors,
             message="Échec de l'enregistrement des besoins caloriques",
             status_code=400,
+        )
+
+
+class ProgressRecordsView(APIView):
+    """
+    Vue pour manipuler les enregistrements
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """
+        Récupère les enregistrements liés à l'utilisateur connecté
+        """
+        records = ProgressRecord.objects.filter(user=request.user).order_by("-date")
+        serializer = ProgressRecordSerializer(records, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, primary_key=None):
+        """
+        Modifie un enregistrement
+        """
+        try:
+            record_id = self.kwargs.get("primary_key") or request.path.split("/")[-2]
+            print(record_id)
+            record = ProgressRecord.objects.get(id=record_id, user=request.user)
+        except ProgressRecord.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProgressRecordSerializer(
+            record, data=request.data, partial=True, context={"request": request}
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, primary_key):
+        try:
+            record = ProgressRecord.objects.get(id=primary_key, user=request.user)
+        except ProgressRecord.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        record.delete()
+        return Response(
+            {"detail": "Enregistrement supprimé avec succès."},
+            status=status.HTTP_204_NO_CONTENT,
         )

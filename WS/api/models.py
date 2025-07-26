@@ -5,6 +5,14 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
+ACTIVITY_CHOICES = [
+    ("sedentaire", "Sédentaire"),
+    ("leger", "Léger"),
+    ("modere", "Modéré"),
+    ("intense", "Intense"),
+    ("tres_intense", "Très intense"),
+]
+
 
 class CustomUser(AbstractUser):
     """
@@ -50,6 +58,7 @@ class ProgressRecord(models.Model):
     date = models.DateField(default=timezone.now)
     weight_kg = models.FloatField()
     height_cm = models.FloatField()
+    activity_level = models.CharField(max_length=20, choices=ACTIVITY_CHOICES)
     imc = models.FloatField()
     bmr = models.FloatField()
     tdee = models.FloatField()

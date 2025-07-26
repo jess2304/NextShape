@@ -1,25 +1,8 @@
 import { defineStore } from "pinia"
 import { calculateCalories } from "@/services/apiService"
-import { User } from "@/stores/authStore"
 import { useAuthStore } from "@/stores/authStore"
 import { getAgeFromBirthDate } from "@/assets/js/utils"
-export interface ProgressRecord {
-  user: User | null
-  date: string | null
-  weight_kg: number | null
-  height_cm: number | null
-  imc: number | null
-  gender: string | null
-  age: number | null
-  activity_level: string | null
-  goal: string | null
-  bmr: number | null
-  tdee: number | null
-  calories_recommandees: number | null
-  created_at: Date | null
-  modified_at: Date | null
-  [key: string]: string | User | number | Date | null
-}
+import { ProgressRecord } from "@/assets/js/interfaces"
 
 export const useProgressRecord = defineStore("progressRecord", {
   state: () => ({
