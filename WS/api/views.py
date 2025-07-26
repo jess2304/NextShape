@@ -8,11 +8,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .response import error_response, success_response
 from .serializers import (
+    CaloriesRecordSerializer,
     EmailCodeRequestRegistrationSerializer,
     EmailCodeRequestResetPasswordSerializer,
     EmailCodeVerificationSerializer,
-    IMCRecordSerializer,
     LoginSerializer,
+    ProgressRecordSerializer,
     RegisterSerializer,
     ResetPasswordSerializer,
     UpdateProfileSerializer,
@@ -324,33 +325,89 @@ class ResetPasswordView(APIView):
         )
 
 
-class IMCRecordView(APIView):
+class CaloriesRecordView(APIView):
     """
-    Vue pour calculer et enregistrer les infos IMC
+    Vue pour calculer et enregistrer les besoins caloriques + IMC dans ProgressRecord
     """
 
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         """
-        Gère la requête POST pour la création d'un nouveau Record et pour retourner l'IMC trouvé
+        Gère la requête POST pour la création d'un ProgressRecord avec IMC et Calories
         """
-        serializer = IMCRecordSerializer(
-            data=request.data, context={"request": request}
+        serializer = CaloriesRecordSerializer(
+            data=request.data,
+            context={"request": request},
         )
+
         if serializer.is_valid():
             record: ProgressRecord = serializer.save()
             return success_response(
-                message="Enregistrement IMC effectué avec succès",
+                message="Enregistrement calorique effectué avec succès",
                 data={
-                    "imc": record.imc,
                     "weight_kg": record.weight_kg,
+                    "height_cm": record.height_cm,
+                    "imc": record.imc,
                     "date": record.date,
+                    "bmr": record.bmr,
+                    "tdee": record.tdee,
+                    "calories_recommandees": record.calories_recommandees,
+                    "goal": record.goal,
                 },
                 status_code=201,
             )
+
         return error_response(
             errors=serializer.errors,
-            message="Échec de l'enregistrement IMC",
+            message="Échec de l'enregistrement des besoins caloriques",
             status_code=400,
+        )
+
+
+class ProgressRecordsView(APIView):
+    """
+    Vue pour manipuler les enregistrements
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """
+        Récupère les enregistrements liés à l'utilisateur connecté
+        """
+        records = ProgressRecord.objects.filter(user=request.user).order_by("-date")
+        serializer = ProgressRecordSerializer(records, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, primary_key=None):
+        """
+        Modifie un enregistrement
+        """
+        try:
+            record_id = self.kwargs.get("primary_key") or request.path.split("/")[-2]
+            print(record_id)
+            record = ProgressRecord.objects.get(id=record_id, user=request.user)
+        except ProgressRecord.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProgressRecordSerializer(
+            record, data=request.data, partial=True, context={"request": request}
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, primary_key):
+        try:
+            record = ProgressRecord.objects.get(id=primary_key, user=request.user)
+        except ProgressRecord.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        record.delete()
+        return Response(
+            {"detail": "Enregistrement supprimé avec succès."},
+            status=status.HTTP_204_NO_CONTENT,
         )

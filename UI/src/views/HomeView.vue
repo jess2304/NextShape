@@ -24,15 +24,6 @@ import { PRESENTATION_TEXT, SUBTITLE, TITLE } from "@/assets/js/constants"
           rounded
           raised
         />
-        <Button
-          as="router-link"
-          label="Besoins en calories 🔥"
-          to="/calculatrice-calories"
-          class="no-underline font-semibold"
-          severity="secondary"
-          rounded
-          raised
-        />
       </div>
     </section>
     <section class="text-center px-8 py-6">

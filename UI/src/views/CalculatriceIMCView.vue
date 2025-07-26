@@ -15,8 +15,8 @@ const toast = useToast()
 
 const weight_kg = ref<number>()
 const height_cm = ref<number>()
+const imc = ref<number>()
 
-const imc = computed(() => progressStore.progressRecord?.imc ?? null)
 const imcResult = computed(() => {
   if (!imc.value) return null
   if (imc.value < 18.5) return { label: "Maigreur", severity: "warn" }
@@ -26,16 +26,16 @@ const imcResult = computed(() => {
   return { label: "Obésité", severity: "danger" }
 })
 
-const submit = async () => {
+const calculateIMC = () => {
   try {
-    await progressStore.calculateIMC(
+    imc.value = progressStore.calculateIMC(
       weight_kg.value || -1,
       height_cm.value || -1
     )
     toast.add({
       severity: "success",
-      summary: "IMC enregistré",
-      detail: `Votre IMC a été calculé et enregistré`,
+      summary: "IMC calculé",
+      detail: `Votre IMC est prêt`,
       life: 5000,
     })
   } catch (error: any) {
@@ -101,7 +101,7 @@ const submit = async () => {
               label="Calculer & Enregistrer"
               icon="pi pi-check"
               class="p-button-success"
-              @click="submit"
+              @click="calculateIMC"
             />
           </div>
         </div>

@@ -49,3 +49,25 @@ export const GENDER = [
     value: "F",
   },
 ]
+
+export const ACTIVITY_LEVELS = [
+  { label: "Sédentaire", value: "sedentaire" },
+  { label: "Léger", value: "leger" },
+  { label: "Modéré", value: "modere" },
+  { label: "Intense", value: "intense" },
+  { label: "Très intense", value: "tres_intense" },
+]
+
+export const ACTIVITY_DESCRIPTIONS: Record<string, string> = {
+  sedentaire: "Aucune activité physique ou travail de bureau.",
+  leger: "Marche ou activité légère 1 à 2 fois/semaine.",
+  modere: "Sport ou activité modérée 3 à 5 fois/semaine.",
+  intense: "Exercice quotidien ou activité physique intense.",
+  tres_intense: "Entraînement intensif ou travail physique très exigeant.",
+}
+
+export const GOALS = [
+  { label: "Perte de poids", value: "perte" },
+  { label: "Maintien", value: "maintien" },
+  { label: "Prise de masse", value: "prise" },
+]

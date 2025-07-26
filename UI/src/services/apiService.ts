@@ -2,7 +2,12 @@ import axios, { AxiosError, AxiosRequestTransformer } from "axios"
 import { dateTransformer } from "@/assets/js/utils"
 import { useAuthStore } from "@/stores/authStore"
 import router from "@/router"
-import { cp } from "fs"
+import {
+  CaloriesResponse,
+  LoginResponse,
+  ProgressRecord,
+  VerifyCodeResponse,
+} from "@/assets/js/interfaces"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -46,21 +51,6 @@ api.interceptors.response.use(
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Auth Services
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export interface LoginResponse {
-  data: {
-    first_name: string
-    last_name: string
-    email: string
-    gender: string
-    birth_date: string
-    phone_number: string
-  }
-  access: string
-}
-export interface VerifyCodeResponse {
-  success: boolean
-  message: string
-}
 
 // Inscription
 export const registerUser = async (userData: any) =>
@@ -136,16 +126,57 @@ export const resetPassword = async (email: string, password: string) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ProgressRecord services
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const calculateIMC = async (payload: {
-  weight_kg: number
-  height_cm: number
-}) => {
+export const calculateCalories = async (payload: {
+  gender: string | null
+  age: number | null
+  weight_kg: number | null
+  height_cm: number | null
+  activity_level: string | null
+  goal: string | null
+}): Promise<CaloriesResponse> => {
   try {
-    const response = await api.post(`${API_URL}calculate-imc/`, payload, {
+    const response = await api.post(`${API_URL}calculate-calories/`, payload, {
       withCredentials: true,
     })
     return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ProgressRecords (plural) services
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const getProgressRecords = async (): Promise<ProgressRecord[]> => {
+  try {
+    const response = await axios.get(`${API_URL}progress-records/`)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export const updateRecord = async (
+  id: number,
+  payload: Record<string, any>
+): Promise<ProgressRecord> => {
+  try {
+    const response = await axios.patch(
+      `${API_URL}progress-records/${id}/`,
+      payload,
+      { withCredentials: true }
+    )
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export const deleteRecord = async (id: number) => {
+  try {
+    await axios.delete(`${API_URL}progress-records/${id}/`, {
+      withCredentials: true,
+    })
   } catch (error) {
     throw error
   }

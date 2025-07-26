@@ -10,6 +10,8 @@ python manage.py migrate
 
 if [ "$ENV" = "dev" ]; then
     echo "Development mode"
+    echo "Seeding the database..."
+    python manage.py seed || echo "Seeding failed or already done"
     exec python manage.py runserver 0.0.0.0:8000
 elif [ "$ENV" = "test" ]; then
     echo "Testing mode"

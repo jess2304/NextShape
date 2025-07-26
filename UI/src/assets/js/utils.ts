@@ -51,3 +51,32 @@ export const showToast = (
     life: 5000,
   })
 }
+
+export const getAgeFromBirthDate = (
+  birthDateStr: string | null | undefined
+): number | null => {
+  if (!birthDateStr) return null
+
+  const birthDate = new Date(birthDateStr)
+  const today = new Date()
+  let age = today.getFullYear() - birthDate.getFullYear()
+
+  const hasBirthdayPassedThisYear =
+    today.getMonth() > birthDate.getMonth() ||
+    (today.getMonth() === birthDate.getMonth() &&
+      today.getDate() >= birthDate.getDate())
+
+  if (!hasBirthdayPassedThisYear) {
+    age--
+  }
+  return age
+}
+
+export function formatDate(dateStr: string): string {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString("fr-FR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
+}

@@ -18,7 +18,6 @@ const routes = [
     path: "/calculatrice-imc",
     name: "calculatrice-imc",
     component: CalculatriceIMCView,
-    meta: { requiresAuth: true },
   },
   {
     path: "/calculatrice-calories",
