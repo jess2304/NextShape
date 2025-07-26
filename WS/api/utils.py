@@ -49,3 +49,36 @@ def generate_and_send_verification_code(email):
     code = get_random_string(length=6, allowed_chars="0123456789")
     EmailVerificationCode.objects.create(email=email, code=code)
     send_verification_email(email, code)
+
+
+def calculs_calories(weight, height, age, gender, activity_level, goal):
+    # BMR (Mifflin-St Jeor)
+    if gender == "H":
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5
+    else:
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161
+
+    activity_factors = {
+        "sedentaire": 1.2,
+        "leger": 1.375,
+        "modere": 1.55,
+        "intense": 1.725,
+        "tres_intense": 1.9,
+    }
+    tdee = bmr * activity_factors.get(activity_level, 1.2)
+
+    if goal == "perte":
+        calories = tdee - 500
+    elif goal == "prise":
+        calories = tdee + 300
+    else:
+        calories = tdee
+
+    imc = weight / ((height / 100) ** 2)
+
+    return {
+        "imc": round(imc, 2),
+        "bmr": round(bmr),
+        "tdee": round(tdee),
+        "calories_recommandees": round(calories),
+    }

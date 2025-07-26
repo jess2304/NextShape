@@ -1,6 +1,7 @@
 from typing import cast
 
 from api.models import CustomUser, ProgressRecord
+from api.utils import calculs_calories
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from rest_framework import serializers
@@ -255,45 +256,21 @@ class CaloriesRecordSerializer(serializers.ModelSerializer):
         height = validated_data["height_cm"]
         age = validated_data["age"]
         gender = validated_data["gender"]
-        level = validated_data["activity_level"]
+        activity_level = validated_data["activity_level"]
         goal = validated_data["goal"]
 
-        # BMR (Harris-Benedict revised by Miffin and St Jeor in 1990)
-        if gender == "H":
-            bmr = 10 * weight + 6.25 * height - 5 * age + 5
-        else:
-            bmr = 10 * weight + 6.25 * height - 5 * age - 161
-
-        # Facteurs selon le niveau d’activité
-        activity_factors = {
-            "sedentaire": 1.2,
-            "leger": 1.375,
-            "modere": 1.55,
-            "intense": 1.725,
-            "tres_intense": 1.9,
-        }
-        tdee = bmr * activity_factors.get(level, 1.2)
-
-        # goal calorique
-        if goal == "perte":
-            calories = tdee - 500
-        elif goal == "prise":
-            calories = tdee + 300
-        else:
-            calories = tdee
-
-        # IMC
-        imc = round(weight / ((height / 100) ** 2), 2)
+        result = calculs_calories(weight, height, age, gender, activity_level, goal)
 
         return ProgressRecord.objects.create(
             user=user,
             weight_kg=weight,
             height_cm=height,
-            imc=imc,
-            bmr=round(bmr),
-            tdee=round(tdee),
-            calories_recommandees=round(calories),
+            imc=result["imc"],
+            bmr=result["bmr"],
+            tdee=result["tdee"],
+            calories_recommandees=result["calories_recommandees"],
             goal=goal,
+            activity_level=activity_level,
             date=timezone.localdate(),
         )
 
@@ -331,47 +308,20 @@ class ProgressRecordSerializer(serializers.ModelSerializer):
             if attr in validated_data:
                 setattr(instance, attr, validated_data[attr])
 
+        user = instance.user
         weight = instance.weight_kg
         height = instance.height_cm
         goal = instance.goal
-        level = instance.activity_level
-
-        user = instance.user
-        age = self._get_age(user.birth_date)
+        activity_level = instance.activity_level
         gender = user.gender
+        age = self._get_age(user.birth_date)
 
-        # Calcul BMR
-        if gender == "H":
-            bmr = 10 * weight + 6.25 * height - 5 * age + 5
-        else:
-            bmr = 10 * weight + 6.25 * height - 5 * age - 161
+        result = calculs_calories(weight, height, age, gender, activity_level, goal)
 
-        # Activité dynamique
-        activity_factors = {
-            "sedentaire": 1.2,
-            "leger": 1.375,
-            "modere": 1.55,
-            "intense": 1.725,
-            "tres_intense": 1.9,
-        }
-        tdee = bmr * activity_factors.get(level, 1.2)
-
-        # Calories recommandées selon objectif
-        if goal == "perte":
-            calories = tdee - 500
-        elif goal == "prise":
-            calories = tdee + 300
-        else:
-            calories = tdee
-
-        # IMC
-        imc = weight / ((height / 100) ** 2)
-
-        # Mise à jour des champs dérivés
-        instance.imc = round(imc, 2)
-        instance.bmr = round(bmr)
-        instance.tdee = round(tdee)
-        instance.calories_recommandees = round(calories)
+        instance.imc = result["imc"]
+        instance.bmr = result["bmr"]
+        instance.tdee = result["tdee"]
+        instance.calories_recommandees = result["calories_recommandees"]
 
         instance.save()
         return instance

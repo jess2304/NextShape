@@ -2,6 +2,7 @@ import random
 from datetime import datetime, timedelta
 
 from api.models import ProgressRecord
+from api.utils import calculs_calories
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
@@ -28,6 +29,7 @@ class Command(BaseCommand):
                 "last_name": "Ettaghouti",
                 "phone_number": "0600000000",
                 "birth_date": "1999-09-05",
+                "gender": "H",
             },
         )
         if created:
@@ -41,28 +43,15 @@ class Command(BaseCommand):
         ProgressRecord.objects.filter(user=user).delete()
 
         base_date = datetime.now() - timedelta(days=60)
+        age = 25
         for i in range(60):
             date = base_date + timedelta(days=i)
             weight = 86.5 - i * 0.1 + random.uniform(-0.3, 0.3)
-            height = 175  # cm
-            imc = weight / ((height / 100) ** 2)
-            goal = random.choice(["maintain", "gain", "lose"])
-
-            # BMR (Harris-Benedict simple, homme de 25 ans)
-            bmr = 10 * weight + 6.25 * height - 5 * 25 + 5
-
-            # Activité aléatoire
+            height = 175
+            goal = random.choice(["maintien", "prise", "perte"])
             activity_level = random.choice(list(ACTIVITY_FACTORS.keys()))
-            activity_factor = ACTIVITY_FACTORS[activity_level]
 
-            tdee = bmr * activity_factor
-
-            if goal == "lose":
-                calories = tdee - 500
-            elif goal == "gain":
-                calories = tdee + 300
-            else:
-                calories = tdee
+            result = calculs_calories(weight, height, age, user.gender, activity_level, goal)  # type: ignore
 
             ProgressRecord.objects.create(
                 user=user,
@@ -70,10 +59,10 @@ class Command(BaseCommand):
                 weight_kg=round(weight, 1),
                 height_cm=height,
                 activity_level=activity_level,
-                imc=round(imc, 2),
-                bmr=round(bmr, 2),
-                tdee=round(tdee, 2),
-                calories_recommandees=round(calories, 2),
+                imc=result["imc"],
+                bmr=result["bmr"],
+                tdee=result["tdee"],
+                calories_recommandees=result["calories_recommandees"],
                 goal=goal,
             )
         self.stdout.write(self.style.SUCCESS("60 progress records added."))
