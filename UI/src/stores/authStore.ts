@@ -9,20 +9,10 @@ import {
   loginUser,
   logoutUser,
   checkAuthentication,
-  VerifyCodeResponse,
 } from "@/services/apiService"
 import router from "@/router"
 import { useProgressRecord } from "@/stores/progressRecordStore"
-
-export interface User {
-  first_name: string
-  last_name: string
-  email: string
-  gender: string
-  birth_date: string
-  phone_number: string
-  [key: string]: string
-}
+import { User, VerifyCodeResponse } from "@/assets/js/interfaces"
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({

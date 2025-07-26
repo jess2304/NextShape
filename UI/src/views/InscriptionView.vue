@@ -13,18 +13,7 @@ import router from "@/router"
 import CodeVerificationModalComponent from "@/components/CodeVerificationModalComponent.vue"
 import { validateRequiredFields, showToast } from "@/assets/js/utils"
 import { GENDER } from "@/assets/js/constants"
-
-interface RegistrationForm {
-  first_name: string | null
-  last_name: string | null
-  gender: string
-  birth_date: Date | null
-  email: string | null
-  confirmEmail: string | null
-  phone_number: string | null
-  password: string | null
-  confirmPassword: string | null
-}
+import { RegistrationForm } from "@/assets/js/interfaces"
 
 // Constante de la date d'aujourd'hui (contrôle calendrier)
 const today = new Date()
