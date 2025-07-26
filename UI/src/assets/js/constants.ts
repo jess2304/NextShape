@@ -35,9 +35,9 @@ export const NAVBAR_ELEMENTS = [
 // Presentation texts for home
 export const TITLE = "Transforme ton corps, contrôle tes calories !"
 export const SUBTITLE =
-  "NextShape t'aide à suivre ton évolution physique avec une précision inégalée."
+  "NextShape t'aide à suivre ton évolution physique avec une précision inégalée. En quelques clics, tu peux <strong>calculer ton IMC</strong> à tout moment, gratuitement et sans inscription. Pour aller plus loin et <strong>connaître tes besoins caloriques personnalisés</strong>, il te suffit de créer un compte. C'est rapide, sécurisé, et ça te donne accès à des recommandations sur mesure."
 export const PRESENTATION_TEXT =
-  "Tu cherches un moyen simple et efficace de suivre ton évolution physique ? NextShape est là pour t'aider à calculer ton IMC, déterminer tes besoins caloriques et visualiser tes progrès au fil du temps. Que tu sois en phase de perte de poids, de prise de masse ou simplement curieux de voir comment ton corps évolue, cette plateforme te permet d'avoir une vue d'ensemble claire et détaillée de tes données. Pas d'algorithmes compliqués ni de recommandations approximatives : juste des calculs précis et des graphiques pour t'aider à mieux comprendre ton évolution et ajuster ton mode de vie en fonction de tes propres objectifs."
+  "<strong>Tu cherches un moyen simple et efficace de suivre ton évolution physique ?</strong><br><br> NextShape est là pour t'aider à calculer ton IMC, déterminer tes besoins caloriques et visualiser tes progrès au fil du temps. <br><br>Que tu sois en phase de perte de poids, de prise de masse ou simplement curieux de voir comment ton corps évolue, cette plateforme te permet d'avoir une vue d'ensemble claire et détaillée de tes données. <br><br>Pas d'algorithmes compliqués ni de recommandations approximatives : juste des calculs précis et des graphiques pour t'aider à mieux comprendre ton évolution et ajuster ton mode de vie en fonction de tes propres objectifs."
 
 export const GENDER = [
   {

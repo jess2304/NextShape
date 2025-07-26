@@ -1,80 +1,64 @@
 <script setup lang="ts">
 import Button from "primevue/button"
-import Panel from "primevue/panel"
-import Card from "primevue/card"
-import { PRESENTATION_TEXT, SUBTITLE, TITLE } from "@/assets/js/constants"
+import { Panel } from "primevue"
+import { TITLE, SUBTITLE, PRESENTATION_TEXT } from "@/assets/js/constants"
 </script>
 
 <template>
-  <div class="mx-8">
-    <section class="text-center">
-      <h1 class="text-6xl font-bold">
-        {{ TITLE }}
-      </h1>
-      <p class="text-xl mt-3 opacity-90">
-        {{ SUBTITLE }}
-      </p>
-      <div class="flex gap-3 justify-content-center mt-4">
-        <Button
-          as="router-link"
-          label="Calculer mon IMC 📊"
-          to="/calculatrice-imc"
-          class="no-underline font-semibold"
-          severity="primary"
-          rounded
-          raised
-        />
+  <div>
+    <section class="p-fluid md:px-8">
+      <div class="grid align-items-center justify-content-center">
+        <div class="col-12 md:col-6 text-center md:text-left">
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+            {{ TITLE }}
+          </h1>
+          <p v-html="SUBTITLE" class="text-xl text-gray-600 mb-5" />
+          <div
+            class="flex flex-column sm:flex-row gap-3 justify-content-center md:justify-content-start"
+          >
+            <Button
+              as="router-link"
+              to="/calculatrice-imc"
+              label="Calculer mon IMC"
+              severity="primary"
+              rounded
+              raised
+              class="no-underline font-semibold w-full sm:w-auto"
+            />
+            <Button
+              as="router-link"
+              to="/calculatrice-calories"
+              label="Calculer mes calories"
+              severity="secondary"
+              rounded
+              raised
+              class="no-underline font-semibold w-full sm:w-auto"
+            />
+          </div>
+        </div>
+        <div
+          class="col-12 md:col-6 flex justify-content-center md:justify-content-end mt-5 md:mt-0"
+        >
+          <img
+            src="/hero-nextshape.png"
+            alt="Illustration NextShape"
+            class="w-11 md:w-20 lg:w-15 shadow-3 border-round-xl"
+          />
+        </div>
       </div>
     </section>
-    <section class="text-center px-8 py-6">
-      <h2 class="text-3xl font-bold">
-        Pourquoi choisir <span class="text-blue-500">NextShape</span> ?
-      </h2>
-      <Panel class="shadow-3 mt-4 border-round-lg">
-        <p class="text-lg text-700 mt-3 leading-loose">
-          {{ PRESENTATION_TEXT }}
-        </p>
-      </Panel>
-    </section>
-    <section class="px-8 py-6 flex justify-content-center gap-4">
-      <Card class="w-5 md:w-3 lg:w-3">
-        <template #header>
-          <img alt="user header" src="/IMC&Calories.png" class="w-full" />
-        </template>
-        <template #title>Calcule</template>
-        <template #subtitle>Ton IMC & Tes besoins en calories</template>
-        <template #content>
-          <ul class="m-0">
-            <li>
-              <strong>IMC :</strong> Indicateur du poids idéal selon la taille,
-              utile pour évaluer les risques de surpoids ou de maigreur.
-            </li>
-            <li>
-              <strong>Besoins caloriques :</strong> Quantité d'énergie
-              nécessaire au corps selon l'âge, le poids et l'activité.
-            </li>
-          </ul>
-        </template>
-      </Card>
-      <Card class="w-5 md:w-3 lg:w-3">
-        <template #header>
-          <img alt="user header" src="/Evolution.png" class="w-full" />
-        </template>
-        <template #title>Analyse</template>
-        <template #subtitle>L'évolution de ton corps</template>
-        <template #content>
-          <ul class="m-0">
-            <li>
-              Visualise tes progrès pour rester motivé et ajuster tes efforts en
-              fonction des résultats obtenus.
-            </li>
-            <li>
-              Analyse ton évolution pour identifier les tendances et adapter ton
-              alimentation et ton activité physique efficacement.
-            </li>
-          </ul>
-        </template>
-      </Card>
+    <section class="mt-7 px-4 md:px-8 text-center">
+      <div class="flex justify-content-center">
+        <Panel
+          header=""
+          class="w-full md:w-10 lg:w-full shadow-3 border-round-xl"
+        >
+          <p
+            v-html="PRESENTATION_TEXT"
+            class="text-base md:text-lg text-gray-700 leading-normal mt-2"
+          />
+        </Panel>
+      </div>
     </section>
   </div>
 </template>
