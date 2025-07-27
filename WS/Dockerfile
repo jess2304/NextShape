@@ -19,7 +19,7 @@ COPY brevo.pem /usr/local/share/ca-certificates/brevo.crt
 RUN update-ca-certificates
 
 # Donner les droits d'exécution au script d'entrée
-RUN chmod +x wait.sh entrypoint.sh
+RUN chmod +x ./wait.sh ./entrypoint.sh
 
 # Exposer le port de Django
 EXPOSE 8000
