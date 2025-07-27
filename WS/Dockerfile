@@ -19,6 +19,9 @@ COPY brevo.pem /usr/local/share/ca-certificates/brevo.crt
 RUN update-ca-certificates
 
 # Donner les droits d'exécution au script d'entrée
+RUN apt-get update && apt-get install -y dos2unix \
+  && dos2unix wait.sh entrypoint.sh \
+  && chmod +x wait.sh entrypoint.sh
 RUN chmod +x ./wait.sh ./entrypoint.sh
 
 # Exposer le port de Django
