@@ -60,11 +60,26 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "https://nextshape.onrender.com",  # prod
+    "https://nextshape-dev.onrender.com",  # dev
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ["*"]
+CORS_ALLOW_METHODS = ["*"]
+
+ENV = os.getenv("ENV", "dev")
+
+if ENV == "dev":
+    CORS_ALLOWED_ORIGINS = [
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "https://nextshape-dev.onrender.com",
+    ]
+elif ENV == "prod":
+    CORS_ALLOWED_ORIGINS = ["https://nextshape.onrender.com"]
 
 ROOT_URLCONF = "next_shape_ws.urls"
 
