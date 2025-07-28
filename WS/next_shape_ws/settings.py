@@ -81,9 +81,14 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 
-ENV = os.getenv("ENV", "dev")
+ENV = os.getenv("ENV", "local")
 
-if ENV == "dev":
+if ENV == "local":
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5173",
+    ]
+
+elif ENV == "dev":
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:5173",
         "https://nextshape-dev.onrender.com",

@@ -8,7 +8,12 @@ echo "ENV = $ENV"
 echo "Apply the migrations"
 python manage.py migrate
 
-if [ "$ENV" = "dev" ]; then
+if [ "$ENV" = "local" ]; then
+    echo "Local mode (Docker local)"
+    echo "Seeding the database..."
+    python manage.py seed || echo "Seeding failed or already done"
+    exec python manage.py runserver 0.0.0.0:8000
+elif [ "$ENV" = "dev"  ]; then
     echo "Development mode"
     echo "Seeding the database..."
     python manage.py seed || echo "Seeding failed or already done"

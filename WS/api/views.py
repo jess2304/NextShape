@@ -1,4 +1,5 @@
 from api.models import EmailVerificationCode, ProgressRecord
+from next_shape_ws.settings import ENV
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -98,8 +99,14 @@ class LogoutView(APIView):
 
     def post(self, request):
         response = Response({"detail": "Déconnecté."}, status=status.HTTP_200_OK)
-        response.delete_cookie("access_token")
-        response.delete_cookie("refresh_token")
+
+        cookie_params = {"path": "/"}
+        if ENV in ["dev", "prod"]:
+            cookie_params["domain"] = ".onrender.com"
+
+        response.delete_cookie("access_token", **cookie_params)
+        response.delete_cookie("refresh_token", **cookie_params)
+
         return response
 
 
