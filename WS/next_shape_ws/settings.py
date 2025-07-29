@@ -222,7 +222,7 @@ def get_cookie_settings():
             "httponly": True,
             "secure": True,
             "samesite": "None",
-            "domain": ".onrender.com",
+            "domain": "nextshape.onrender.com",
             "path": "/",
         }
     else:

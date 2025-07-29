@@ -54,30 +54,25 @@ api.interceptors.response.use(
 
 // Inscription
 export const registerUser = async (userData: any) =>
-  await api.post(`${API_URL}register/`, userData)
+  await api.post(`register/`, userData)
 
 // Connexion
 export const loginUser = async (credentials: {
   email: string
   password: string
 }) => {
-  const response = await api.post<LoginResponse>(
-    `${API_URL}login/`,
-    credentials
-  )
+  const response = await api.post<LoginResponse>(`login/`, credentials)
   return response.data
 }
 
 // Déconnexion
 export const logoutUser = async () => {
-  await api.post(`${API_URL}logout/`)
+  await api.post(`logout/`)
 }
 
 export const checkAuthentication = async () => {
   try {
-    const response = await api.get(`${API_URL}check-authentication/`, {
-      withCredentials: true,
-    })
+    const response = await api.get("check-authentication/")
     return response.data.authenticated
   } catch {
     return false
@@ -86,28 +81,25 @@ export const checkAuthentication = async () => {
 
 // Update du profil
 export const updateProfile = async (userData: any) => {
-  const response = await api.patch(`${API_URL}profile/`, userData, {
-    withCredentials: true,
-  })
+  const response = await api.patch("profile/", userData)
   return response.data
 }
 
 // Suppression du compte
-export const deleteAccount = async () =>
-  await api.delete(`${API_URL}delete-account/`, { withCredentials: true })
+export const deleteAccount = async () => await api.delete("delete-account/")
 
 // Envoi de code de vérification selon un contexte
 export const sendVerificationCode = async (
   email: string,
   context: "registration" | "reset-password"
-) => await api.post(`${API_URL}send-code-${context}/`, { email })
+) => await api.post(`send-code-${context}/`, { email })
 
 // Verifier le code
 export const verifyCode = async (
   email: string,
   code: string
 ): Promise<VerifyCodeResponse> => {
-  const response = await api.post(`${API_URL}verify-code/`, {
+  const response = await api.post("verify-code/", {
     email,
     code,
   })
@@ -116,7 +108,7 @@ export const verifyCode = async (
 
 // Réinitialiser le mot de passe
 export const resetPassword = async (email: string, password: string) => {
-  const response = await api.post(`${API_URL}reset-password/`, {
+  const response = await api.post("reset-password/", {
     email,
     password,
   })
@@ -135,9 +127,7 @@ export const calculateCalories = async (payload: {
   goal: string | null
 }): Promise<CaloriesResponse> => {
   try {
-    const response = await api.post(`${API_URL}calculate-calories/`, payload, {
-      withCredentials: true,
-    })
+    const response = await api.post("calculate-calories/", payload)
     return response.data
   } catch (error) {
     throw error
@@ -149,7 +139,7 @@ export const calculateCalories = async (payload: {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const getProgressRecords = async (): Promise<ProgressRecord[]> => {
   try {
-    const response = await axios.get(`${API_URL}progress-records/`)
+    const response = await api.get("progress-records/")
     return response.data
   } catch (error) {
     throw error
@@ -161,11 +151,7 @@ export const updateRecord = async (
   payload: Record<string, any>
 ): Promise<ProgressRecord> => {
   try {
-    const response = await axios.patch(
-      `${API_URL}progress-records/${id}/`,
-      payload,
-      { withCredentials: true }
-    )
+    const response = await api.patch(`progress-records/${id}/`, payload)
     return response.data
   } catch (error) {
     throw error
@@ -174,9 +160,7 @@ export const updateRecord = async (
 
 export const deleteRecord = async (id: number) => {
   try {
-    await axios.delete(`${API_URL}progress-records/${id}/`, {
-      withCredentials: true,
-    })
+    await api.delete(`progress-records/${id}/`)
   } catch (error) {
     throw error
   }
