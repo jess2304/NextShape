@@ -1,5 +1,3 @@
-import logging
-
 from api.models import EmailVerificationCode, ProgressRecord
 from next_shape_ws.settings import COOKIE_PARAMS
 from rest_framework import generics, status
@@ -22,8 +20,6 @@ from .serializers import (
     UpdateProfileSerializer,
 )
 from .utils import generate_and_send_verification_code
-
-logger = logging.getLogger(__name__)
 
 
 class RegisterView(generics.CreateAPIView):
@@ -82,10 +78,6 @@ class LoginView(APIView):
                 max_age=24 * 60 * 60,
                 **COOKIE_PARAMS,
             )
-            logger.info(
-                f"[LoginView] Cookies envoyés : access_token et refresh_token définis avec : {COOKIE_PARAMS}"
-            )
-            logger.info(f"[Login] Cookies reçus : {request.COOKIES}")
             return response
         return error_response(
             errors=serializer.errors, message="Échec de la connexion", status_code=400
@@ -100,7 +92,6 @@ class LogoutView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        logger.info(f"[Logout] Cookies reçus pour suppression : {request.COOKIES}")
         response = Response({"detail": "Déconnecté."}, status=status.HTTP_200_OK)
 
         for cookie in ["access_token", "refresh_token"]:
@@ -121,10 +112,6 @@ class CheckAuthenticationView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        logger.info(
-            f"[CheckAuth] request.user: {request.user} / is_authenticated: {request.user.is_authenticated}"
-        )
-        logger.info(f"[CheckAuth] cookies reçus: {request.COOKIES}")
         return Response({"authenticated": request.user.is_authenticated}, status=200)
 
 
