@@ -213,3 +213,19 @@ SIMPLE_JWT = {
 # Default AutoField
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+def get_cookie_settings():
+    if ENV in ["dev", "prod"]:
+        return {
+            "httponly": True,
+            "secure": True,
+            "samesite": "None",
+            "domain": ".onrender.com",
+            "path": "/",
+        }
+    else:
+        return {"httponly": True, "secure": True, "samesite": "None", "path": "/"}
+
+
+COOKIE_PARAMS = get_cookie_settings()

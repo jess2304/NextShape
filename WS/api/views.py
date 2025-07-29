@@ -1,5 +1,5 @@
 from api.models import EmailVerificationCode, ProgressRecord
-from next_shape_ws.settings import ENV
+from next_shape_ws.settings import COOKIE_PARAMS
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -70,19 +70,13 @@ class LoginView(APIView):
                 key="access_token",
                 value=data["access"],
                 max_age=30 * 60,
-                httponly=True,
-                secure=True,
-                samesite="None",
-                path="/",
+                **COOKIE_PARAMS,
             )
             response.set_cookie(
                 key="refresh_token",
                 value=data["refresh"],
                 max_age=24 * 60 * 60,
-                httponly=True,
-                secure=True,
-                samesite="None",
-                path="/",
+                **COOKIE_PARAMS,
             )
             return response
         return error_response(
@@ -99,14 +93,12 @@ class LogoutView(APIView):
 
     def post(self, request):
         response = Response({"detail": "Déconnecté."}, status=status.HTTP_200_OK)
-
-        cookie_params = {"path": "/"}
-        if ENV in ["dev", "prod"]:
-            cookie_params["domain"] = ".onrender.com"
-
-        response.delete_cookie("access_token", **cookie_params)
-        response.delete_cookie("refresh_token", **cookie_params)
-
+        deletion_keys = ["path", "domain"]
+        cookie_params_delete = {
+            k: v for k, v in COOKIE_PARAMS.items() if k in deletion_keys
+        }
+        response.delete_cookie("access_token", **cookie_params_delete)
+        response.delete_cookie("refresh_token", **cookie_params_delete)
         return response
 
 
@@ -146,10 +138,7 @@ class RefreshAccessView(APIView):
             key="access_token",
             value=str(access_token),
             max_age=30 * 60,
-            httponly=True,
-            secure=True,
-            samesite="None",
-            path="/",
+            **COOKIE_PARAMS,
         )
 
         return response
