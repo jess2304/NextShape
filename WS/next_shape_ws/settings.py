@@ -226,7 +226,7 @@ def get_cookie_settings():
             "path": "/",
         }
     else:
-        return {"httponly": True, "secure": True, "samesite": "None", "path": "/"}
+        return {"httponly": True, "secure": False, "samesite": "Lax", "path": "/"}
 
 
 COOKIE_PARAMS = get_cookie_settings()

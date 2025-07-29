@@ -102,12 +102,14 @@ class LogoutView(APIView):
     def post(self, request):
         logger.info(f"[Logout] Cookies reçus pour suppression : {request.COOKIES}")
         response = Response({"detail": "Déconnecté."}, status=status.HTTP_200_OK)
-        deletion_keys = ["path", "domain"]
-        cookie_params_delete = {
-            k: v for k, v in COOKIE_PARAMS.items() if k in deletion_keys
-        }
-        response.delete_cookie("access_token", **cookie_params_delete)
-        response.delete_cookie("refresh_token", **cookie_params_delete)
+
+        for cookie in ["access_token", "refresh_token"]:
+            response.set_cookie(
+                key=cookie,
+                value="",
+                max_age=0,
+                **COOKIE_PARAMS,
+            )
         return response
 
 
