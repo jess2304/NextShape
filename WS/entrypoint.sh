@@ -2,11 +2,22 @@
 
 echo "ENV = $ENV"
 
+# Check if cert is mounted and update it
+if [ -f /usr/local/share/ca-certificates/brevo.crt ]; then
+    echo "Certificat brevo.pem détecté — update-ca-certificates"
+    update-ca-certificates
+else
+    echo "Aucun certificat Brevo détecté, skip"
+fi
+
 ./wait.sh "$DATABASE_HOST:$DATABASE_PORT"
 
 # Apply migrations
 echo "Apply the migrations"
 python manage.py migrate
+
+echo "Collect static files"
+python manage.py collectstatic --noinput
 
 if [ "$ENV" = "local" ]; then
     echo "Local mode (Docker local)"

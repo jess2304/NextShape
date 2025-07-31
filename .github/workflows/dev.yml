@@ -1,7 +1,7 @@
 name: NextShape CI - Dev
 on:
   push:
-    branches: [develop]
+    branches: [develop, fusion-domains]
   pull_request:
     branches: [develop]
 

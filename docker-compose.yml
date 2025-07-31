@@ -1,7 +1,6 @@
 version: "3.9"
 
 services:
-  # PostgreSQL Database
   db:
     image: postgres
     container_name: nextshape_db
@@ -16,34 +15,20 @@ services:
     ports:
       - "5432:5432"
 
-  # Django Backend
-  backend:
+  app:
     build:
-      context: ./WS
-    env_file: .env
-    container_name: nextshape_backend
+      context: .
+      dockerfile: WS/Dockerfile
+    container_name: nextshape_app
     depends_on:
       - db
     volumes:
-      - ./WS:/app
+      - ./WS/brevo.pem:/usr/local/share/ca-certificates/brevo.crt:ro
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     command: ./entrypoint.sh
-
-  # Vue.js Frontend
-  frontend:
-    build:
-      context: ./UI
-      args:
-        VITE_API_URL: ${VITE_API_URL}
-    env_file: .env
-    container_name: nextshape_frontend
-    environment:
-      - NODE_ENV=prod
-    ports:
-      - "5173:80"
-    depends_on:
-      - backend
 
 volumes:
   pg_data:

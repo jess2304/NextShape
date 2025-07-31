@@ -198,3 +198,4 @@ dist-ssr
 *.sw?
 
 WS/brevo.pem
+.env.prod
