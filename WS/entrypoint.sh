@@ -3,11 +3,12 @@
 echo "ENV = $ENV"
 
 # Check if cert is mounted and update it
-if [ -f /usr/local/share/ca-certificates/brevo.crt ]; then
-    echo "Certificat brevo.pem détecté — update-ca-certificates"
-    update-ca-certificates
+if [ -n "$BREVO_PEM" ]; then
+  echo "$BREVO_PEM" > /usr/local/share/ca-certificates/brevo.crt
+  echo "Brevo certificate was detected — update-ca-certificates"
+  update-ca-certificates
 else
-    echo "Aucun certificat Brevo détecté, skip"
+  echo "No Brevo certificate detected."
 fi
 
 ./wait.sh "$DATABASE_HOST:$DATABASE_PORT"
