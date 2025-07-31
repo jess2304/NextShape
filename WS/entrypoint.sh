@@ -4,9 +4,9 @@ echo "ENV = $ENV"
 
 # Check if cert is mounted and update it
 # 1. Render : brevo.pem via secret file
-if [ -f /var/render/secrets/brevo.pem ]; then
+if [ -f /etc/secrets/brevo.pem ]; then
     echo "Brevo certificate detected via Render secrets"
-    cp /var/render/secrets/brevo.pem /usr/local/share/ca-certificates/brevo.crt
+    cp /etc/secrets/brevo.pem /usr/local/share/ca-certificates/brevo.crt
     update-ca-certificates
 # 2. Local : brevo.crt via WS/
 elif [ -f /usr/local/share/ca-certificates/brevo.crt ]; then
