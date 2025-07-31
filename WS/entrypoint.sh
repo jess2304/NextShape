@@ -4,7 +4,8 @@ echo "ENV = $ENV"
 
 # Check if cert is mounted and update it
 if [ -n "$BREVO_PEM" ]; then
-    echo "$BREVO_PEM" | awk 'BEGIN{RS="\\n"; ORS="\n"} {print}' > /usr/local/share/ca-certificates/brevo.crt
+    printf "%b" "$BREVO_PEM" > /usr/local/share/ca-certificates/brevo.crt
+    file /usr/local/share/ca-certificates/brevo.crt
     echo "Brevo certificate was detected — update-ca-certificates"
     update-ca-certificates
 else
