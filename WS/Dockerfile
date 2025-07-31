@@ -2,6 +2,10 @@
 FROM node:20 AS frontend
 WORKDIR /app
 COPY UI/ ./UI/
+
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 RUN cd UI && npm install && npm run build
 
 # Étape 2 : Django backend avec frontend intégré

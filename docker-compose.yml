@@ -19,6 +19,8 @@ services:
     build:
       context: .
       dockerfile: WS/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
     container_name: nextshape_app
     depends_on:
       - db
