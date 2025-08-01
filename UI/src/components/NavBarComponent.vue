@@ -13,11 +13,11 @@ const router = useRouter()
       <img
         src="/nextshape.png"
         alt="NextShape Icon"
-        class="w-1 flex-shrink-0" />
+        class="w-2 h-2 md:w-1 md:h-1" />
       <Button
         text
         label="NextShape"
-        class="text-2xl no-hover p-0"
+        class="text-base md:text-2xl no-hover p-0"
         @click="router.push('/')"
     /></template>
     <template #item="{ item, props, hasSubmenu }">

@@ -60,9 +60,11 @@ const calculateIMC = () => {
     }"
   >
     <template #legend>
-      <div class="flex items-center pl-2 gap-3">
-        <Avatar image="/Calculatrice.png" shape="circle" />
-        <span class="font-bold text-2xl">Calculatrice d'IMC</span>
+      <div class="flex items-center gap-1">
+        <Avatar image="/Calculatrice.png" shape="circle" class="w-1 h-1" />
+        <span class="font-bold text-xl md:text-2xl text-gray-800"
+          >Calculatrice d'IMC</span
+        >
       </div>
     </template>
 

@@ -168,7 +168,9 @@ const resetForm = () => {
 </script>
 
 <template>
-  <div class="card p-4 surface-card shadow-2 border-round-lg w-6 mx-auto">
+  <div
+    class="card p-4 surface-card shadow-2 border-round-lg w-full md:w-6 mx-auto"
+  >
     <h2 class="text-5xl text-center text-primary">Inscription</h2>
     <div class="formgrid grid">
       <div class="field col-12 md:col-6">

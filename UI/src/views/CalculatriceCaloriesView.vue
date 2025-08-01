@@ -98,7 +98,12 @@ const handleForNextStep = async (
 </script>
 <template>
   <!-- PC -->
-  <Stepper v-if="!isMobile" value="1" linear class="basis-[50rem]">
+  <Stepper
+    v-if="!isMobile"
+    value="1"
+    linear
+    class="w-full max-w-screen-lg mx-auto px-2"
+  >
     <StepList>
       <Step value="1">Informations personnelles</Step>
       <Step value="2">Activité physique et Objectif</Step>
@@ -110,7 +115,7 @@ const handleForNextStep = async (
         value="1"
         class="p-4 shadow-2 border-round-lg mx-auto"
       >
-        <div class="w-8 mx-auto">
+        <div class="w-full max-w-xl mx-auto">
           <PersonalInformationsFormComponent :invalidFields="invalidFields" />
         </div>
 
@@ -133,11 +138,11 @@ const handleForNextStep = async (
         value="2"
         class="p-4 shadow-2 border-round-lg mx-auto"
       >
-        <div class="w-8 mx-auto">
+        <div class="w-full max-w-xl mx-auto">
           <PhysicalActivityGoalFormComponent :invalidFields="invalidFields" />
         </div>
 
-        <div class="flex pt-6 justify-between">
+        <div class="flex justify-between flex-wrap gap-2 pt-6">
           <Button
             label="Retour"
             severity="secondary"
@@ -163,10 +168,10 @@ const handleForNextStep = async (
         value="3"
         class="p-4 shadow-2 border-round-lg mx-auto"
       >
-        <div class="w-8 mx-auto">
+        <div class="w-full max-w-xl mx-auto">
           <RecapComponent />
         </div>
-        <div class="pt-6">
+        <div class="flex justify-between flex-wrap gap-2 pt-6">
           <Button
             label="Retour"
             severity="secondary"
@@ -184,7 +189,7 @@ const handleForNextStep = async (
   </Stepper>
 
   <!-- Mobile -->
-  <Stepper v-else value="1" linear class="basis-[50rem]">
+  <Stepper v-else value="1" linear class="w-full max-w-screen-sm mx-auto px-2">
     <StepItem>
       <Step value="1">Informations personnelles</Step>
       <StepPanel
@@ -192,7 +197,7 @@ const handleForNextStep = async (
         value="1"
         class="p-4 shadow-2 border-round-lg mx-auto"
       >
-        <div class="w-8 mx-auto">
+        <div class="w-full max-w-xl mx-auto">
           <PersonalInformationsFormComponent :invalidFields="invalidFields" />
         </div>
 
@@ -212,11 +217,11 @@ const handleForNextStep = async (
         value="2"
         class="p-4 shadow-2 border-round-lg mx-auto"
       >
-        <div class="w-8 mx-auto">
+        <div class="w-full max-w-xl mx-auto">
           <PhysicalActivityGoalFormComponent :invalidFields="invalidFields" />
         </div>
 
-        <div class="flex pt-6 justify-between">
+        <div class="flex justify-between flex-wrap gap-2 pt-6">
           <Button
             label="Retour"
             severity="secondary"
@@ -239,11 +244,11 @@ const handleForNextStep = async (
         value="3"
         class="p-4 shadow-2 border-round-lg mx-auto"
       >
-        <div class="w-8 mx-auto">
+        <div class="w-full max-w-xl mx-auto">
           <RecapComponent />
         </div>
 
-        <div class="pt-6">
+        <div class="flex justify-between flex-wrap gap-2 pt-6">
           <Button
             label="Retour"
             severity="secondary"

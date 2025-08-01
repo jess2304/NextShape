@@ -124,7 +124,7 @@ const confirmDeleteAccount = (event: Event) => {
 </script>
 
 <template>
-  <Card class="w-6 mx-auto">
+  <Card class="w-full md:w-6 mx-auto">
     <template #title>
       <span class="text-3xl font-bold">
         Profil de {{ userData?.first_name || "N/A" }}

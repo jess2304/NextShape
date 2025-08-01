@@ -43,14 +43,17 @@ const userMenuItems = computed(() => [
       />
     </template>
     <template v-else>
-      <div class="flex items-center gap-2">
-        <Avatar
-          icon="pi pi-user"
-          class="bg-green-500 text-white"
-          shape="circle"
-          @click="userMenu.toggle($event)"
-        />
-        <span class="font-bold text-lg"
+      <div class="flex flex items-stretch gap-2">
+        <div class="flex align-self-center align-items-center">
+          <Avatar
+            icon="pi pi-user"
+            class="bg-green-500 text-white"
+            shape="square"
+            @click="userMenu.toggle($event)"
+          />
+        </div>
+        <span
+          class="flex align-items-center justify-content-center font-bold text-lg"
           >{{ authStore.user?.first_name }}
           {{ authStore.user?.last_name }}</span
         >

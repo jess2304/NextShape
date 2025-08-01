@@ -62,10 +62,12 @@ const openResetPasswordModal = () => {
 </script>
 
 <template>
-  <div class="card p-4 surface-card shadow-2 border-round-lg w-6 mx-auto">
+  <div
+    class="card p-4 surface-card shadow-2 border-round-lg w-full md:w-6 mx-auto"
+  >
     <h2 class="text-5xl text-center text-primary">Connexion</h2>
     <form class="formgrid grid" @submit.prevent="validateAndProceed">
-      <div class="field col-12 md:col-6">
+      <div class="field col-12">
         <label>Adresse Email</label>
         <InputText
           class="w-full"
@@ -75,7 +77,7 @@ const openResetPasswordModal = () => {
           :invalid="invalidFields.email"
         />
       </div>
-      <div class="field col-12 md:col-6">
+      <div class="field col-12">
         <label for="password">Mot de passe</label>
         <Password
           class="w-full"
@@ -89,7 +91,7 @@ const openResetPasswordModal = () => {
           >Mot de passe oublié ?</a
         >
       </div>
-      <div>
+      <div class="field col-12 flex justify-content-end">
         <Button
           class="mx-2"
           label="Se connecter"
