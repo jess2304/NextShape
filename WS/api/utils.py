@@ -1,5 +1,9 @@
+import smtplib
+import ssl
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from django.utils.crypto import get_random_string
 
 from .models import EmailVerificationCode
@@ -8,8 +12,6 @@ from .models import EmailVerificationCode
 def send_verification_email(email, code):
     subject = " NextShape - Vérification de votre adresse email"
     from_email = settings.DEFAULT_FROM_EMAIL
-    to_email = [email]
-
     text_content = f"""
     Bonjour,
 
@@ -40,9 +42,18 @@ def send_verification_email(email, code):
     </html>
     """
 
-    msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = from_email
+    msg["To"] = email
+    msg.attach(MIMEText(text_content, "plain"))
+    msg.attach(MIMEText(html_content, "html"))
+
+    context = ssl._create_unverified_context()
+    with smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT) as server:
+        server.starttls(context=context)
+        server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+        server.sendmail(from_email, [email], msg.as_string())
 
 
 def generate_and_send_verification_code(email):

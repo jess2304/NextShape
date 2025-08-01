@@ -197,5 +197,4 @@ dist-ssr
 *.sln
 *.sw?
 
-WS/brevo.pem
 .env.prod
