@@ -149,7 +149,7 @@ const openMobileEdit = (recordId: number) => {
   >
     <template #legend>
       <div class="flex items-center pl-2 gap-3">
-        <Avatar image="/Historique.png" shape="circle" class="w-1 h-1" />
+        <Avatar image="Historique.png" shape="circle" class="w-1 h-1" />
         <span class="font-bold text-xl md:text-2xl text-gray-800"
           >Historique de calculs</span
         >

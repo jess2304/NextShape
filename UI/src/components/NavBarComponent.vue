@@ -8,7 +8,7 @@ import NavBarConnexionComponent from "@/components/NavBarConnexionComponent.vue"
 const router = useRouter()
 </script>
 <template>
-  <Menubar :model="NAVBAR_ELEMENTS">
+  <Menubar :model="NAVBAR_ELEMENTS" :pt="{ button: { class: 'no-hover' } }">
     <template #start>
       <img
         src="/nextshape.png"
