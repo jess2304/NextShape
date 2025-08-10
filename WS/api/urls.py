@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     CaloriesRecordView,
     CheckAuthenticationView,
+    ContactView,
     DeleteAccountView,
     LoginView,
     LogoutView,
@@ -51,5 +52,10 @@ urlpatterns = [
         "progress-records/<int:primary_key>/",
         ProgressRecordsView.as_view(),
         name="progress-record-detail",
+    ),
+    path(
+        "contact/",
+        ContactView.as_view(),
+        name="contact",
     ),
 ]

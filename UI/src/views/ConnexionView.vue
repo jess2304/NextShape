@@ -67,9 +67,10 @@ const openResetPasswordModal = () => {
   >
     <h2 class="text-5xl text-center text-primary">Connexion</h2>
     <form class="formgrid grid" @submit.prevent="validateAndProceed">
-      <div class="field col-12">
-        <label>Adresse Email</label>
+      <div class="field col-12 md:col-6">
+        <label for="email">Adresse Email</label>
         <InputText
+          id="email"
           class="w-full"
           type="email"
           v-model="credentials.email"
@@ -77,7 +78,7 @@ const openResetPasswordModal = () => {
           :invalid="invalidFields.email"
         />
       </div>
-      <div class="field col-12">
+      <div class="field col-12 md:col-6">
         <label for="password">Mot de passe</label>
         <Password
           class="w-full"

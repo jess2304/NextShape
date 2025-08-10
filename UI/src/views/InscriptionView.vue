@@ -225,9 +225,10 @@ const resetForm = () => {
         />
       </div>
       <div class="field col-12 md:col-6">
-        <label>Adresse Email *</label>
+        <label for="email">Adresse Email *</label>
         <InputText
           class="w-full"
+          id="email"
           type="email"
           v-model="formData.email"
           placeholder="Votre email"
