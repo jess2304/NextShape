@@ -1,17 +1,11 @@
 # NextShape
 
+![](UI/public/App.png)
 NextShape est une application web de suivi de forme physique, qui permet à un utilisateur de :
 
 - Gérer son **compte utilisateur** (inscription avec vérification e-mail, connexion, modification, suppression, réinitialisation du mot de passe).
 - Calculer son **IMC**, son **BMR**, son **TDEE** et ses **calories recommandées** en fonction de ses données personnelles.
 - Visualiser l'évolution de ses données corporelles dans un **historique**.
-
-L'application est construite avec :
-
-- **Frontend** : Vue 3, TypeScript, PrimeVue, Pinia, Vite
-- **Backend** : Django, Django REST Framework, JWT par cookie HttpOnly
-- **Base de données** : PostgreSQL
-- **CI/CD** : Docker, docker-compose, Render, GitHub Actions
 
 ## Fonctionnalités
 
@@ -22,6 +16,19 @@ L'application est construite avec :
 - Mise à jour et suppression des enregistrements
 - Envoi de codes par email via SMTP (Brevo)
 - Pipeline CI/CD avec test et déploiement Render (dev/prod)
+
+## Outils :
+
+L'application est réalisée avec :
+
+- **Frontend** : Vue 3, TypeScript, PrimeVue, Pinia, Vite
+- **Backend** : Django, Django REST Framework, JWT par cookie HttpOnly
+- **Base de données** : PostgreSQL
+- **CI/CD** : Docker, docker-compose, Render, GitHub Actions
+
+<p align="center">
+<img src="UI/public/Architecture.png" alt="Architecture Front-Back-BDD" width="500">
+</p>
 
 ## Installation
 
@@ -77,5 +84,5 @@ C'est pour cela que durant le ENTRYPOINT, on réalise un **seed** qui injecte ce
 
 - Utilisateur :
   - Email : jessem@mail.com
-  - Mot de passe : 123 (Pas du tout sécurisé)
+  - Mot de passe : 123 (Pas du tout sécurisé comme mot de passe)
 - Les données de l'utilisateur (des calculs de besoins caloriques) trouvés à la page Historique.
