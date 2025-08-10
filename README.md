@@ -1,6 +1,7 @@
 # NextShape
 
 ![](UI/public/App.png)
+
 NextShape est une application web de suivi de forme physique, qui permet à un utilisateur de :
 
 - Gérer son **compte utilisateur** (inscription avec vérification e-mail, connexion, modification, suppression, réinitialisation du mot de passe).
@@ -27,7 +28,7 @@ L'application est réalisée avec :
 - **CI/CD** : Docker, docker-compose, Render, GitHub Actions
 
 <p align="center">
-<img src="UI/public/Architecture.png" alt="Architecture Front-Back-BDD" width="500">
+<img src="UI/public/Architecture.PNG" alt="Architecture Front-Back-BDD" width="500">
 </p>
 
 ## Installation
