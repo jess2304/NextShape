@@ -5,6 +5,7 @@ from email.mime.text import MIMEText
 
 from django.conf import settings
 from django.utils.crypto import get_random_string
+from next_shape_ws.settings import ENV
 
 from .models import EmailVerificationCode
 
@@ -15,6 +16,11 @@ def send_html_email(
     """
     Envoie un email HTML via SMTP configuré dans settings.
     """
+
+    # On ne tente pas d’envoyer d’email en CI/tests
+    if ENV == "test":
+        return
+
     from_email = settings.DEFAULT_FROM_EMAIL
 
     msg = MIMEMultipart("alternative")
