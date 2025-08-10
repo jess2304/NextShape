@@ -1,7 +1,7 @@
 # NextShape
 
 <p align="center">
-<img src="UI/public/App.PNG" alt="APP">
+<img src="UI/public/App.png" alt="APP">
 </p>
 
 NextShape est une application web de suivi de forme physique, qui permet à un utilisateur de :
