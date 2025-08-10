@@ -14,11 +14,10 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv_path = BASE_DIR / ".env"
 load_dotenv(dotenv_path, override=True)
@@ -29,8 +28,11 @@ load_dotenv(dotenv_path, override=True)
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-secret-key-for-dev")
 
+# Environment
+ENV = os.getenv("ENV", "local")
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = ENV == "local"
 
 ALLOWED_HOSTS: list = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
 
@@ -45,12 +47,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "corsheaders",
     "api",
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -60,49 +61,13 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://nextshape.onrender.com",  # prod
-    "https://nextshape-dev.onrender.com",  # dev
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    "content-type",
-]
-
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
-
-ENV = os.getenv("ENV", "local")
-
-if ENV == "local":
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:5173",
-    ]
-
-elif ENV == "dev":
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:5173",
-        "https://nextshape-dev.onrender.com",
-        "https://nextshape.onrender.com",  # prod front calls back dev for the current moment
-    ]
-elif ENV == "prod":
-    CORS_ALLOWED_ORIGINS = ["https://nextshape.onrender.com"]
 
 ROOT_URLCONF = "next_shape_ws.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "UI", "dist")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -192,7 +157,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/assets/"
+MEDIA_URL = "/media/"
+
+STATICFILES_DIRS = [BASE_DIR / "UI" / "dist"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -201,7 +171,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # JWT Settings
-
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -210,23 +179,20 @@ SIMPLE_JWT = {
 }
 
 
-# Default AutoField
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
 # Cookie settings for auth
-def get_cookie_settings():
-    if ENV in ["dev", "prod"]:
-        return {
-            "httponly": True,
-            "secure": True,
-            "samesite": "None",
-            "domain": "nextshape-backend-dev.onrender.com",
-            "path": "/",
-        }
-    else:
-        return {"httponly": True, "secure": False, "samesite": "Lax", "path": "/"}
+COOKIE_PARAMS = {
+    "httponly": True,
+    "secure": not DEBUG,
+    "samesite": "None" if not DEBUG else "Lax",
+    "path": "/",
+}
 
+if ENV == "local":
+    # CORS config in local when we don't use docker,
+    # we may need the access between back and front
+    INSTALLED_APPS += ["corsheaders"]
+    MIDDLEWARE.insert(0, "corsheaders.middleware.CorsMiddleware")
 
-COOKIE_PARAMS = get_cookie_settings()
+    CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
+    CORS_ALLOW_CREDENTIALS = True
+    CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]

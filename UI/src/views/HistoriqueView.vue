@@ -2,7 +2,7 @@
 import Fieldset from "primevue/fieldset"
 import Avatar from "primevue/avatar"
 import { useProgressRecords } from "@/stores/progressRecordsStore"
-import { onMounted, ref } from "vue"
+import { computed, onMounted, ref } from "vue"
 import { showToast, formatDate } from "@/assets/js/utils"
 import { ACTIVITY_DESCRIPTIONS, ACTIVITY_LEVELS } from "@/assets/js/constants"
 import { useToast } from "primevue"
@@ -12,6 +12,9 @@ import Button from "primevue/button"
 import Select from "primevue/select"
 import Tag from "primevue/tag"
 import InputNumber from "primevue/inputnumber"
+import MobileEditModal from "@/components/MobileEditModal.vue"
+
+const isMobile = computed(() => window.innerWidth <= 768)
 
 // Appel des stores
 const progressRecordsStore = useProgressRecords()
@@ -128,6 +131,14 @@ const deleteRecord = async (id: number) => {
     })
   }
 }
+
+const editMobileVisible = ref(false)
+const editingId = ref<number | null>(null)
+
+const openMobileEdit = (recordId: number) => {
+  editingId.value = recordId
+  editMobileVisible.value = true
+}
 </script>
 <template>
   <Fieldset
@@ -138,12 +149,87 @@ const deleteRecord = async (id: number) => {
   >
     <template #legend>
       <div class="flex items-center pl-2 gap-3">
-        <Avatar image="/Historique.png" shape="circle" />
-        <span class="font-bold text-2xl">Historique de calculs</span>
+        <Avatar image="Historique.png" shape="circle" class="w-1 h-1" />
+        <span class="font-bold text-xl md:text-2xl text-gray-800"
+          >Historique de calculs</span
+        >
       </div>
     </template>
 
+    <div v-if="isMobile" class="space-y-3">
+      <div
+        v-for="record in progressRecordsStore.progressRecords"
+        :key="record.id"
+        class="border border-gray-200 shadow-sm p-4 rounded-md"
+      >
+        <div class="text-xs text-gray-500 mb-1">
+          Date : {{ formatDate(record.date ?? "") }}
+        </div>
+
+        <div class="mb-2">
+          <div
+            class="flex justify-between gap-2 whitespace-nowrap overflow-auto text-sm"
+          >
+            <strong>Poids :</strong> {{ record.weight_kg }} kg
+          </div>
+          <div
+            class="flex justify-between gap-2 whitespace-nowrap overflow-auto text-sm"
+          >
+            <strong>Taille :</strong> {{ record.height_cm }} cm
+          </div>
+          <div
+            class="flex justify-between gap-2 whitespace-nowrap overflow-auto text-sm"
+          >
+            <strong>Activité :</strong>
+            <Tag
+              :value="activityLabels[record.activity_level ?? '']"
+              :severity="activitySeverity[record.activity_level ?? '']"
+              rounded
+              class="text-xs"
+            />
+          </div>
+          <div
+            class="flex justify-between gap-2 whitespace-nowrap overflow-auto text-sm"
+          >
+            <strong>Objectif :</strong>
+            <Tag
+              :value="goalLabels[record.goal ?? '']"
+              :severity="goalSeverity[record.goal ?? '']"
+              rounded
+              class="text-xs"
+            />
+          </div>
+          <div class="text-sm flex flex-column">
+            <span><strong>IMC :</strong> {{ record.imc?.toFixed(1) }}</span>
+            <span><strong>BMR :</strong> {{ record.bmr }} kcal</span>
+            <span><strong>TDEE :</strong> {{ record.tdee }} kcal</span>
+            <span
+              ><strong>Calories recommandées :</strong>
+              {{ record.calories_recommandees }} kcal</span
+            >
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <Button icon="pi pi-pencil" @click="openMobileEdit(record.id)" text />
+          <Button
+            icon="pi pi-trash"
+            @click="deleteRecord(record.id)"
+            text
+            severity="danger"
+          />
+        </div>
+        <div>
+          <hr />
+        </div>
+      </div>
+      <MobileEditModal
+        v-model:visible="editMobileVisible"
+        v-model:recordId="editingId"
+      />
+    </div>
     <DataTable
+      v-else
       :value="progressRecordsStore.progressRecords"
       dataKey="id"
       responsiveLayout="scroll"

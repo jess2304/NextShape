@@ -3,6 +3,10 @@ import { useProgressRecord } from "@/stores/progressRecordStore"
 import { ACTIVITY_LEVELS, GENDER, GOALS } from "@/assets/js/constants"
 import { computed } from "vue"
 import { formatDate } from "@/assets/js/utils"
+import Accordion from "primevue/accordion"
+import AccordionHeader from "primevue/accordionheader"
+import AccordionPanel from "primevue/accordionpanel"
+import AccordionContent from "primevue/accordioncontent"
 
 // Appel des stores
 const progressRecordStore = useProgressRecord()
@@ -91,15 +95,75 @@ const calories = computed(
 
           <p class="font-mono text-sm">
             <strong>Calories recommandées :</strong><br />
-            <span v-if="progressRecordStore.progressRecord.goal === 'perte'"
-              >TDEE – 500 (déficit)</span
-            >
+            Idéalement, créez un écart calorique
+            <span class="font-semibold">entre 200 et 300 kcal</span> par rapport
+            à votre TDEE.
+            <br />
+            Un écart trop petit (<200 kcal) → pas de résultats visibles. Un
+            écart trop grand (>400–500 kcal) → résultats rapides mais rarement
+            durables.
+            <br /><br />
+
+            <span v-if="progressRecordStore.progressRecord.goal === 'perte'">
+              🔽 <strong>Objectif : Perte de poids</strong> →
+              <span class="text-blue-600">TDEE – 300 kcal</span> (déficit
+              modéré)
+            </span>
+
             <span
               v-else-if="progressRecordStore.progressRecord.goal === 'prise'"
-              >TDEE + 300 (surplus)</span
             >
-            <span v-else>TDEE (maintien)</span>
+              🔼 <strong>Objectif : Prise de masse</strong> →
+              <span class="text-green-600">TDEE + 300 kcal</span> (surplus
+              contrôlé)
+            </span>
+
+            <span v-else>
+              ⚖️ <strong>Objectif : Maintien</strong> →
+              <span class="text-orange-600">TDEE</span> (équilibre)
+            </span>
           </p>
+          <Accordion value="-1">
+            <AccordionPanel value="0">
+              <AccordionHeader
+                >effets négatifs si l’écart est mal calibré</AccordionHeader
+              >
+              <AccordionContent>
+                <div class="space-y-4 text-sm">
+                  <div>
+                    <strong>💡 Perte de poids (déficit trop grand)</strong>
+                    <ul class="list-disc ml-6 mt-1 text-gray-700">
+                      <li>
+                        Ralentissement du métabolisme (mode “économie
+                        d’énergie”)
+                      </li>
+                      <li>Perte musculaire si protéines insuffisantes</li>
+                      <li>Baisse d’énergie et performance</li>
+                      <li>
+                        Fringales et compulsions → craquage assuré après 1–2
+                        semaines
+                      </li>
+                      <li>
+                        Effet yo-yo : reprise rapide du poids perdu, voire plus
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <strong>💡 Prise de masse (surplus trop grand)</strong>
+                    <ul class="list-disc ml-6 mt-1 text-gray-700">
+                      <li>Prise de gras excessive</li>
+                      <li>Problèmes digestifs (ballonnements, inconfort)</li>
+                      <li>Baisse de sensibilité à l’insuline</li>
+                      <li>
+                        “Marathon de bouffe” → tu tiens 1–2 semaines, puis tu
+                        craques, et retour en arrière
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionPanel>
+          </Accordion>
         </div>
         <div class="col-12 md:col-6 text-sm leading-relaxed">
           <p class="mb-3">

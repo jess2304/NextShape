@@ -41,6 +41,7 @@ export interface User {
 
 // ProgressRecord structure
 export interface ProgressRecord {
+  id: number
   user: User | null
   date: string | null
   weight_kg: number | null

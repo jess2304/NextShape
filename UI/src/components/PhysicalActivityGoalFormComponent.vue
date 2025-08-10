@@ -43,7 +43,7 @@ const activityDescription = computed(() => {
           optionLabel="label"
           optionValue="value"
           :invalid="props.invalidFields.activity_level"
-          class="w-full"
+          class="w-full flex-wrap text-sm sm:text-base gap-1"
         />
       </div>
       <div class="col-12 md:col-6">
@@ -66,7 +66,7 @@ const activityDescription = computed(() => {
         optionLabel="label"
         optionValue="value"
         :invalid="props.invalidFields.goal"
-        class="w-full"
+        class="w-full flex-wrap text-sm sm:text-base gap-1"
       />
     </div>
     <Toast />

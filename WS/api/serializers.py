@@ -335,3 +335,9 @@ class ProgressRecordSerializer(serializers.ModelSerializer):
             - birth_date.year
             - ((today.month, today.day) < (birth_date.month, birth_date.day))
         )
+
+
+class ContactFormSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    email = serializers.EmailField()
+    message = serializers.CharField(max_length=1000)

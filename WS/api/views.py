@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .response import error_response, success_response
 from .serializers import (
     CaloriesRecordSerializer,
+    ContactFormSerializer,
     EmailCodeRequestRegistrationSerializer,
     EmailCodeRequestResetPasswordSerializer,
     EmailCodeVerificationSerializer,
@@ -19,7 +20,7 @@ from .serializers import (
     ResetPasswordSerializer,
     UpdateProfileSerializer,
 )
-from .utils import generate_and_send_verification_code
+from .utils import generate_and_send_verification_code, send_contact_email
 
 
 class RegisterView(generics.CreateAPIView):
@@ -409,3 +410,20 @@ class ProgressRecordsView(APIView):
             {"detail": "Enregistrement supprimé avec succès."},
             status=status.HTTP_204_NO_CONTENT,
         )
+
+
+class ContactView(APIView):
+    """
+    Vue pour contacter le responsable
+    """
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ContactFormSerializer(data=request.data)
+        if serializer.is_valid():
+            send_contact_email(serializer.validated_data)
+            return Response(
+                {"detail": "Message reçu avec succès."}, status=status.HTTP_200_OK
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

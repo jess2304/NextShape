@@ -8,6 +8,9 @@ echo "ENV = $ENV"
 echo "Apply the migrations"
 python manage.py migrate
 
+echo "Collect static files"
+python manage.py collectstatic --noinput
+
 if [ "$ENV" = "local" ]; then
     echo "Local mode (Docker local)"
     echo "Seeding the database..."
