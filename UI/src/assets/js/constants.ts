@@ -20,11 +20,12 @@ export const NAVBAR_ELEMENTS = [
     icon: "pi pi-history",
     route: "/historique",
   },
+  /* On la remettra quand elle sera prête
   {
     label: "Évolution",
     icon: "pi pi-chart-line",
     route: "/evolution",
-  },
+  }, */
   {
     label: "Contact",
     icon: "pi pi-envelope",
