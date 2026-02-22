@@ -196,3 +196,9 @@ if ENV == "local":
     CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
     CORS_ALLOW_CREDENTIALS = True
     CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
+
+# Together API Key
+TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
+
+# AI model
+MODEL = os.getenv("AI_MODEL")

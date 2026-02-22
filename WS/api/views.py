@@ -1,4 +1,11 @@
-from api.models import EmailVerificationCode, ProgressRecord
+from functools import lru_cache
+
+from api.health_coach.exceptions import (
+    MissingNutritionPreferences,
+    MissingProgressRecord,
+)
+from api.health_coach.service import HealthCoachService
+from api.models import EmailVerificationCode, ProgressRecord, UserNutritionPreferences
 from next_shape_ws.settings import COOKIE_PARAMS
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -14,11 +21,13 @@ from .serializers import (
     EmailCodeRequestRegistrationSerializer,
     EmailCodeRequestResetPasswordSerializer,
     EmailCodeVerificationSerializer,
+    GenerateNutritionPlanRequestSerializer,
     LoginSerializer,
     ProgressRecordSerializer,
     RegisterSerializer,
     ResetPasswordSerializer,
     UpdateProfileSerializer,
+    UserNutritionPreferencesSerializer,
 )
 from .utils import generate_and_send_verification_code, send_contact_email
 
@@ -427,3 +436,87 @@ class ContactView(APIView):
                 {"detail": "Message reçu avec succès."}, status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class NutritionPreferencesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        preferences, _ = UserNutritionPreferences.objects.get_or_create(
+            user=request.user
+        )
+        serializer = UserNutritionPreferencesSerializer(preferences)
+        return success_response(
+            data=serializer.data,
+            message="Préférences récupérées avec succès.",
+            status_code=status.HTTP_200_OK,
+        )
+
+    def patch(self, request):
+        preferences, _ = UserNutritionPreferences.objects.get_or_create(
+            user=request.user
+        )
+        serializer = UserNutritionPreferencesSerializer(
+            preferences, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return success_response(
+                data=serializer.data,
+                message="Préférences mises à jour avec succès.",
+                status_code=status.HTTP_200_OK,
+            )
+        return error_response(
+            errors=serializer.errors,
+            message="Échec de la mise à jour des préférences.",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+@lru_cache(maxsize=1)
+def get_coach_service() -> HealthCoachService:
+    return HealthCoachService.from_settings()
+
+
+class GenerateWeekNutritionPlanView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = GenerateNutritionPlanRequestSerializer(data=request.data or {})
+        if not serializer.is_valid():
+            return error_response(
+                message="Requête invalide.",
+                errors=serializer.errors,
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        language = serializer.validated_data.get("language", "FR")
+        try:
+            plan = get_coach_service().generate_week_plan_for_user(
+                request.user, language=language
+            )
+            return success_response(
+                data=plan.model_dump(),
+                message="Programme nutritionnel généré avec succès.",
+                status_code=status.HTTP_200_OK,
+            )
+        except RuntimeError:
+            return error_response(
+                message="Service coach indisponible. Vérifiez la configuration IA.",
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        except MissingProgressRecord:
+            return error_response(
+                message="Veuillez d'abord enregistrer vos informations (poids/taille/objectif) avant de générer un programme.",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+        except MissingNutritionPreferences:
+            return error_response(
+                message="Veuillez renseigner vos préférences nutritionnelles avant de générer un programme.",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception:
+            return error_response(
+                message="Une erreur est survenue lors de la génération.",
+                status_code=500,
+            )

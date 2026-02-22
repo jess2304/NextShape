@@ -31,15 +31,12 @@ const routes = [
     component: HistoriqueView,
     meta: { requiresAuth: true },
   },
-
-  /*
-  On la remettra quand elle sera prête
   {
     path: "/evolution",
     name: "evolution",
     component: EvolutionView,
     meta: { requiresAuth: true },
-  },*/
+  },
   { path: "/contact", name: "contact", component: ContactView },
   { path: "/inscription", component: InscriptionView },
   { path: "/connexion", component: ConnexionView },

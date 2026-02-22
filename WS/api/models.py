@@ -74,3 +74,19 @@ class ProgressRecord(models.Model):
     class Meta:
         unique_together = ("user", "date")
         ordering = ["-date"]
+
+
+class UserNutritionPreferences(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="nutrition_preferences",
+    )
+    allergies = models.TextField(blank=True, default="")
+    diet_type = models.CharField(max_length=50, blank=True, default="")
+    disliked_foods = models.TextField(blank=True, default="")
+    supplements = models.JSONField(default=list, blank=True)
+    meals_per_day = models.IntegerField(default=3)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

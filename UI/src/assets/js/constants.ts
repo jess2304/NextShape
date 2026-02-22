@@ -20,12 +20,11 @@ export const NAVBAR_ELEMENTS = [
     icon: "pi pi-history",
     route: "/historique",
   },
-  /* On la remettra quand elle sera prête
   {
     label: "Évolution",
     icon: "pi pi-chart-line",
     route: "/evolution",
-  }, */
+  },
   {
     label: "Contact",
     icon: "pi pi-envelope",
@@ -71,4 +70,19 @@ export const GOALS = [
   { label: "Perte de poids", value: "perte" },
   { label: "Maintien", value: "maintien" },
   { label: "Prise de masse", value: "prise" },
+]
+
+export const SUPPLEMENT_OPTIONS = [
+  { label: "Whey", value: "whey" },
+  { label: "Caséine", value: "caseine" },
+  { label: "Gainer", value: "gainer" },
+  { label: "Créatine", value: "creatine" },
+  { label: "Omega-3", value: "omega3" },
+  { label: "Multivitamines", value: "multivitamines" },
+  { label: "Magnesium", value: "magnesium" },
+]
+
+export const LANG_OPTIONS = [
+  { label: "🇫🇷 Français", value: "FR" },
+  { label: "🇬🇧 English", value: "EN" },
 ]

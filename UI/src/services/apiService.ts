@@ -5,6 +5,8 @@ import router from "@/router"
 import {
   CaloriesResponse,
   LoginResponse,
+  NutritionPreferences,
+  NutritionWeekPlan,
   ProgressRecord,
   VerifyCodeResponse,
 } from "@/assets/js/interfaces"
@@ -14,8 +16,8 @@ const API_URL = import.meta.env.VITE_API_URL
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  timeout: 20000,
-  timeoutErrorMessage: "Le serveur na pas répondu à temps (20 secondes)",
+  timeout: 60000,
+  timeoutErrorMessage: "Le serveur na pas répondu à temps (60 secondes)",
   transformRequest: [
     dateTransformer,
     ...((axios.defaults.transformRequest as AxiosRequestTransformer[]) || []),
@@ -171,8 +173,40 @@ export const deleteRecord = async (id: number) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const sendMail = async (payload: Record<string, any>) => {
   try {
-    await api.post(`${API_URL}contact/`, payload)
+    await api.post("contact/", payload)
   } catch (error) {
     throw error
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// AI Coach service
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const getNutritionPreferences = async () => {
+  const response = await api.get<{
+    success: boolean
+    message: string
+    data: NutritionPreferences
+  }>("nutrition-preferences/")
+  return response.data
+}
+
+export const updateNutritionPreferences = async (
+  payload: Partial<NutritionPreferences>
+) => {
+  const response = await api.patch<{
+    success: boolean
+    message: string
+    data: NutritionPreferences
+  }>("nutrition-preferences/", payload)
+  return response.data
+}
+
+export const generateWeekNutritionPlan = async (language: string) => {
+  const response = await api.post<{
+    success: boolean
+    message: string
+    data: NutritionWeekPlan
+  }>("coach/week-plan/", { language })
+  return response.data
 }

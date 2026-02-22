@@ -6,8 +6,10 @@ from .views import (
     CheckAuthenticationView,
     ContactView,
     DeleteAccountView,
+    GenerateWeekNutritionPlanView,
     LoginView,
     LogoutView,
+    NutritionPreferencesView,
     ProgressRecordsView,
     RefreshAccessView,
     RegisterView,
@@ -57,5 +59,15 @@ urlpatterns = [
         "contact/",
         ContactView.as_view(),
         name="contact",
+    ),
+    path(
+        "nutrition-preferences/",
+        NutritionPreferencesView.as_view(),
+        name="nutrition-preferences",
+    ),
+    path(
+        "coach/week-plan/",
+        GenerateWeekNutritionPlanView.as_view(),
+        name="generate-week-plan",
     ),
 ]

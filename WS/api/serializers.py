@@ -1,6 +1,6 @@
 from typing import cast
 
-from api.models import CustomUser, ProgressRecord
+from api.models import CustomUser, ProgressRecord, UserNutritionPreferences
 from api.utils import calculs_calories
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -341,3 +341,40 @@ class ContactFormSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     email = serializers.EmailField()
     message = serializers.CharField(max_length=1000)
+
+
+class UserNutritionPreferencesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserNutritionPreferences
+        fields = [
+            "allergies",
+            "diet_type",
+            "disliked_foods",
+            "supplements",
+            "meals_per_day",
+        ]
+
+    def validate_meals_per_day(self, value):
+        if value < 1 or value > 8:
+            raise serializers.ValidationError(
+                "Le nombre de repas par jour doit être entre 1 et 5."
+            )
+        return value
+
+    def validate_supplements(self, value):
+        if value is None:
+            return []
+        if not isinstance(value, list):
+            raise serializers.ValidationError(
+                "Le champ suppléments doit être une liste."
+            )
+        cleaned: list[str] = []
+        for item in value:
+            text = str(item).strip()
+            if text:
+                cleaned.append(text)
+        return cleaned
+
+
+class GenerateNutritionPlanRequestSerializer(serializers.Serializer):
+    language = serializers.CharField(default="FR", max_length=50, required=False)

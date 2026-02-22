@@ -77,3 +77,46 @@ export interface RegistrationForm {
   password: string | null
   confirmPassword: string | null
 }
+
+// Nutrition preferences
+export interface NutritionPreferences {
+  allergies: string
+  diet_type: string
+  disliked_foods: string
+  supplements: string[]
+  meals_per_day: number
+}
+
+// Nutrition plan meal item
+export interface NutritionPlanMealItem {
+  name: string
+  portion: string
+  note?: string | null
+}
+
+// Nutrition plan meal
+export interface NutritionPlanMeal {
+  title: string
+  items: NutritionPlanMealItem[]
+  approx_calories: number
+  approx_protein_g: number
+  approx_fat_g: number
+  approx_carbs_g: number
+}
+
+// Nutrition plan for a day
+export interface NutritionPlanDay {
+  day_index: number
+  meals: NutritionPlanMeal[]
+}
+
+// Nutrition plan for a whole week
+export interface NutritionWeekPlan {
+  calories_target: number
+  protein_g_target: number
+  fat_g_target: number
+  carbs_g_target: number
+  meals_per_day: number
+  days: NutritionPlanDay[]
+  notes: string[]
+}
