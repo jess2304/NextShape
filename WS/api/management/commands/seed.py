@@ -39,7 +39,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.WARNING("User already exists."))
 
-        # Création des données de progression
+        # Create progress data
         ProgressRecord.objects.filter(user=user).delete()
 
         base_date = datetime.now() - timedelta(days=60)

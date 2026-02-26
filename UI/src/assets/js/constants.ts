@@ -1,4 +1,4 @@
-// constants.ts est un fichier présentant toutes les constantes du projet.
+// constants.ts centralizes all project constants.
 
 export const NAVBAR_ELEMENTS = [
   {

@@ -14,10 +14,10 @@ def send_html_email(
     subject: str, to_email: str, html_content: str, reply_to: str | None = None
 ):
     """
-    Envoie un email HTML via SMTP configuré dans settings.
+    Send an HTML email via SMTP configured in settings.
     """
 
-    # On ne tente pas d’envoyer d’email en CI/tests
+    # Do not attempt to send emails in CI/tests
     if ENV == "test":
         return
 
@@ -41,7 +41,7 @@ def send_html_email(
 
 def send_verification_email(email: str, code: str):
     """
-    Email de vérification de compte.
+    Account verification email.
     """
     subject = "NextShape - Vérification de votre adresse email"
     html_content = f"""
@@ -63,7 +63,7 @@ def send_verification_email(email: str, code: str):
 
 def send_contact_email(data: dict):
     """
-    Email envoyé depuis le formulaire de contact.
+    Email sent from the contact form.
     """
     subject = f"[Contact] Message de {data['name']}"
     to_email = getattr(settings, "CONTACT_INBOX", settings.DEFAULT_FROM_EMAIL)
@@ -89,7 +89,7 @@ def generate_and_send_verification_code(email):
 
 
 def calculs_calories(weight, height, age, gender, activity_level, goal):
-    # BMR (Mifflin-St Jeor)
+    # BMR (Mifflin-St Jeor equation)
     if gender == "H":
         bmr = 10 * weight + 6.25 * height - 5 * age + 5
     else:

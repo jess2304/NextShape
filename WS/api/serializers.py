@@ -7,13 +7,13 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
-# Appel du modèle de l'utilisateur
+# Load the user model
 User = get_user_model()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
     """
-    Serializer pour l'inscription
+    Serializer for user registration.
     """
 
     username = serializers.CharField(required=False)
@@ -34,8 +34,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Si aucun username n'est fourni, on met l'email.
-        Cela garantit que Django ait toujours un username même si c'est useless.
+        If no username is provided, use the email as fallback.
+        This ensures Django always has a username value.
         """
         if not data.get("username"):
             data["username"] = data["email"]
@@ -43,7 +43,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Crée un nouvel utilisateur (Gestion aut du hash du mot de passe)
+        Create a new user (password hashing is handled automatically).
         """
         user = User.objects.create_user(**validated_data)
         return user
@@ -51,7 +51,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     """
-    Serializer pour la connexion
+    Serializer for login.
     """
 
     email = serializers.EmailField(required=True)
@@ -59,16 +59,16 @@ class LoginSerializer(serializers.Serializer):
 
     def validate(self, data):
         """
-        Valider l'email et le mot de passe en base.
+        Validate email and password against the database.
         """
         email = data.get("email")
         password = data.get("password")
-        # Récupérer l'utilisateur correspondant à l'email
+        # Retrieve the user matching the provided email
         user = User.objects.filter(email=email).first()
         user = cast(CustomUser, user)
         if user is None or not user.check_password(password):
             raise serializers.ValidationError("Identifiants incorrects.")
-        # Générer un Token JWT pour l'utilisateur.
+        # Generate JWT tokens for the user
         refresh = RefreshToken.for_user(user)
         return {
             "refresh": str(refresh),
@@ -85,13 +85,13 @@ class LoginSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         """
-        Retourne simplement les données validées après authentification.
+        Return validated data after authentication.
         """
         return validated_data
 
     def to_representation(self, instance):
         """
-        Retourne le format final de la réponse.
+        Return the final response payload format.
         """
         return instance["user"]
 
@@ -142,19 +142,19 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         return value
 
     def update(self, instance, validated_data):
-        # Traiter le mot de passe séparément
+        # Handle password updates separately
         password = validated_data.pop("password", None)
 
         if password:
             instance.set_password(password)
-        # Si l'email est mis à jour, mettre aussi à jour le username.
+        # Keep username aligned when email changes
         new_email = validated_data.get("email", None)
 
         if new_email:
             instance.username = new_email
         if "phone_number" in validated_data and validated_data["phone_number"] == "":
             validated_data["phone_number"] = None
-        # Mettre à jour les autres champs
+        # Update remaining fields
         return super().update(instance, validated_data)
 
 

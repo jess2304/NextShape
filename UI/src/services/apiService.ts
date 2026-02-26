@@ -24,22 +24,22 @@ const api = axios.create({
   ],
 })
 
-// Intercepteur de réponse
+// Response interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     if (error.response && error.response.status === 401) {
       try {
-        // Tenter le refresh-access
+        // Attempt access token refresh
         await axios.post(`${API_URL}refresh-access/`, null, {
           withCredentials: true,
         })
 
-        // Rejouer la requête originale après refresh
+        // Replay the original request after refresh
         const config = error.config
         return api(config!)
       } catch (refreshError) {
-        // Échec du refresh donc déconnexion
+        // Refresh failed, so force logout
         const authStore = useAuthStore()
         authStore.logout()
         router.push("/connexion")
@@ -51,14 +51,14 @@ api.interceptors.response.use(
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Auth Services
+// Auth services
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Inscription
+// Registration
 export const registerUser = async (userData: any) =>
   await api.post(`register/`, userData)
 
-// Connexion
+// Login
 export const loginUser = async (credentials: {
   email: string
   password: string
@@ -67,7 +67,7 @@ export const loginUser = async (credentials: {
   return response.data
 }
 
-// Déconnexion
+// Logout
 export const logoutUser = async () => {
   await api.post(`logout/`)
 }
@@ -81,22 +81,22 @@ export const checkAuthentication = async () => {
   }
 }
 
-// Update du profil
+// Profile update
 export const updateProfile = async (userData: any) => {
   const response = await api.patch("profile/", userData)
   return response.data
 }
 
-// Suppression du compte
+// Account deletion
 export const deleteAccount = async () => await api.delete("delete-account/")
 
-// Envoi de code de vérification selon un contexte
+// Send verification code based on context
 export const sendVerificationCode = async (
   email: string,
   context: "registration" | "reset-password"
 ) => await api.post(`send-code-${context}/`, { email })
 
-// Verifier le code
+// Verify code
 export const verifyCode = async (
   email: string,
   code: string
@@ -108,7 +108,7 @@ export const verifyCode = async (
   return response.data
 }
 
-// Réinitialiser le mot de passe
+// Reset password
 export const resetPassword = async (email: string, password: string) => {
   const response = await api.post("reset-password/", {
     email,
@@ -137,7 +137,7 @@ export const calculateCalories = async (payload: {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ProgressRecords (plural) services
+// ProgressRecords services
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const getProgressRecords = async (): Promise<ProgressRecord[]> => {
   try {
@@ -180,7 +180,7 @@ export const sendMail = async (payload: Record<string, any>) => {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// AI Coach service
+// AI coach service
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const getNutritionPreferences = async () => {
   const response = await api.get<{

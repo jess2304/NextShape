@@ -15,21 +15,21 @@ import { validateRequiredFields, showToast } from "@/assets/js/utils"
 import { GENDER } from "@/assets/js/constants"
 import { RegistrationForm } from "@/assets/js/interfaces"
 
-// Constante de la date d'aujourd'hui (contrôle calendrier)
+// Today's date (used to restrict date picker)
 const today = new Date()
 
-// Appel des stores
+// Stores
 const toast = useToast()
 const authStore = useAuthStore()
 
-// Constante pour faire apparaître la fenêtre modale de vérification de mail.
+// Controls display of the email verification modal.
 const showModal = ref(false)
 const codeFromUser = ref("")
 const loading = ref(false)
-// Init des données insérées et invalides
+// Initialize invalid field tracking
 const invalidFields = ref<Record<string, boolean>>({})
 
-// Init du formulaire
+// Initialize registration form
 const formData = ref<RegistrationForm>({
   first_name: null,
   last_name: null,
@@ -42,11 +42,11 @@ const formData = ref<RegistrationForm>({
   confirmPassword: null,
 })
 
-// Valider les données et passer l'inscription au Backend
+// Validate input and submit registration flow
 const validateAndProceed = async () => {
   invalidFields.value = {}
 
-  // Checker si les champs obligatoires sont renseignés
+  // Check required fields
   let requiredFields = [
     "first_name",
     "last_name",
@@ -68,7 +68,7 @@ const validateAndProceed = async () => {
     )
     return
   }
-  // Checker si les mails sont identiques
+  // Check email confirmation
   if (formData.value.email !== formData.value.confirmEmail) {
     invalidFields.value.email = true
     invalidFields.value.confirmEmail = true
@@ -80,7 +80,7 @@ const validateAndProceed = async () => {
     )
   }
 
-  // Checker si les mots de passes sont identiques
+  // Check password confirmation
   if (formData.value.password !== formData.value.confirmPassword) {
     invalidFields.value.password = true
     invalidFields.value.confirmPassword = true
@@ -92,7 +92,7 @@ const validateAndProceed = async () => {
     )
   }
 
-  // Si tout est validé on passe à l'enregistrement
+  // If valid, continue registration flow
   await sendCode()
 }
 

@@ -25,7 +25,7 @@ const goalOptions: Array<Record<string, string>> = [
   { label: "Perte de poids", value: "perte" },
   { label: "Prise de masse", value: "prise" },
 ]
-// Préremplir quand on ouvre la modale
+// Load fields when opening the modal
 const load = () => {
   const record = store.progressRecords.find((r) => r.id === recordId.value)
   if (record) {

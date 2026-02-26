@@ -1,4 +1,4 @@
-import datetime
+﻿import datetime
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -16,23 +16,21 @@ ACTIVITY_CHOICES = [
 
 class CustomUser(AbstractUser):
     """
-    Modèle Custom pour l'utilisateur.
+    Custom user model.
     """
 
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, blank=False, default="H")
-
-    # L'email sera utilisé comme identifiant au lieu du username
+    # Use email as the unique login identifier instead of username
     USERNAME_FIELD = "email"
-
-    # Champs requis lors de la création d'un utilisateur
+    # Required fields when creating a user
     REQUIRED_FIELDS = ["username", "first_name", "last_name", "gender", "birth_date"]
 
     def __str__(self):
         """
-        Affiche l'email lorsqu'on convertit un utilisateur en str
+        Return the email when converting the user to string.
         """
         return self.email
 

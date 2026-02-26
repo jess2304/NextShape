@@ -6,7 +6,7 @@ def success_response(
     data=None, message="Opération réussie", status_code=status.HTTP_200_OK
 ):
     """
-    Réponse standard en cas de succès.
+    Standard success response wrapper.
     """
     return Response(
         {
@@ -24,7 +24,7 @@ def error_response(
     status_code=status.HTTP_400_BAD_REQUEST,
 ):
     """
-    Réponse standard en cas d'erreur.
+    Standard error response wrapper.
     """
     return Response(
         {

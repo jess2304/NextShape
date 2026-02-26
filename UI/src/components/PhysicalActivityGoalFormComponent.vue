@@ -9,15 +9,15 @@ import {
   GOALS,
 } from "@/assets/js/constants"
 
-// Appel des stores
+// Store
 const progressRecordStore = useProgressRecord()
 
-// Champs invalides pour validation visuelle
+// Invalid field state for visual validation
 const props = defineProps<{
   invalidFields: Record<string, boolean>
 }>()
 
-// Description dynamique à droite
+// Dynamic description shown on the right
 const activityDescription = computed(() => {
   return (
     ACTIVITY_DESCRIPTIONS[

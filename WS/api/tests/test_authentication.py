@@ -6,7 +6,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import AccessToken
 
 
-# Test pour un cookie valide
+# Test with a valid cookie
 @pytest.mark.django_db
 def test_authenticate_with_valid_cookie_token():
     user = CustomUser.objects.create_user(
@@ -24,7 +24,7 @@ def test_authenticate_with_valid_cookie_token():
     assert result[0] == user
 
 
-# Test sans cookie
+# Test without cookie
 @pytest.mark.django_db
 def test_authenticate_with_no_cookie_token():
     factory = APIRequestFactory()

@@ -5,7 +5,7 @@ import Toast from "primevue/toast"
 import { GENDER } from "@/assets/js/constants"
 import { useProgressRecord } from "@/stores/progressRecordStore"
 
-// Appel des stores
+// Store
 const progressRecordStore = useProgressRecord()
 
 const props = defineProps<{

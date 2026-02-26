@@ -23,7 +23,7 @@ const today = new Date()
 const authStore = useAuthStore()
 const userData = computed(() => authStore.user)
 
-// Gestion des modifications
+// Edit state management
 const editDialogVisible = ref(false)
 const fieldToEdit = ref("")
 const fieldValue = ref("")
@@ -178,7 +178,7 @@ const confirmDeleteAccount = (event: Event) => {
       </div>
     </template>
   </Card>
-  <!-- Dialog de modification -->
+  <!-- Edit dialog -->
   <Dialog
     v-model:visible="editDialogVisible"
     :header="getDialogHeader(fieldToEdit)"

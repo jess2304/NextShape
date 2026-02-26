@@ -1,4 +1,4 @@
-# Étape 1 : Build Vue frontend
+# Step 1: Build Vue frontend
 FROM node:20 AS frontend
 WORKDIR /app
 COPY UI/ ./UI/
@@ -8,7 +8,7 @@ ENV VITE_API_URL=$VITE_API_URL
 
 RUN cd UI && npm install && npm run build
 
-# Étape 2 : Django backend avec frontend intégré
+# Step 2: Django backend with integrated frontend
 FROM python:3.11
 WORKDIR /app
 

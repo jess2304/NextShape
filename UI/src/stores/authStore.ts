@@ -21,7 +21,7 @@ export const useAuthStore = defineStore("auth", {
 
   actions: {
     async register(userData: any) {
-      // Appelle le service pour enregistrer un nouvel utilisateur
+      // Call service to register a new user
       const payload = {
         username: userData.email,
         first_name: userData.first_name,
@@ -40,7 +40,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
     async login(credentials: { email: string; password: string }) {
-      // Appelle le service pour se connecter
+      // Call service to log in
       try {
         const response = await loginUser(credentials)
         const user = response.data
@@ -53,14 +53,14 @@ export const useAuthStore = defineStore("auth", {
       }
     },
     setUser(
-      // Setter pour mettre à jour les données de l'utilisateur.
+      // Setter to update user data.
       userData: User
     ) {
       this.user = userData
     },
 
     async logout() {
-      // Déconnexion de l'utilisateur.
+      // Logout the user.
       try {
         await logoutUser()
       } catch {
@@ -81,7 +81,7 @@ export const useAuthStore = defineStore("auth", {
 
     async updateProfileField(field: string, value: any) {
       const payload: Record<string, any> = { [field]: value }
-      // Appelle le service pour modifier une valeur dans l'utilisateur.
+      // Call service to update one user field.
       try {
         const response = await updateProfile(payload)
         this.user = response.data
@@ -95,11 +95,11 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async deleteAccount() {
-      // Appelle le service pour supprimer tout un compte utilisateur.
+      // Call service to delete the user account.
       try {
         await deleteAccount()
         await this.logout()
-        // Rediriger vers la page de connexion
+        // Redirect to the home page
         router.push("/")
       } catch (error) {
         throw error

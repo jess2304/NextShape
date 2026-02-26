@@ -34,7 +34,7 @@ from .utils import generate_and_send_verification_code, send_contact_email
 
 class RegisterView(generics.CreateAPIView):
     """
-    Vue pour l'inscription d'un utilisateur.
+    View for user registration.
     """
 
     serializer_class = RegisterSerializer
@@ -42,8 +42,8 @@ class RegisterView(generics.CreateAPIView):
 
     def post(self, request):
         """
-        Gère la requête POST d'inscription.
-        Si tout est valide, crée l'utilisateur et retourne un message de succès.
+        Handle registration POST requests.
+        If valid, create the user and return a success message.
         """
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -58,15 +58,15 @@ class RegisterView(generics.CreateAPIView):
 
 class LoginView(APIView):
     """
-    Vue pour la connexion d'un utilisateur.
+    View for user login.
     """
 
     permission_classes = [AllowAny]
 
     def post(self, request):
         """
-        Gère la requête POST de connexion.
-        Vérifie les identifiants et renvoie un token JWT.
+        Handle login POST requests.
+        Validate credentials and return JWT tokens.
         """
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -96,7 +96,7 @@ class LoginView(APIView):
 
 class LogoutView(APIView):
     """
-    Vue pour se déconnecter proprement en supprimant les cookies
+    View for clean logout by clearing auth cookies.
     """
 
     permission_classes = [AllowAny]
@@ -116,7 +116,7 @@ class LogoutView(APIView):
 
 class CheckAuthenticationView(APIView):
     """
-    Vue pour vérifier s'il est réellement connecté.
+    View to check whether the current user is authenticated.
     """
 
     permission_classes = [AllowAny]
@@ -127,7 +127,7 @@ class CheckAuthenticationView(APIView):
 
 class RefreshAccessView(APIView):
     """
-    Vue pour rafraîchir l'accès en cas d'expiration depuis refresh_token en cookie
+    View to refresh access token from the refresh token cookie.
     """
 
     permission_classes = [AllowAny]
@@ -158,14 +158,14 @@ class RefreshAccessView(APIView):
 
 class UpdateProfileView(APIView):
     """
-    Vue pour modifier les données d'un utilisateur.
+    View to update user profile data.
     """
 
     permission_classes = [IsAuthenticated]
 
     def patch(self, request):
         """
-        Gère la requête PATCH de modification de l'utilisateur.
+        Handle user profile PATCH requests.
         """
         serializer = UpdateProfileSerializer(
             request.user, data=request.data, partial=True
@@ -193,7 +193,7 @@ class UpdateProfileView(APIView):
 
 class DeleteAccountView(APIView):
     """
-    Vue pour supprimer le compte définitivement de la base.
+    View to permanently delete the user account.
     """
 
     permission_classes = [IsAuthenticated]
@@ -208,7 +208,7 @@ class DeleteAccountView(APIView):
 
 class SendCodeForRegistrationView(APIView):
     """
-    Vue pour envoyer un code vers un mail lors de l'inscription.
+    View to send a verification code during registration.
     """
 
     permission_classes = [AllowAny]
@@ -228,7 +228,7 @@ class SendCodeForRegistrationView(APIView):
 
 class SendCodeForResetPasswordView(APIView):
     """
-    Vue pour envoyer un code vers un mail lors de la réinitialisation du mot de passe.
+    View to send a verification code for password reset.
     """
 
     permission_classes = [AllowAny]
@@ -311,14 +311,14 @@ class VerifyCodeView(APIView):
 
 class ResetPasswordView(APIView):
     """
-    Vue pour réinitialiser le mot de passe après l'avoir oublié.
+    View to reset a forgotten password.
     """
 
     permission_classes = [AllowAny]
 
     def post(self, request):
         """
-        Gère la requête POST de modification du mot de passe.
+        Handle password reset POST requests.
         """
         serializer = ResetPasswordSerializer(data=request.data)
         if serializer.is_valid():
@@ -335,14 +335,14 @@ class ResetPasswordView(APIView):
 
 class CaloriesRecordView(APIView):
     """
-    Vue pour calculer et enregistrer les besoins caloriques + IMC dans ProgressRecord
+    View to compute and store calorie needs + BMI in ProgressRecord.
     """
 
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         """
-        Gère la requête POST pour la création d'un ProgressRecord avec IMC et Calories
+        Handle POST requests to create a ProgressRecord with BMI and calories.
         """
         serializer = CaloriesRecordSerializer(
             data=request.data,
@@ -375,14 +375,14 @@ class CaloriesRecordView(APIView):
 
 class ProgressRecordsView(APIView):
     """
-    Vue pour manipuler les enregistrements
+    View to manage progress records.
     """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         """
-        Récupère les enregistrements liés à l'utilisateur connecté
+        Fetch records linked to the authenticated user.
         """
         records = ProgressRecord.objects.filter(user=request.user).order_by("-date")
         serializer = ProgressRecordSerializer(records, many=True)
@@ -390,7 +390,7 @@ class ProgressRecordsView(APIView):
 
     def patch(self, request, primary_key=None):
         """
-        Modifie un enregistrement
+        Update a record.
         """
         try:
             record_id = self.kwargs.get("primary_key") or request.path.split("/")[-2]
@@ -423,7 +423,7 @@ class ProgressRecordsView(APIView):
 
 class ContactView(APIView):
     """
-    Vue pour contacter le responsable
+    View for contact form submissions.
     """
 
     permission_classes = [AllowAny]

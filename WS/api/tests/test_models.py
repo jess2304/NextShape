@@ -8,13 +8,13 @@ from django.utils import timezone
 @pytest.mark.django_db
 def test_code_is_expired_true():
     """
-    Teste que la vérif du code is_expired retourne True après 10 minutes.
+    Verify that is_expired returns True after 10 minutes.
     """
     code = EmailVerificationCode.objects.create(
         email="expired@test.com",
         code="111111",
     )
-    # forcer la date après sa création pour avoir un temps supérieur à 10 minutes
+    # Force created_at to be more than 10 minutes old
     code.created_at = timezone.now() - datetime.timedelta(minutes=11)
     code.save(update_fields=["created_at"])
     assert code.is_expired() is True
@@ -23,7 +23,7 @@ def test_code_is_expired_true():
 @pytest.mark.django_db
 def test_code_is_expired_false():
     """
-    Teste que la véfif du code is_expired retourne False si le code a moins de 10 minutes.
+    Verify that is_expired returns False when the code is less than 10 minutes old.
     """
     code = EmailVerificationCode.objects.create(
         email="valid@test.com",

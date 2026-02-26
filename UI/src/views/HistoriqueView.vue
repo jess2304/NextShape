@@ -16,11 +16,11 @@ import MobileEditModal from "@/components/MobileEditModal.vue"
 
 const isMobile = computed(() => window.innerWidth <= 768)
 
-// Appel des stores
+// Store
 const progressRecordsStore = useProgressRecords()
 const toast = useToast()
 const editingRows = ref([])
-// Appel du GET pour avoir nos données stockées.
+// Load stored history records.
 onMounted(async () => {
   try {
     await progressRecordsStore.getProgressRecords()

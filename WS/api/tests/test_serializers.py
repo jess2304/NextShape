@@ -12,7 +12,7 @@ from api.serializers import (
 from django.utils import timezone
 
 
-# RegisterSerializer
+# RegisterSerializer tests
 @pytest.mark.django_db
 def test_register_serializer_valid():
     data = {
@@ -46,7 +46,7 @@ def test_register_serializer_duplicate_email():
     assert "email" in serializer.errors or "non_field_errors" in serializer.errors
 
 
-# LoginSerializer
+# LoginSerializer tests
 @pytest.mark.django_db
 def test_login_serializer_valid():
     CustomUser.objects.create_user(
@@ -67,7 +67,7 @@ def test_login_serializer_invalid_password():
     assert not serializer.is_valid()
 
 
-# UpdateProfileSerializer
+# UpdateProfileSerializer tests
 @pytest.mark.django_db
 def test_update_profile_phone_number_unique():
     CustomUser.objects.create_user(
@@ -98,7 +98,7 @@ def test_update_profile_valid_patch():
     assert user_updated.first_name == "Updated"
 
 
-# EmailCodeVerificationSerializer
+# EmailCodeVerificationSerializer tests
 def test_email_code_verification_valid():
     data = {"email": "a@a.com", "code": "123456"}
     serializer = EmailCodeVerificationSerializer(data=data)
@@ -112,7 +112,7 @@ def test_email_code_verification_missing_code():
     assert "code" in serializer.errors
 
 
-# ResetPasswordSerializer
+# ResetPasswordSerializer tests
 @pytest.mark.django_db
 def test_reset_password_serializer_valid():
     CustomUser.objects.create_user(
@@ -125,7 +125,7 @@ def test_reset_password_serializer_valid():
     assert user.check_password("newPassword")
 
 
-# TEST - CaloriesRecordSerializer
+# CaloriesRecordSerializer tests
 @pytest.mark.django_db
 def test_calories_record_serializer_valid_creation():
     user = CustomUser.objects.create_user(
@@ -196,7 +196,7 @@ def test_calories_record_serializer_duplicate_date():
     assert "non_field_errors" in serializer.errors or "__all__" in serializer.errors
 
 
-# TEST - ProgressRecordSerializer
+# ProgressRecordSerializer tests
 @pytest.mark.django_db
 def test_progress_record_serializer_update_valid():
     from datetime import date

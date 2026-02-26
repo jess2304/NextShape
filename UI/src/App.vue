@@ -4,7 +4,7 @@ import NavBarComponent from "./components/NavBarComponent.vue"
 import FooterComponent from "./components/FooterComponent.vue"
 import { useAuthStore } from "@/stores/authStore"
 import Toast from "primevue/toast"
-// Appel du store d'authentification pour charger l'utilisateur en cours.
+// Load the auth store to fetch the current user.
 const authStore = useAuthStore()
 </script>
 

@@ -49,7 +49,7 @@ const router = createRouter({
   routes,
 })
 
-// Protection des routes privées
+// Protect private routes
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 
-# Test d'envoi de code pour valider l'adresse mail lors de l'inscription
+# Test code sending for email verification during registration
 @pytest.mark.django_db
 def test_send_code_registration_success():
     client = APIClient()
@@ -34,7 +34,7 @@ def test_send_code_registration_existing_email():
     assert response.data and "email" in response.data["errors"]
 
 
-# Test d'envoi de code pour la réinitialisation du mot de passe
+# Test code sending for password reset
 @pytest.mark.django_db
 def test_send_code_reset_password_success():
     CustomUser.objects.create_user(
@@ -61,7 +61,7 @@ def test_send_code_reset_password_unknown_email():
     assert response.data and "email" in response.data["errors"]
 
 
-# Vérification du code valide
+# Valid code verification
 @pytest.mark.django_db
 def test_verify_code_valid():
     EmailVerificationCode.objects.create(
@@ -86,7 +86,7 @@ def test_verify_code_expired():
         code="999999",
         created_at=timezone.now() - datetime.timedelta(minutes=11),
     )
-    # forcer la date après sa création pour avoir un temps supérieur à 10 minutes
+    # Force created_at to be more than 10 minutes old
     code.created_at = timezone.now() - datetime.timedelta(minutes=11)
     code.save(update_fields=["created_at"])
 
@@ -120,7 +120,7 @@ def test_verify_code_incorrect():
 
 @pytest.mark.django_db
 def test_verify_code_validation_error():
-    # Pas de code envoyé
+    # No code provided
     client = APIClient()
     payload = {"email": "user@test.com"}
     response = client.post("/api/verify-code/", payload)
@@ -133,7 +133,7 @@ def test_verify_code_validation_error():
     assert response.data["message"] == "Ce code est invalide."
 
 
-# Réinitialisation du mot de passe
+# Password reset
 @pytest.mark.django_db
 def test_reset_password_success():
     user = CustomUser.objects.create_user(
