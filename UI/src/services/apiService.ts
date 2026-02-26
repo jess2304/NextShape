@@ -18,7 +18,7 @@ const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
   timeout: 60000,
-  timeoutErrorMessage: "Le serveur na pas répondu à temps (60 secondes)",
+  timeoutErrorMessage: "Le serveur n'a pas répondu à temps (60 secondes)",
   transformRequest: [
     dateTransformer,
     ...((axios.defaults.transformRequest as AxiosRequestTransformer[]) || []),
@@ -121,9 +121,14 @@ export const verifyCode = async (
 }
 
 // Reset password
-export const resetPassword = async (email: string, password: string) => {
+export const resetPassword = async (
+  email: string,
+  password: string,
+  code: string
+) => {
   const response = await api.post<ApiResponse<null>>("reset-password/", {
     email,
+    code,
     password,
   })
   return response.data

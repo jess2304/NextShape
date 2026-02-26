@@ -1,3 +1,4 @@
+import os
 import random
 from datetime import datetime, timedelta
 
@@ -21,6 +22,7 @@ class Command(BaseCommand):
     help = "Seed database with fake users and progress records"
 
     def handle(self, *args, **kwargs):
+        seed_password = os.getenv("SEED_USER_PASSWORD", "NextShapeSeed!2026")
         user, created = User.objects.get_or_create(
             email="jessem@mail.com",
             defaults={
@@ -33,7 +35,7 @@ class Command(BaseCommand):
             },
         )
         if created:
-            user.set_password("123")
+            user.set_password(seed_password)
             user.save()
             self.stdout.write(self.style.SUCCESS("User created."))
         else:

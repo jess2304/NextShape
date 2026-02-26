@@ -141,7 +141,8 @@ const updatePassword = async () => {
   try {
     const response = await authStore.resetPassword(
       email.value,
-      newPassword.value
+      newPassword.value,
+      code.value
     )
     showToast(toast, "success", "Succès", resolveApiMessage(response))
     emits("validated", { email: email.value })

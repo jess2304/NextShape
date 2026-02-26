@@ -9,9 +9,11 @@ from api.health_coach.exceptions import (
 from api.health_coach.service import HealthCoachService
 from api.models import EmailVerificationCode, ProgressRecord, UserNutritionPreferences
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from next_shape_ws.settings import COOKIE_PARAMS
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -32,6 +34,8 @@ from .serializers import (
 )
 from .utils import generate_and_send_verification_code, send_contact_email
 
+User = get_user_model()
+
 
 class RegisterView(generics.CreateAPIView):
     """
@@ -40,6 +44,8 @@ class RegisterView(generics.CreateAPIView):
 
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "register"
 
     def post(self, request):
         """
@@ -63,6 +69,8 @@ class LoginView(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "login"
 
     def post(self, request):
         """
@@ -137,6 +145,8 @@ class RefreshAccessView(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "refresh_access"
 
     def post(self, request):
         refresh_token = request.COOKIES.get("refresh_token")
@@ -214,12 +224,18 @@ class SendCodeForRegistrationView(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "send_code_registration"
 
     def post(self, request):
         serializer = EmailCodeRequestRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data["email"]
-            generate_and_send_verification_code(email)
+            if not User.objects.filter(email=email).exists():
+                generate_and_send_verification_code(
+                    email,
+                    context="registration",
+                )
             return success_response(code="VERIFICATION_CODE_SENT", status_code=200)
         return error_response(
             code="VERIFICATION_CODE_SEND_FAILED",
@@ -234,12 +250,18 @@ class SendCodeForResetPasswordView(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "send_code_reset_password"
 
     def post(self, request):
         serializer = EmailCodeRequestResetPasswordSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data["email"]
-            generate_and_send_verification_code(email)
+            if User.objects.filter(email=email).exists():
+                generate_and_send_verification_code(
+                    email,
+                    context="reset_password",
+                )
             return success_response(code="VERIFICATION_CODE_SENT", status_code=200)
         return error_response(
             code="VERIFICATION_CODE_SEND_FAILED",
@@ -250,6 +272,8 @@ class SendCodeForResetPasswordView(APIView):
 
 class VerifyCodeView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "verify_code"
 
     def post(self, request):
         serializer = EmailCodeVerificationSerializer(data=request.data)
@@ -264,9 +288,10 @@ class VerifyCodeView(APIView):
         code = serializer.validated_data["code"]
 
         try:
-            entry = EmailVerificationCode.objects.filter(email=email).latest(
-                "created_at"
-            )
+            entry = EmailVerificationCode.objects.filter(
+                email=email,
+                is_used=False,
+            ).latest("created_at")
 
             if entry.code != code:
                 return error_response(
@@ -302,6 +327,8 @@ class ResetPasswordView(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "reset_password"
 
     def post(self, request):
         """
@@ -381,9 +408,14 @@ class ProgressRecordsView(APIView):
         """
         Update a record.
         """
+        if primary_key is None:
+            return error_response(
+                code="PROGRESS_RECORD_NOT_FOUND",
+                status_code=status.HTTP_404_NOT_FOUND,
+            )
+
         try:
-            record_id = self.kwargs.get("primary_key") or request.path.split("/")[-2]
-            record = ProgressRecord.objects.get(id=record_id, user=request.user)
+            record = ProgressRecord.objects.get(id=primary_key, user=request.user)
         except ProgressRecord.DoesNotExist:
             return error_response(
                 code="PROGRESS_RECORD_NOT_FOUND",
@@ -429,6 +461,8 @@ class ContactView(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "contact"
 
     def post(self, request):
         serializer = ContactFormSerializer(data=request.data)

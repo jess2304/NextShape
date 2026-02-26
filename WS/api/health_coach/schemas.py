@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 PosInt = Annotated[int, Field(gt=0)]
 NonNegInt = Annotated[int, Field(ge=0)]
-MealsPerDay = Annotated[int, Field(ge=1, le=8)]
+MealsPerDay = Annotated[int, Field(ge=1, le=5)]
 
 
 class MacroTargets(BaseModel):

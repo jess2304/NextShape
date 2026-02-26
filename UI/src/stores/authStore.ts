@@ -123,9 +123,9 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async resetPassword(email: string, newPassword: string) {
+    async resetPassword(email: string, newPassword: string, code: string) {
       try {
-        return await resetPasswordRequest(email, newPassword)
+        return await resetPasswordRequest(email, newPassword, code)
       } catch (error) {
         throw resolveApiErrorMessage(
           error,

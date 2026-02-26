@@ -1,5 +1,5 @@
-import pytest
-from api.models import CustomUser, ProgressRecord
+﻿import pytest
+from api.models import CustomUser, EmailVerificationCode, ProgressRecord
 from api.serializers import (
     CaloriesRecordSerializer,
     EmailCodeVerificationSerializer,
@@ -17,7 +17,7 @@ from django.utils import timezone
 def test_register_serializer_valid():
     data = {
         "email": "test@test.com",
-        "password": "test",
+        "password": "StrongPassword!123",
         "first_name": "Test",
         "last_name": "User",
         "birth_date": "1999-01-01",
@@ -37,7 +37,7 @@ def test_register_serializer_duplicate_email():
     )
     data = {
         "email": "test@test.com",
-        "password": "password",
+        "password": "StrongPassword!123",
         "first_name": "DuplicateTest",
         "last_name": "User",
     }
@@ -118,11 +118,21 @@ def test_reset_password_serializer_valid():
     CustomUser.objects.create_user(
         email="a@test.com", username="a@test.com", password="oldPassword"
     )
-    data = {"email": "a@test.com", "password": "newPassword"}
+    EmailVerificationCode.objects.create(
+        email="a@test.com",
+        code="123456",
+        context="reset_password",
+    )
+
+    data = {
+        "email": "a@test.com",
+        "code": "123456",
+        "password": "NewPassword!123",
+    }
     serializer = ResetPasswordSerializer(data=data)
-    assert serializer.is_valid()
+    assert serializer.is_valid(), serializer.errors
     user = serializer.save()
-    assert user.check_password("newPassword")
+    assert user.check_password("NewPassword!123")
 
 
 # CaloriesRecordSerializer tests

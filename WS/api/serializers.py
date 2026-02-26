@@ -1,14 +1,28 @@
-from typing import cast
+﻿from typing import cast
 
-from api.models import CustomUser, ProgressRecord, UserNutritionPreferences
+from api.models import (
+    CustomUser,
+    EmailVerificationCode,
+    ProgressRecord,
+    UserNutritionPreferences,
+)
 from api.utils import calculs_calories
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Load the user model
 User = get_user_model()
+
+
+def _validate_password_strength(password: str, user=None) -> None:
+    try:
+        validate_password(password, user=user)
+    except DjangoValidationError as exc:
+        raise serializers.ValidationError(list(exc.messages)) from exc
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -39,6 +53,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         """
         if not data.get("username"):
             data["username"] = data["email"]
+        _validate_password_strength(data["password"])
         return data
 
     def create(self, validated_data):
@@ -144,12 +159,12 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Handle password updates separately
         password = validated_data.pop("password", None)
-
         if password:
+            _validate_password_strength(password, user=instance)
             instance.set_password(password)
-        # Keep username aligned when email changes
-        new_email = validated_data.get("email", None)
 
+        # Keep username aligned when email changes.
+        new_email = validated_data.get("email")
         if new_email:
             instance.username = new_email
         if "phone_number" in validated_data and validated_data["phone_number"] == "":
@@ -161,21 +176,9 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 class EmailCodeRequestRegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError(
-                "Il existe déjà un utilisateur avec ce mail."
-            )
-        return value
-
 
 class EmailCodeRequestResetPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
-
-    def validate_email(self, value):
-        if not User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Aucun utilisateur avec cet email.")
-        return value
 
 
 class EmailCodeVerificationSerializer(serializers.Serializer):
@@ -185,19 +188,59 @@ class EmailCodeVerificationSerializer(serializers.Serializer):
 
 class ResetPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
+    code = serializers.CharField(max_length=6)
     password = serializers.CharField(write_only=True)
 
-    def validate_email(self, value):
-        if not User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Aucun utilisateur avec cet email.")
-        return value
+    default_error_messages = {
+        "invalid_email": "Aucun utilisateur avec cet email.",
+        "invalid_code": "Code invalide, expiré ou déjà utilisé.",
+    }
+
+    def validate(self, attrs):
+        email = attrs["email"]
+        code = attrs["code"]
+        password = attrs["password"]
+
+        user = User.objects.filter(email=email).first()
+        if user is None:
+            raise serializers.ValidationError(
+                {"email": self.error_messages["invalid_email"]}
+            )
+
+        _validate_password_strength(password, user=user)
+
+        code_entry = (
+            EmailVerificationCode.objects.filter(
+                email=email,
+                code=code,
+                context="reset_password",
+                is_used=False,
+            )
+            .order_by("-created_at")
+            .first()
+        )
+
+        if code_entry is None or code_entry.is_expired():
+            raise serializers.ValidationError(
+                {"code": self.error_messages["invalid_code"]}
+            )
+
+        attrs["user"] = user
+        attrs["code_entry"] = code_entry
+        return attrs
 
     def save(self):
-        email = self.validated_data["email"]
+        user = self.validated_data["user"]
+        code_entry = self.validated_data["code_entry"]
         password = self.validated_data["password"]
-        user = User.objects.get(email=email)
+
         user.set_password(password)
         user.save()
+
+        code_entry.is_used = True
+        code_entry.used_at = timezone.now()
+        code_entry.save(update_fields=["is_used", "used_at"])
+
         return user
 
 
@@ -245,7 +288,7 @@ class CaloriesRecordSerializer(serializers.ModelSerializer):
 
         if ProgressRecord.objects.filter(user=user, date=today).exists():
             raise serializers.ValidationError(
-                "Un enregistrement existe déjà pour aujourd’hui. Vous pouvez directement le modifier."
+                "Un enregistrement existe déjà pour aujourd'hui. Vous pouvez directement le modifier."
             )
 
         return data
@@ -355,7 +398,7 @@ class UserNutritionPreferencesSerializer(serializers.ModelSerializer):
         ]
 
     def validate_meals_per_day(self, value):
-        if value < 1 or value > 8:
+        if value < 1 or value > 5:
             raise serializers.ValidationError(
                 "Le nombre de repas par jour doit être entre 1 et 5."
             )

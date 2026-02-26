@@ -13,11 +13,10 @@ def test_profile_patch_requires_auth():
     response = client.patch("/api/profile/", {"first_name": "Anonymous"})
     assert isinstance(response, Response)
     assert response.status_code == 401
-    assert (
-        response.data is not None
-        and response.data.get("detail")
-        == "Informations d'authentification non fournies."
-    )
+    assert response.data is not None
+    assert response.data.get("success") is False
+    assert response.data.get("code") == "AUTH_REQUIRED"
+    assert "detail" in response.data.get("errors", {})
 
 
 # Simple patch update on one field

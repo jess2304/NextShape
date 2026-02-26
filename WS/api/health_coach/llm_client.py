@@ -8,7 +8,6 @@ from typing import Any
 
 import httpx
 from api.health_coach.constants import BASE_URL, TEMPERATURE, TIMEOUT
-from langchain_together import ChatTogether
 
 
 @dataclass(frozen=True)
@@ -31,13 +30,6 @@ class LLMClient:
         self._base_url = config.base_url.rstrip("/")
         self._temperature = config.temperature
         self._timeout = config.timeout
-        self._llm = ChatTogether(
-            model=config.model,
-            api_key=config.api_key,
-            base_url=config.base_url,
-            temperature=config.temperature,
-            timeout=config.timeout,
-        )
 
     def invoke_structured(
         self,

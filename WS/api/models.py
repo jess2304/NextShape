@@ -36,8 +36,16 @@ class CustomUser(AbstractUser):
 
 
 class EmailVerificationCode(models.Model):
+    CONTEXT_CHOICES = [
+        ("registration", "registration"),
+        ("reset_password", "reset_password"),
+    ]
+
     email = models.EmailField()
     code = models.CharField(max_length=6)
+    context = models.CharField(max_length=20, choices=CONTEXT_CHOICES)
+    is_used = models.BooleanField(default=False)
+    used_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_expired(self):

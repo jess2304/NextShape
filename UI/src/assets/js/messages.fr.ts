@@ -1,6 +1,11 @@
 export const API_MESSAGES_FR: Record<string, string> = {
   COMMON_SUCCESS: "Opération réussie.",
   COMMON_ERROR: "Une erreur est survenue.",
+  AUTH_REQUIRED: "Authentification requise.",
+  PERMISSION_DENIED: "Vous n'avez pas la permission d'effectuer cette action.",
+  NOT_FOUND: "Ressource introuvable.",
+  THROTTLED: "Trop de requêtes. Réessayez plus tard.",
+  BAD_REQUEST: "Requête invalide.",
   AUTH_REGISTER_SUCCESS: "Inscription réussie. Veuillez vous connecter.",
   AUTH_REGISTER_FAILED: "Échec de l'inscription.",
   AUTH_LOGIN_SUCCESS: "Connexion réussie.",

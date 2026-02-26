@@ -14,6 +14,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,11 +26,13 @@ load_dotenv(dotenv_path, override=True)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-secret-key-for-dev")
-
 # Environment
-ENV = os.getenv("ENV", "local")
+ENV = os.getenv("ENV", "local").strip().lower()
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is required.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = ENV == "local"
@@ -51,8 +54,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -85,7 +88,43 @@ WSGI_APPLICATION = "next_shape_ws.wsgi.application"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("api.authentication.CookieJWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "EXCEPTION_HANDLER": "api.exception_handlers.api_exception_handler",
+    "DEFAULT_THROTTLE_RATES": {
+        "register": os.getenv("THROTTLE_REGISTER_RATE", "20/hour"),
+        "login": os.getenv("THROTTLE_LOGIN_RATE", "30/hour"),
+        "refresh_access": os.getenv("THROTTLE_REFRESH_ACCESS_RATE", "120/hour"),
+        "send_code_registration": os.getenv(
+            "THROTTLE_SEND_CODE_REGISTRATION_RATE", "10/hour"
+        ),
+        "send_code_reset_password": os.getenv(
+            "THROTTLE_SEND_CODE_RESET_RATE", "10/hour"
+        ),
+        "verify_code": os.getenv("THROTTLE_VERIFY_CODE_RATE", "30/hour"),
+        "reset_password": os.getenv("THROTTLE_RESET_PASSWORD_RATE", "10/hour"),
+        "contact": os.getenv("THROTTLE_CONTACT_RATE", "20/hour"),
+    },
 }
+
+# Cache configuration (used by DRF throttling among other things).
+DJANGO_CACHE_URL = os.getenv("DJANGO_CACHE_URL")
+if DJANGO_CACHE_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": DJANGO_CACHE_URL,
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "nextshape-local-cache",
+        }
+    }
+    if ENV not in {"local", "test"}:
+        raise ImproperlyConfigured(
+            "DJANGO_CACHE_URL is required outside local/test for shared throttling."
+        )
 
 
 # Database
@@ -119,6 +158,8 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False") == "True"
+EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT") or 10)
 
 # Model for the customised User
 AUTH_USER_MODEL = "api.CustomUser"

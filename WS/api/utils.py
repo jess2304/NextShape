@@ -1,13 +1,24 @@
-import smtplib
+﻿import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from django.conf import settings
 from django.utils.crypto import get_random_string
-from next_shape_ws.settings import ENV
 
 from .models import EmailVerificationCode
+
+
+def _is_test_runtime() -> bool:
+    return getattr(settings, "ENV", "") == "test"
+
+
+def _build_tls_context() -> ssl.SSLContext:
+    context = ssl.create_default_context()
+    # Enforce modern TLS if supported by current Python/OpenSSL.
+    if hasattr(ssl, "TLSVersion"):
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
+    return context
 
 
 def send_html_email(
@@ -17,8 +28,8 @@ def send_html_email(
     Send an HTML email via SMTP configured in settings.
     """
 
-    # Do not attempt to send emails in CI/tests
-    if ENV == "test":
+    # Do not attempt to send emails during test runs.
+    if _is_test_runtime():
         return
 
     from_email = settings.DEFAULT_FROM_EMAIL
@@ -30,12 +41,29 @@ def send_html_email(
     if reply_to:
         msg["Reply-To"] = reply_to
 
-    msg.attach(MIMEText(html_content, "html"))
+    msg.attach(MIMEText(html_content, "html", "utf-8"))
 
-    context = ssl._create_unverified_context()
-    with smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT) as server:
-        server.starttls(context=context)
-        server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+    email_host = settings.EMAIL_HOST
+    email_port = settings.EMAIL_PORT
+    if not email_host:
+        raise ValueError("EMAIL_HOST is not configured.")
+
+    timeout_seconds = int(getattr(settings, "EMAIL_TIMEOUT", 10) or 10)
+    email_use_ssl = bool(getattr(settings, "EMAIL_USE_SSL", False))
+    email_use_tls = bool(getattr(settings, "EMAIL_USE_TLS", True))
+
+    smtp_cls = smtplib.SMTP_SSL if email_use_ssl else smtplib.SMTP
+    tls_context = _build_tls_context()
+
+    with smtp_cls(email_host, email_port, timeout=timeout_seconds) as server:
+        if not email_use_ssl and email_use_tls:
+            server.ehlo()
+            server.starttls(context=tls_context)
+            server.ehlo()
+
+        if settings.EMAIL_HOST_USER and settings.EMAIL_HOST_PASSWORD:
+            server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+
         server.sendmail(from_email, [to_email], msg.as_string())
 
 
@@ -82,9 +110,9 @@ def send_contact_email(data: dict):
     send_html_email(subject, to_email, html_content, reply_to=data["email"])
 
 
-def generate_and_send_verification_code(email):
+def generate_and_send_verification_code(email: str, context: str):
     code = get_random_string(length=6, allowed_chars="0123456789")
-    EmailVerificationCode.objects.create(email=email, code=code)
+    EmailVerificationCode.objects.create(email=email, code=code, context=context)
     send_verification_email(email, code)
 
 
