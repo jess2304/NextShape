@@ -50,10 +50,10 @@ export const useCoachStore = defineStore("coach", {
       return response
     },
 
-    async buildWeekPlan(language: string = "FR") {
+    async buildWeekPlan() {
       this.isPlanLoading = true
       try {
-        const response = await generateWeekNutritionPlan(language)
+        const response = await generateWeekNutritionPlan()
         this.weekPlan = response.data
         return response
       } finally {

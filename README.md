@@ -66,6 +66,7 @@ EMAIL_USE_TLS=True
 
 # URL vers l'API qu'utilisera le front pour envoyer les requêtes.
 VITE_API_URL=http://localhost:8000/api/
+AI_LANGUAGE=FR
 ```
 
 - Lancer en local

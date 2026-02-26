@@ -4,7 +4,6 @@ import SplitterPanel from "primevue/splitterpanel"
 import Button from "primevue/button"
 import InputText from "primevue/inputtext"
 import InputNumber from "primevue/inputnumber"
-import Select from "primevue/select"
 import Textarea from "primevue/textarea"
 import Divider from "primevue/divider"
 import MultiSelect from "primevue/multiselect"
@@ -15,24 +14,24 @@ import TabPanels from "primevue/tabpanels"
 import Tabs from "primevue/tabs"
 import { useToast } from "primevue/usetoast"
 import { useCoachStore } from "@/stores/coachStore"
-import { LANG_OPTIONS, SUPPLEMENT_OPTIONS } from "@/assets/js/constants"
-import { onMounted, ref } from "vue"
+import { SUPPLEMENT_OPTIONS } from "@/assets/js/constants"
+import { onMounted } from "vue"
+import { resolveApiErrorMessage, resolveApiMessage } from "@/assets/js/utils"
 
 const coachStore = useCoachStore()
 const toast = useToast()
 
-const language = ref("FR")
-
 const loadPreferences = async () => {
   try {
-    await coachStore.loadNutritionPreferences()
+    return await coachStore.loadNutritionPreferences()
   } catch (err: any) {
     toast.add({
       severity: "error",
       summary: "Erreur",
-      detail:
-        err?.response?.data?.message ||
-        "Impossible de charger les préférences nutritionnelles.",
+      detail: resolveApiErrorMessage(
+        err,
+        "Impossible de charger les préférences nutritionnelles."
+      ),
       life: 4000,
     })
   }
@@ -44,16 +43,17 @@ const savePreferences = async () => {
     toast.add({
       severity: "success",
       summary: "Sauvegarde",
-      detail: response.message || "préférences mises à jour.",
+      detail: resolveApiMessage(response, "Préférences mises à jour."),
       life: 3000,
     })
   } catch (err: any) {
     toast.add({
       severity: "error",
       summary: "Erreur",
-      detail:
-        err?.response?.data?.message ||
-        "Impossible de sauvegarder les préférences.",
+      detail: resolveApiErrorMessage(
+        err,
+        "Impossible de sauvegarder les préférences."
+      ),
       life: 4000,
     })
   }
@@ -61,37 +61,32 @@ const savePreferences = async () => {
 
 const buildWeekPlan = async () => {
   try {
-    const response = await coachStore.buildWeekPlan(language.value)
+    const response = await coachStore.buildWeekPlan()
     toast.add({
       severity: "success",
-      summary: "Plan genere",
-      detail: response.message || "Programme nutritionnel géneré.",
+      summary: "Plan généré",
+      detail: resolveApiMessage(response, "Programme nutritionnel généré."),
       life: 3000,
     })
   } catch (err: any) {
     toast.add({
       severity: "error",
       summary: "Erreur",
-      detail:
-        err?.response?.data?.message || "Impossible de générer le plan hebdo.",
+      detail: resolveApiErrorMessage(
+        err,
+        "Impossible de générer le plan hebdo."
+      ),
       life: 4000,
     })
   }
 }
 
 onMounted(async () => {
-  await loadPreferences
+  await loadPreferences()
 })
 </script>
 
 <template>
-  <Select
-    v-model="language"
-    :options="LANG_OPTIONS"
-    optionLabel="label"
-    optionValue="value"
-    class="w-14rem mb-2"
-  />
   <Tabs value="0">
     <TabList>
       <Tab value="0">Programme de nutrition</Tab>
@@ -157,7 +152,7 @@ onMounted(async () => {
                   display="chip"
                   filter
                   class="w-full"
-                  placeholder="Selectionnez les compléments a inclure dans votre régime"
+                  placeholder="Sélectionnez les compléments à inclure dans votre régime"
                 />
               </div>
 
@@ -218,7 +213,7 @@ onMounted(async () => {
               >
                 <strong>Cible:</strong>
                 {{ coachStore.weekPlan.calories_target }} kcal,
-                {{ coachStore.weekPlan.protein_g_target }} g proteines,
+                {{ coachStore.weekPlan.protein_g_target }} g protéines,
                 {{ coachStore.weekPlan.carbs_g_target }} g glucides,
                 {{ coachStore.weekPlan.fat_g_target }} g lipides.
               </div>

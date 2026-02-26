@@ -8,7 +8,11 @@ import { useToast } from "primevue/usetoast"
 import Button from "primevue/button"
 import Toast from "primevue/toast"
 import ResetPasswordModalComponent from "@/components/ResetPasswordModalComponent.vue"
-import { showToast, validateRequiredFields } from "@/assets/js/utils"
+import {
+  resolveApiErrorMessage,
+  showToast,
+  validateRequiredFields,
+} from "@/assets/js/utils"
 import { Credentials } from "@/assets/js/interfaces"
 
 // Initialize credentials and invalid field state.
@@ -51,8 +55,16 @@ const validateAndProceed = async () => {
     const redirectPath = router.currentRoute.value.query.redirect || "/"
     router.push(redirectPath as string)
     credentials.value = { email: null, password: null }
-  } catch (error) {
-    showToast(toast, "error", "Erreur lors de la connexion")
+  } catch (error: any) {
+    showToast(
+      toast,
+      "error",
+      "Erreur",
+      resolveApiErrorMessage(
+        error,
+        String(error || "Erreur lors de la connexion")
+      )
+    )
   }
 }
 

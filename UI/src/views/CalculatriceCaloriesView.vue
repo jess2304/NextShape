@@ -9,7 +9,7 @@ import PhysicalActivityGoalFormComponent from "@/components/PhysicalActivityGoal
 import RecapComponent from "@/components/RecapComponent.vue"
 import { ref, onMounted, onBeforeUnmount } from "vue"
 import { useProgressRecord } from "@/stores/progressRecordStore"
-import { showToast } from "@/assets/js/utils"
+import { resolveApiErrorMessage, showToast } from "@/assets/js/utils"
 import { useToast } from "primevue"
 
 // Store
@@ -45,9 +45,10 @@ const calculateCalories = async () => {
       toast,
       "error",
       "Erreur",
-      error?.response?.data?.errors?.non_field_errors?.[0] ||
-        error?.response?.data?.message ||
+      resolveApiErrorMessage(
+        error,
         "Échec de l'enregistrement des besoins caloriques"
+      )
     )
   }
 }

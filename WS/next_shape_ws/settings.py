@@ -202,3 +202,6 @@ TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
 
 # AI model
 MODEL = os.getenv("AI_MODEL")
+
+# AI output language for coach responses
+AI_LANGUAGE = os.getenv("AI_LANGUAGE", "FR")

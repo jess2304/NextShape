@@ -374,7 +374,3 @@ class UserNutritionPreferencesSerializer(serializers.ModelSerializer):
             if text:
                 cleaned.append(text)
         return cleaned
-
-
-class GenerateNutritionPlanRequestSerializer(serializers.Serializer):
-    language = serializers.CharField(default="FR", max_length=50, required=False)

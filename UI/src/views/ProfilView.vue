@@ -12,7 +12,11 @@ import DatePicker from "primevue/datepicker"
 import InputMask from "primevue/inputmask"
 import ConfirmPopup from "primevue/confirmpopup"
 import { useConfirm } from "primevue/useconfirm"
-import { showToast } from "@/assets/js/utils"
+import {
+  resolveApiErrorMessage,
+  resolveApiMessage,
+  showToast,
+} from "@/assets/js/utils"
 import SelectButton from "primevue/selectbutton"
 import { GENDER } from "@/assets/js/constants"
 
@@ -23,7 +27,6 @@ const today = new Date()
 const authStore = useAuthStore()
 const userData = computed(() => authStore.user)
 
-// Edit state management
 const editDialogVisible = ref(false)
 const fieldToEdit = ref("")
 const fieldValue = ref("")
@@ -77,15 +80,18 @@ const cancelEdit = () => {
 
 const saveEdit = async () => {
   try {
-    await authStore.updateProfileField(fieldToEdit.value, fieldValue.value)
-    showToast(toast, "success", "Succès", "Modification enregistrée.")
+    const response = await authStore.updateProfileField(
+      fieldToEdit.value,
+      fieldValue.value
+    )
+    showToast(toast, "success", "Succès", resolveApiMessage(response))
     cancelEdit()
-  } catch (error) {
+  } catch (error: any) {
     showToast(
       toast,
       "error",
       "Erreur",
-      "Erreur lors de la mise à jour du profil."
+      resolveApiErrorMessage(error, String(error || "Erreur de mise à jour."))
     )
   }
 }
@@ -107,14 +113,17 @@ const confirmDeleteAccount = (event: Event) => {
     },
     accept: async () => {
       try {
-        await authStore.deleteAccount()
-        showToast(toast, "success", "Succès", "Votre compte a été supprimé.")
-      } catch (error) {
+        const response = await authStore.deleteAccount()
+        showToast(toast, "success", "Succès", resolveApiMessage(response))
+      } catch (error: any) {
         showToast(
           toast,
           "error",
           "Erreur",
-          "Échec de la suppression du compte."
+          resolveApiErrorMessage(
+            error,
+            String(error || "Échec de la suppression du compte.")
+          )
         )
       }
     },

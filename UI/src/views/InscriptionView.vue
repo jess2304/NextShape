@@ -11,25 +11,24 @@ import { useToast } from "primevue/usetoast"
 import { useAuthStore } from "@/stores/authStore"
 import router from "@/router"
 import CodeVerificationModalComponent from "@/components/CodeVerificationModalComponent.vue"
-import { validateRequiredFields, showToast } from "@/assets/js/utils"
+import {
+  resolveApiErrorMessage,
+  resolveApiMessage,
+  validateRequiredFields,
+  showToast,
+} from "@/assets/js/utils"
 import { GENDER } from "@/assets/js/constants"
 import { RegistrationForm } from "@/assets/js/interfaces"
 
-// Today's date (used to restrict date picker)
 const today = new Date()
 
-// Stores
 const toast = useToast()
 const authStore = useAuthStore()
 
-// Controls display of the email verification modal.
 const showModal = ref(false)
-const codeFromUser = ref("")
 const loading = ref(false)
-// Initialize invalid field tracking
 const invalidFields = ref<Record<string, boolean>>({})
 
-// Initialize registration form
 const formData = ref<RegistrationForm>({
   first_name: null,
   last_name: null,
@@ -42,12 +41,10 @@ const formData = ref<RegistrationForm>({
   confirmPassword: null,
 })
 
-// Validate input and submit registration flow
 const validateAndProceed = async () => {
   invalidFields.value = {}
 
-  // Check required fields
-  let requiredFields = [
+  const requiredFields = [
     "first_name",
     "last_name",
     "gender",
@@ -68,37 +65,33 @@ const validateAndProceed = async () => {
     )
     return
   }
-  // Check email confirmation
+
   if (formData.value.email !== formData.value.confirmEmail) {
     invalidFields.value.email = true
     invalidFields.value.confirmEmail = true
-    return showToast(
-      toast,
-      "error",
-      "Erreur",
-      "Les emails ne correspondent pas"
-    )
+    showToast(toast, "error", "Erreur", "Les emails ne correspondent pas")
+    return
   }
 
-  // Check password confirmation
   if (formData.value.password !== formData.value.confirmPassword) {
     invalidFields.value.password = true
     invalidFields.value.confirmPassword = true
-    return showToast(
+    showToast(
       toast,
       "error",
       "Erreur",
       "Les mots de passe ne correspondent pas"
     )
+    return
   }
 
-  // If valid, continue registration flow
   await sendCode()
 }
 
 const sendCode = async () => {
+  loading.value = true
   try {
-    await authStore.sendVerificationCode(
+    const response = await authStore.sendVerificationCode(
       formData.value.email || "",
       "registration"
     )
@@ -107,45 +100,55 @@ const sendCode = async () => {
       toast,
       "info",
       "Code envoyé",
-      "Un email contenant un code vous a été envoyé."
+      resolveApiMessage(
+        response,
+        "Un email contenant un code vous a été envoyé."
+      )
     )
   } catch (err: any) {
-    const detail =
-      err?.response?.data?.email?.[0] || "Échec de l'envoi du code."
-    showToast(toast, "error", "Erreur", detail)
+    showToast(
+      toast,
+      "error",
+      "Erreur",
+      resolveApiErrorMessage(err, String(err || "Échec de l'envoi du code."))
+    )
   } finally {
     loading.value = false
   }
 }
 
 const handleCodeValidation = async (code: string) => {
-  codeFromUser.value = code
   loading.value = true
 
   try {
-    const response = await authStore.verifyCode(
+    const verification = await authStore.verifyCode(
       formData.value.email || "",
       code
     )
-    if (!response.success) {
-      showToast(toast, "error", "Erreur", response.message)
+    if (!verification.success) {
+      showToast(toast, "error", "Erreur", resolveApiMessage(verification))
       return
     }
-    try {
-      await authStore.register(formData.value)
-      showToast(
-        toast,
-        "success",
-        "Succès",
-        "Votre inscription a été un succès. Bienvenue sur NextShape !"
+
+    const registration = await authStore.register(formData.value)
+    showToast(
+      toast,
+      "success",
+      "Succès",
+      resolveApiMessage(registration, "Votre inscription a été un succès.")
+    )
+    resetForm()
+    router.push("/connexion")
+  } catch (error: any) {
+    showToast(
+      toast,
+      "error",
+      "Erreur",
+      resolveApiErrorMessage(
+        error,
+        String(error || "Erreur lors de la vérification")
       )
-      resetForm()
-      router.push("/connexion")
-    } catch (registrationError) {
-      showToast(toast, "error", "Erreur", String(registrationError))
-    }
-  } catch (verificationError) {
-    showToast(toast, "error", "Erreur", "Erreur lors de la vérification")
+    )
   } finally {
     loading.value = false
   }

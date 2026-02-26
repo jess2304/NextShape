@@ -36,6 +36,7 @@ def test_profile_patch_first_name():
     assert isinstance(response, Response)
     assert response.data is not None
     assert response.data.get("success") is True
+    assert response.data.get("code") == "PROFILE_UPDATE_SUCCESS"
     assert response.data["data"]["first_name"] == "NewName"
 
     user.refresh_from_db()
@@ -64,6 +65,7 @@ def test_profile_patch_phone_number_conflict():
     assert isinstance(response, Response)
     assert response.data is not None
     assert response.data.get("success") is False
+    assert response.data.get("code") == "PROFILE_UPDATE_FAILED"
     assert "phone_number" in response.data.get("errors")
 
 

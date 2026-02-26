@@ -81,8 +81,3 @@ export const SUPPLEMENT_OPTIONS = [
   { label: "Multivitamines", value: "multivitamines" },
   { label: "Magnesium", value: "magnesium" },
 ]
-
-export const LANG_OPTIONS = [
-  { label: "🇫🇷 Français", value: "FR" },
-  { label: "🇬🇧 English", value: "EN" },
-]

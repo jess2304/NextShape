@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from functools import lru_cache
 
 from api.health_coach.exceptions import (
@@ -6,10 +8,10 @@ from api.health_coach.exceptions import (
 )
 from api.health_coach.service import HealthCoachService
 from api.models import EmailVerificationCode, ProgressRecord, UserNutritionPreferences
+from django.conf import settings
 from next_shape_ws.settings import COOKIE_PARAMS
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -21,7 +23,6 @@ from .serializers import (
     EmailCodeRequestRegistrationSerializer,
     EmailCodeRequestResetPasswordSerializer,
     EmailCodeVerificationSerializer,
-    GenerateNutritionPlanRequestSerializer,
     LoginSerializer,
     ProgressRecordSerializer,
     RegisterSerializer,
@@ -48,11 +49,11 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return success_response(
-                message="Inscription réussie. Veuillez vous connecter.", status_code=201
-            )
+            return success_response(code="AUTH_REGISTER_SUCCESS", status_code=201)
         return error_response(
-            errors=serializer.errors, message="Échec de l'inscription", status_code=400
+            code="AUTH_REGISTER_FAILED",
+            errors=serializer.errors,
+            status_code=400,
         )
 
 
@@ -73,7 +74,7 @@ class LoginView(APIView):
             data: dict = serializer.validated_data
             response = success_response(
                 data=serializer.data,
-                message="Connexion réussie",
+                code="AUTH_LOGIN_SUCCESS",
                 status_code=200,
             )
             response.set_cookie(
@@ -90,7 +91,9 @@ class LoginView(APIView):
             )
             return response
         return error_response(
-            errors=serializer.errors, message="Échec de la connexion", status_code=400
+            code="AUTH_LOGIN_FAILED",
+            errors=serializer.errors,
+            status_code=400,
         )
 
 
@@ -102,7 +105,7 @@ class LogoutView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        response = Response({"detail": "Déconnecté."}, status=status.HTTP_200_OK)
+        response = success_response(code="AUTH_LOGOUT_SUCCESS")
 
         for cookie in ["access_token", "refresh_token"]:
             response.set_cookie(
@@ -122,7 +125,10 @@ class CheckAuthenticationView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        return Response({"authenticated": request.user.is_authenticated}, status=200)
+        return success_response(
+            code="AUTH_CHECK_SUCCESS",
+            data={"authenticated": request.user.is_authenticated},
+        )
 
 
 class RefreshAccessView(APIView):
@@ -136,23 +142,21 @@ class RefreshAccessView(APIView):
         refresh_token = request.COOKIES.get("refresh_token")
 
         if not refresh_token:
-            return error_response(message="Refresh token manquant", status_code=401)
+            return error_response(code="AUTH_REFRESH_MISSING", status_code=401)
 
         try:
             refresh = RefreshToken(refresh_token)
             access_token = refresh.access_token
         except TokenError:
-            return error_response(message="Refresh token invalide", status_code=401)
+            return error_response(code="AUTH_REFRESH_INVALID", status_code=401)
 
-        response = success_response(message="Nouveau token généré avec succès.")
-
+        response = success_response(code="AUTH_REFRESH_SUCCESS")
         response.set_cookie(
             key="access_token",
             value=str(access_token),
             max_age=30 * 60,
             **COOKIE_PARAMS,
         )
-
         return response
 
 
@@ -173,6 +177,7 @@ class UpdateProfileView(APIView):
         if serializer.is_valid():
             updated_user = serializer.save()
             return success_response(
+                code="PROFILE_UPDATE_SUCCESS",
                 data={
                     "first_name": updated_user.first_name,
                     "last_name": updated_user.last_name,
@@ -181,12 +186,11 @@ class UpdateProfileView(APIView):
                     "birth_date": updated_user.birth_date,
                     "phone_number": updated_user.phone_number,
                 },
-                message="Profil mis à jour avec succès",
                 status_code=200,
             )
         return error_response(
+            code="PROFILE_UPDATE_FAILED",
             errors=serializer.errors,
-            message="Échec de la mise à jour du profil",
             status_code=400,
         )
 
@@ -201,9 +205,7 @@ class DeleteAccountView(APIView):
     def delete(self, request):
         user = request.user
         user.delete()
-        return success_response(
-            message="Votre compte a été supprimé avec succès.", status_code=200
-        )
+        return success_response(code="ACCOUNT_DELETE_SUCCESS", status_code=200)
 
 
 class SendCodeForRegistrationView(APIView):
@@ -218,10 +220,10 @@ class SendCodeForRegistrationView(APIView):
         if serializer.is_valid():
             email = serializer.validated_data["email"]
             generate_and_send_verification_code(email)
-            return success_response(message="Code envoyé avec succès.", status_code=200)
+            return success_response(code="VERIFICATION_CODE_SENT", status_code=200)
         return error_response(
+            code="VERIFICATION_CODE_SEND_FAILED",
             errors=serializer.errors,
-            message="Échec de l'envoi du code",
             status_code=400,
         )
 
@@ -238,10 +240,10 @@ class SendCodeForResetPasswordView(APIView):
         if serializer.is_valid():
             email = serializer.validated_data["email"]
             generate_and_send_verification_code(email)
-            return success_response(message="Code envoyé avec succès.", status_code=200)
+            return success_response(code="VERIFICATION_CODE_SENT", status_code=200)
         return error_response(
+            code="VERIFICATION_CODE_SEND_FAILED",
             errors=serializer.errors,
-            message="Échec de l'envoi du code",
             status_code=400,
         )
 
@@ -252,13 +254,10 @@ class VerifyCodeView(APIView):
     def post(self, request):
         serializer = EmailCodeVerificationSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(
-                {
-                    "success": False,
-                    "message": "Ce code est invalide.",
-                    "errors": serializer.errors,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+            return error_response(
+                code="VERIFICATION_CODE_INVALID_REQUEST",
+                errors=serializer.errors,
+                status_code=status.HTTP_400_BAD_REQUEST,
             )
 
         email = serializer.validated_data["email"]
@@ -270,42 +269,30 @@ class VerifyCodeView(APIView):
             )
 
             if entry.code != code:
-                return Response(
-                    {
-                        "success": False,
-                        "message": "Code incorrect",
-                        "data": {"valid": False},
-                    },
-                    status.HTTP_200_OK,
+                return error_response(
+                    code="VERIFICATION_CODE_INCORRECT",
+                    data={"valid": False},
+                    status_code=status.HTTP_200_OK,
                 )
 
             if entry.is_expired():
-                return Response(
-                    {
-                        "success": False,
-                        "message": "Code expiré",
-                        "data": {"valid": False},
-                    },
-                    status=status.HTTP_200_OK,
+                return error_response(
+                    code="VERIFICATION_CODE_EXPIRED",
+                    data={"valid": False},
+                    status_code=status.HTTP_200_OK,
                 )
 
-            return Response(
-                {
-                    "success": True,
-                    "message": "Code vérifié avec succès",
-                    "data": {"valid": True},
-                },
-                status=status.HTTP_200_OK,
+            return success_response(
+                code="VERIFICATION_CODE_VALID",
+                data={"valid": True},
+                status_code=status.HTTP_200_OK,
             )
 
         except EmailVerificationCode.DoesNotExist:
-            return Response(
-                {
-                    "success": False,
-                    "message": "Code incorrect",
-                    "data": {"valid": False},
-                },
-                status=status.HTTP_200_OK,
+            return error_response(
+                code="VERIFICATION_CODE_INCORRECT",
+                data={"valid": False},
+                status_code=status.HTTP_200_OK,
             )
 
 
@@ -323,12 +310,10 @@ class ResetPasswordView(APIView):
         serializer = ResetPasswordSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return success_response(
-                message="Mot de passe mis à jour avec succès", status_code=200
-            )
+            return success_response(code="PASSWORD_RESET_SUCCESS", status_code=200)
         return error_response(
+            code="PASSWORD_RESET_FAILED",
             errors=serializer.errors,
-            message="Échec de la réinitialisation du mot de passe",
             status_code=400,
         )
 
@@ -352,7 +337,7 @@ class CaloriesRecordView(APIView):
         if serializer.is_valid():
             record: ProgressRecord = serializer.save()
             return success_response(
-                message="Enregistrement calorique effectué avec succès",
+                code="CALORIES_RECORD_SUCCESS",
                 data={
                     "weight_kg": record.weight_kg,
                     "height_cm": record.height_cm,
@@ -367,8 +352,8 @@ class CaloriesRecordView(APIView):
             )
 
         return error_response(
+            code="CALORIES_RECORD_FAILED",
             errors=serializer.errors,
-            message="Échec de l'enregistrement des besoins caloriques",
             status_code=400,
         )
 
@@ -386,7 +371,11 @@ class ProgressRecordsView(APIView):
         """
         records = ProgressRecord.objects.filter(user=request.user).order_by("-date")
         serializer = ProgressRecordSerializer(records, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return success_response(
+            code="PROGRESS_RECORDS_FETCH_SUCCESS",
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
     def patch(self, request, primary_key=None):
         """
@@ -394,10 +383,12 @@ class ProgressRecordsView(APIView):
         """
         try:
             record_id = self.kwargs.get("primary_key") or request.path.split("/")[-2]
-            print(record_id)
             record = ProgressRecord.objects.get(id=record_id, user=request.user)
         except ProgressRecord.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+            return error_response(
+                code="PROGRESS_RECORD_NOT_FOUND",
+                status_code=status.HTTP_404_NOT_FOUND,
+            )
 
         serializer = ProgressRecordSerializer(
             record, data=request.data, partial=True, context={"request": request}
@@ -405,19 +396,30 @@ class ProgressRecordsView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return success_response(
+                code="PROGRESS_RECORD_UPDATE_SUCCESS",
+                data=serializer.data,
+                status_code=status.HTTP_200_OK,
+            )
+        return error_response(
+            code="PROGRESS_RECORD_UPDATE_FAILED",
+            errors=serializer.errors,
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
 
     def delete(self, request, primary_key):
         try:
             record = ProgressRecord.objects.get(id=primary_key, user=request.user)
         except ProgressRecord.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+            return error_response(
+                code="PROGRESS_RECORD_NOT_FOUND",
+                status_code=status.HTTP_404_NOT_FOUND,
+            )
 
         record.delete()
-        return Response(
-            {"detail": "Enregistrement supprimé avec succès."},
-            status=status.HTTP_204_NO_CONTENT,
+        return success_response(
+            code="PROGRESS_RECORD_DELETE_SUCCESS",
+            status_code=status.HTTP_200_OK,
         )
 
 
@@ -432,10 +434,15 @@ class ContactView(APIView):
         serializer = ContactFormSerializer(data=request.data)
         if serializer.is_valid():
             send_contact_email(serializer.validated_data)
-            return Response(
-                {"detail": "Message reçu avec succès."}, status=status.HTTP_200_OK
+            return success_response(
+                code="CONTACT_SUCCESS",
+                status_code=status.HTTP_200_OK,
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return error_response(
+            code="CONTACT_FAILED",
+            errors=serializer.errors,
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class NutritionPreferencesView(APIView):
@@ -447,8 +454,8 @@ class NutritionPreferencesView(APIView):
         )
         serializer = UserNutritionPreferencesSerializer(preferences)
         return success_response(
+            code="NUTRITION_PREFS_FETCH_SUCCESS",
             data=serializer.data,
-            message="Préférences récupérées avec succès.",
             status_code=status.HTTP_200_OK,
         )
 
@@ -462,13 +469,13 @@ class NutritionPreferencesView(APIView):
         if serializer.is_valid():
             serializer.save()
             return success_response(
+                code="NUTRITION_PREFS_UPDATE_SUCCESS",
                 data=serializer.data,
-                message="Préférences mises à jour avec succès.",
                 status_code=status.HTTP_200_OK,
             )
         return error_response(
+            code="NUTRITION_PREFS_UPDATE_FAILED",
             errors=serializer.errors,
-            message="Échec de la mise à jour des préférences.",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -482,41 +489,33 @@ class GenerateWeekNutritionPlanView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = GenerateNutritionPlanRequestSerializer(data=request.data or {})
-        if not serializer.is_valid():
-            return error_response(
-                message="Requête invalide.",
-                errors=serializer.errors,
-                status_code=status.HTTP_400_BAD_REQUEST,
-            )
-
-        language = serializer.validated_data.get("language", "FR")
+        ai_language = getattr(settings, "AI_LANGUAGE", "FR")
         try:
             plan = get_coach_service().generate_week_plan_for_user(
-                request.user, language=language
+                request.user, language=ai_language
             )
             return success_response(
+                code="COACH_WEEK_PLAN_SUCCESS",
                 data=plan.model_dump(),
-                message="Programme nutritionnel généré avec succès.",
                 status_code=status.HTTP_200_OK,
             )
         except RuntimeError:
             return error_response(
-                message="Service coach indisponible. Vérifiez la configuration IA.",
+                code="COACH_WEEK_PLAN_SERVICE_UNAVAILABLE",
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
         except MissingProgressRecord:
             return error_response(
-                message="Veuillez d'abord enregistrer vos informations (poids/taille/objectif) avant de générer un programme.",
+                code="COACH_WEEK_PLAN_MISSING_PROGRESS",
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
         except MissingNutritionPreferences:
             return error_response(
-                message="Veuillez renseigner vos préférences nutritionnelles avant de générer un programme.",
+                code="COACH_WEEK_PLAN_MISSING_PREFS",
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
         except Exception:
             return error_response(
-                message="Une erreur est survenue lors de la génération.",
-                status_code=500,
+                code="COACH_WEEK_PLAN_FAILED",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

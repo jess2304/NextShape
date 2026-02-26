@@ -13,8 +13,9 @@ export const useProgressRecords = defineStore("progressRecords", {
   actions: {
     async getProgressRecords() {
       try {
-        const data = await getProgressRecords()
-        this.progressRecords = data
+        const response = await getProgressRecords()
+        this.progressRecords = response.data
+        return response
       } catch (error) {
         throw error
       }
@@ -23,8 +24,9 @@ export const useProgressRecords = defineStore("progressRecords", {
       try {
         const index = this.progressRecords.findIndex((r) => r.id === id)
         if (index !== -1) {
-          const updatedRecord = await updateRecord(id, payload)
-          this.progressRecords[index] = updatedRecord
+          const response = await updateRecord(id, payload)
+          this.progressRecords[index] = response.data
+          return response
         }
       } catch (error) {
         throw error
@@ -34,8 +36,9 @@ export const useProgressRecords = defineStore("progressRecords", {
       try {
         const index = this.progressRecords.findIndex((r) => r.id === id)
         if (index !== -1) {
-          await deleteRecord(id)
+          const response = await deleteRecord(id)
           this.progressRecords.splice(index, 1)
+          return response
         }
       } catch (error) {
         throw error

@@ -1,32 +1,21 @@
-// Response to calories computation
-export interface CaloriesResponse {
+// Generic API response envelope
+export interface ApiResponse<T = unknown, E = Record<string, any>> {
   success: boolean
+  code: string
   message: string
-  data: {
-    bmr: number
-    tdee: number
-    calories_recommandees: number
-  }
+  data: T
+  errors?: E
 }
 
-// Response to login
-export interface LoginResponse {
-  data: {
-    first_name: string
-    last_name: string
-    email: string
-    gender: string
-    birth_date: string
-    phone_number: string
-  }
-  access: string
+// Response to calories computation
+export interface CaloriesData {
+  bmr: number
+  tdee: number
+  calories_recommandees: number
 }
 
 // Response to verify code
-export interface VerifyCodeResponse {
-  success: boolean
-  message: string
-}
+export type VerifyCodeResponse = ApiResponse<{ valid: boolean }>
 
 // User structure
 export interface User {

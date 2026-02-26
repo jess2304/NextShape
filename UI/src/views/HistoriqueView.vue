@@ -3,7 +3,12 @@ import Fieldset from "primevue/fieldset"
 import Avatar from "primevue/avatar"
 import { useProgressRecords } from "@/stores/progressRecordsStore"
 import { computed, onMounted, ref } from "vue"
-import { showToast, formatDate } from "@/assets/js/utils"
+import {
+  formatDate,
+  resolveApiErrorMessage,
+  resolveApiMessage,
+  showToast,
+} from "@/assets/js/utils"
 import { ACTIVITY_DESCRIPTIONS, ACTIVITY_LEVELS } from "@/assets/js/constants"
 import { useToast } from "primevue"
 import DataTable from "primevue/datatable"
@@ -29,9 +34,7 @@ onMounted(async () => {
       toast,
       "error",
       "Erreur",
-      error?.response?.data?.errors?.non_field_errors?.[0] ||
-        error?.response?.data?.message ||
-        "Échec du chargement de votre historique"
+      resolveApiErrorMessage(error, "Échec du chargement de votre historique")
     )
   }
 })
@@ -89,7 +92,7 @@ const onRowEditSave = async (event: any) => {
   }
 
   try {
-    await progressRecordsStore.updateRecord(newData.id, {
+    const response = await progressRecordsStore.updateRecord(newData.id, {
       weight_kg: newData.weight_kg,
       height_cm: newData.height_cm,
       goal: newData.goal,
@@ -99,34 +102,35 @@ const onRowEditSave = async (event: any) => {
       toast,
       "success",
       "Succès",
-      "La mise à jour a été faite avec succès"
+      resolveApiMessage(response, "La mise à jour a été faite avec succès")
     )
   } catch (error: any) {
     showToast(
       toast,
       "error",
       "Erreur",
-      error?.response?.data?.errors?.non_field_errors?.[0] ||
-        error?.response?.data?.message ||
-        "Échec de l'enregistrement"
+      resolveApiErrorMessage(error, "Échec de l'enregistrement")
     )
   }
 }
 
 const deleteRecord = async (id: number) => {
   try {
-    await progressRecordsStore.deleteRecord(id)
+    const response = await progressRecordsStore.deleteRecord(id)
     toast.add({
       severity: "success",
       summary: "Supprimé",
-      detail: "Enregistrement supprimé",
+      detail: resolveApiMessage(response, "Enregistrement supprimé"),
       life: 3000,
     })
   } catch (err) {
     toast.add({
       severity: "error",
       summary: "Erreur",
-      detail: "Impossible de supprimer l'enregistrement",
+      detail: resolveApiErrorMessage(
+        err,
+        "Impossible de supprimer l'enregistrement"
+      ),
       life: 3000,
     })
   }

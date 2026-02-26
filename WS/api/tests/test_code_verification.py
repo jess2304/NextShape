@@ -16,7 +16,7 @@ def test_send_code_registration_success():
 
     assert isinstance(response, Response)
     assert response.status_code == 200
-    assert response.data and response.data["message"] == "Code envoyé avec succès."
+    assert response.data and response.data["code"] == "VERIFICATION_CODE_SENT"
     assert EmailVerificationCode.objects.filter(email="user@test.com").exists()
 
 
@@ -46,7 +46,7 @@ def test_send_code_reset_password_success():
 
     assert isinstance(response, Response)
     assert response.status_code == 200
-    assert response.data and response.data["message"] == "Code envoyé avec succès."
+    assert response.data and response.data["code"] == "VERIFICATION_CODE_SENT"
     assert EmailVerificationCode.objects.filter(email="user@test.com").exists()
 
 
@@ -77,6 +77,7 @@ def test_verify_code_valid():
     assert isinstance(response, Response)
     assert response.status_code == 200
     assert response.data and response.data["data"]["valid"] is True
+    assert response.data["code"] == "VERIFICATION_CODE_VALID"
 
 
 @pytest.mark.django_db
@@ -99,7 +100,7 @@ def test_verify_code_expired():
     assert response.data
     assert response.data["success"] is False
     assert response.data["data"]["valid"] is False
-    assert response.data["message"] == "Code expiré"
+    assert response.data["code"] == "VERIFICATION_CODE_EXPIRED"
 
 
 @pytest.mark.django_db
@@ -115,7 +116,7 @@ def test_verify_code_incorrect():
     assert response.data
     assert response.data["success"] is False
     assert response.data["data"]["valid"] is False
-    assert response.data["message"] == "Code incorrect"
+    assert response.data["code"] == "VERIFICATION_CODE_INCORRECT"
 
 
 @pytest.mark.django_db
@@ -130,7 +131,7 @@ def test_verify_code_validation_error():
     assert response.data
     assert response.data["success"] is False
     assert "code" in response.data["errors"]
-    assert response.data["message"] == "Ce code est invalide."
+    assert response.data["code"] == "VERIFICATION_CODE_INVALID_REQUEST"
 
 
 # Password reset
@@ -148,7 +149,4 @@ def test_reset_password_success():
     assert response.status_code == 200
     user.refresh_from_db()
     assert user.check_password("newPassword")
-    assert (
-        response.data
-        and response.data["message"] == "Mot de passe mis à jour avec succès"
-    )
+    assert response.data and response.data["code"] == "PASSWORD_RESET_SUCCESS"

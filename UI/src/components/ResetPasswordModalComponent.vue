@@ -6,7 +6,11 @@ import InputText from "primevue/inputtext"
 import InputOtp from "primevue/inputotp"
 import { useAuthStore } from "@/stores/authStore"
 import { useToast } from "primevue/usetoast"
-import { showToast } from "@/assets/js/utils"
+import {
+  resolveApiErrorMessage,
+  resolveApiMessage,
+  showToast,
+} from "@/assets/js/utils"
 
 const props = defineProps({
   visible: Boolean,
@@ -55,28 +59,31 @@ const sendCode = async () => {
 
   // Send verification code
   try {
-    await authStore.sendVerificationCode(email.value, "reset-password")
+    const response = await authStore.sendVerificationCode(
+      email.value,
+      "reset-password"
+    )
     step.value = 2
     showToast(
       toast,
       "info",
       "Code envoyé",
-      "Un code vous a été envoyé par e-mail."
+      resolveApiMessage(response, "Un code vous a été envoyé par e-mail.")
     )
   } catch (err: any) {
-    const detail =
-      err?.response?.data?.email?.[0] ||
-      "Échec de l'envoi du code. Veuillez réessayer."
-    showToast(toast, "error", "Erreur", detail)
+    showToast(
+      toast,
+      "error",
+      "Erreur",
+      resolveApiErrorMessage(err, String(err || "Échec de l'envoi du code."))
+    )
   } finally {
     loading.value = false
   }
 }
 
-// Code verification
 const verifyCode = async () => {
   invalidFields.value.code = false
-  // Ensure the code exists and has 6 digits
   if (!code.value || code.value.length !== 6) {
     invalidFields.value.code = true
     showToast(toast, "error", "Erreur", "Veuillez entrer un code valide")
@@ -84,17 +91,24 @@ const verifyCode = async () => {
   }
   loading.value = true
 
-  // Validate code
   try {
     const response = await authStore.verifyCode(email.value, code.value)
     if (response.success) {
       step.value = 3
-      showToast(toast, "success", "Succès", response.message)
+      showToast(toast, "success", "Succès", resolveApiMessage(response))
     } else {
-      showToast(toast, "error", "Erreur", response.message)
+      showToast(toast, "error", "Erreur", resolveApiMessage(response))
     }
-  } catch {
-    showToast(toast, "error", "Erreur", "Erreur lors de la vérification")
+  } catch (error: any) {
+    showToast(
+      toast,
+      "error",
+      "Erreur",
+      resolveApiErrorMessage(
+        error,
+        String(error || "Erreur lors de la vérification")
+      )
+    )
   } finally {
     loading.value = false
   }
@@ -124,21 +138,23 @@ const updatePassword = async () => {
   }
   loading.value = true
 
-  // Update password
   try {
     const response = await authStore.resetPassword(
       email.value,
       newPassword.value
     )
-    showToast(toast, "success", "Succès", response.message)
+    showToast(toast, "success", "Succès", resolveApiMessage(response))
     emits("validated", { email: email.value })
     closeModal()
-  } catch (err) {
+  } catch (err: any) {
     showToast(
       toast,
       "error",
       "Erreur",
-      "Erreur lors de la mise à jour du mot de passe."
+      resolveApiErrorMessage(
+        err,
+        String(err || "Erreur lors de la mise à jour du mot de passe.")
+      )
     )
   } finally {
     loading.value = false

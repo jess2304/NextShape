@@ -1,10 +1,10 @@
 import { defineStore } from "pinia"
 import {
-  sendVerificationCode,
-  verifyCode,
-  updateProfile,
-  deleteAccount,
-  resetPassword,
+  sendVerificationCode as sendVerificationCodeRequest,
+  verifyCode as verifyCodeRequest,
+  updateProfile as updateProfileRequest,
+  deleteAccount as deleteAccountRequest,
+  resetPassword as resetPasswordRequest,
   registerUser,
   loginUser,
   logoutUser,
@@ -13,6 +13,7 @@ import {
 import router from "@/router"
 import { useProgressRecord } from "@/stores/progressRecordStore"
 import { User, VerifyCodeResponse } from "@/assets/js/interfaces"
+import { resolveApiErrorMessage } from "@/assets/js/utils"
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -21,7 +22,6 @@ export const useAuthStore = defineStore("auth", {
 
   actions: {
     async register(userData: any) {
-      // Call service to register a new user
       const payload = {
         username: userData.email,
         first_name: userData.first_name,
@@ -36,31 +36,27 @@ export const useAuthStore = defineStore("auth", {
         const response = await registerUser(payload)
         return response.data
       } catch (error: any) {
-        throw error.response?.data?.message || "Erreur lors de l'inscription."
+        throw resolveApiErrorMessage(error, "Erreur lors de l'inscription.")
       }
     },
+
     async login(credentials: { email: string; password: string }) {
-      // Call service to log in
       try {
         const response = await loginUser(credentials)
-        const user = response.data
-        this.setUser(user)
+        this.setUser(response.data)
         const progressStore = useProgressRecord()
         progressStore.$reset()
-        return response.data
+        return response
       } catch (error: any) {
-        throw error.response?.data?.message || "Erreur lors de la connexion."
+        throw resolveApiErrorMessage(error, "Erreur lors de la connexion.")
       }
     },
-    setUser(
-      // Setter to update user data.
-      userData: User
-    ) {
+
+    setUser(userData: User) {
       this.user = userData
     },
 
     async logout() {
-      // Logout the user.
       try {
         await logoutUser()
       } catch {
@@ -71,6 +67,7 @@ export const useAuthStore = defineStore("auth", {
         router.push("/connexion")
       }
     },
+
     async checkAuthentication() {
       const isAuthenticated = await checkAuthentication()
       if (!isAuthenticated) {
@@ -81,28 +78,29 @@ export const useAuthStore = defineStore("auth", {
 
     async updateProfileField(field: string, value: any) {
       const payload: Record<string, any> = { [field]: value }
-      // Call service to update one user field.
       try {
-        const response = await updateProfile(payload)
+        const response = await updateProfileRequest(payload)
         this.user = response.data
-        return response.data
+        return response
       } catch (error: any) {
-        throw (
-          error.response?.data?.message ||
+        throw resolveApiErrorMessage(
+          error,
           "Erreur lors de la mise à jour de votre profil."
         )
       }
     },
 
     async deleteAccount() {
-      // Call service to delete the user account.
       try {
-        await deleteAccount()
+        const response = await deleteAccountRequest()
         await this.logout()
-        // Redirect to the home page
         router.push("/")
+        return response
       } catch (error) {
-        throw error
+        throw resolveApiErrorMessage(
+          error,
+          "Échec de la suppression du compte."
+        )
       }
     },
 
@@ -111,23 +109,28 @@ export const useAuthStore = defineStore("auth", {
       context: "registration" | "reset-password"
     ) {
       try {
-        await sendVerificationCode(email, context)
+        return await sendVerificationCodeRequest(email, context)
       } catch (error) {
-        throw error
+        throw resolveApiErrorMessage(error, "Échec de l'envoi du code.")
       }
     },
 
     async verifyCode(email: string, code: string): Promise<VerifyCodeResponse> {
-      const response = await verifyCode(email, code)
-      return response
+      try {
+        return await verifyCodeRequest(email, code)
+      } catch (error) {
+        throw resolveApiErrorMessage(error, "Erreur lors de la vérification.")
+      }
     },
 
     async resetPassword(email: string, newPassword: string) {
       try {
-        const response = await resetPassword(email, newPassword)
-        return response
+        return await resetPasswordRequest(email, newPassword)
       } catch (error) {
-        throw error
+        throw resolveApiErrorMessage(
+          error,
+          "Erreur lors de la mise à jour du mot de passe."
+        )
       }
     },
   },
