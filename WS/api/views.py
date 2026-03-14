@@ -7,7 +7,12 @@ from api.health_coach.exceptions import (
     MissingProgressRecord,
 )
 from api.health_coach.service import HealthCoachService
-from api.models import EmailVerificationCode, ProgressRecord, UserNutritionPreferences
+from api.models import (
+    EmailVerificationCode,
+    ProgressRecord,
+    UserNutritionPreferences,
+    UserWeekNutritionPlan,
+)
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from next_shape_ws.settings import COOKIE_PARAMS
@@ -522,15 +527,40 @@ def get_coach_service() -> HealthCoachService:
 class GenerateWeekNutritionPlanView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        try:
+            saved_plan = UserWeekNutritionPlan.objects.get(user=request.user)
+            return success_response(
+                code="COACH_WEEK_PLAN_SUCCESS",
+                data={
+                    "plan": saved_plan.plan_payload,
+                    "updated_at": saved_plan.updated_at.isoformat(),
+                },
+                status_code=status.HTTP_200_OK,
+            )
+        except UserWeekNutritionPlan.DoesNotExist:
+            return success_response(
+                code="COACH_WEEK_PLAN_SUCCESS",
+                data={"plan": None, "updated_at": None},
+                status_code=status.HTTP_200_OK,
+            )
+
     def post(self, request):
         ai_language = getattr(settings, "AI_LANGUAGE", "FR")
         try:
             plan = get_coach_service().generate_week_plan_for_user(
                 request.user, language=ai_language
             )
+            saved_plan, _ = UserWeekNutritionPlan.objects.update_or_create(
+                user=request.user,
+                defaults={"plan_payload": plan.model_dump()},
+            )
             return success_response(
                 code="COACH_WEEK_PLAN_SUCCESS",
-                data=plan.model_dump(),
+                data={
+                    "plan": saved_plan.plan_payload,
+                    "updated_at": saved_plan.updated_at.isoformat(),
+                },
                 status_code=status.HTTP_200_OK,
             )
         except RuntimeError:

@@ -231,9 +231,15 @@ export const updateNutritionPreferences = async (
 }
 
 export const generateWeekNutritionPlan = async () => {
-  const response = await api.post<ApiResponse<NutritionWeekPlan>>(
-    "coach/week-plan/",
-    {}
-  )
+  const response = await api.post<
+    ApiResponse<{ plan: NutritionWeekPlan; updated_at: string | null }>
+  >("coach/week-plan/", {})
+  return response.data
+}
+
+export const getWeekNutritionPlan = async () => {
+  const response = await api.get<
+    ApiResponse<{ plan: NutritionWeekPlan | null; updated_at: string | null }>
+  >("coach/week-plan/")
   return response.data
 }

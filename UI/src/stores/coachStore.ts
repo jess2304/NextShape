@@ -2,6 +2,7 @@ import { NutritionPreferences, NutritionWeekPlan } from "@/assets/js/interfaces"
 import { defineStore } from "pinia"
 import {
   generateWeekNutritionPlan,
+  getWeekNutritionPlan,
   getNutritionPreferences,
   updateNutritionPreferences,
 } from "@/services/apiService"
@@ -16,6 +17,7 @@ export const useCoachStore = defineStore("coach", {
       meals_per_day: 3,
     } as NutritionPreferences,
     weekPlan: null as NutritionWeekPlan | null,
+    weekPlanUpdatedAt: null as string | null,
     isPlanLoading: false,
   }),
 
@@ -54,7 +56,20 @@ export const useCoachStore = defineStore("coach", {
       this.isPlanLoading = true
       try {
         const response = await generateWeekNutritionPlan()
-        this.weekPlan = response.data
+        this.weekPlan = response.data.plan
+        this.weekPlanUpdatedAt = response.data.updated_at
+        return response
+      } finally {
+        this.isPlanLoading = false
+      }
+    },
+
+    async loadWeekPlan() {
+      this.isPlanLoading = true
+      try {
+        const response = await getWeekNutritionPlan()
+        this.weekPlan = response.data.plan
+        this.weekPlanUpdatedAt = response.data.updated_at
         return response
       } finally {
         this.isPlanLoading = false

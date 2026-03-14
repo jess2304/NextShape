@@ -15,7 +15,7 @@ import Tabs from "primevue/tabs"
 import { useToast } from "primevue/usetoast"
 import { useCoachStore } from "@/stores/coachStore"
 import { SUPPLEMENT_OPTIONS } from "@/assets/js/constants"
-import { onMounted } from "vue"
+import { computed, onMounted } from "vue"
 import { resolveApiErrorMessage, resolveApiMessage } from "@/assets/js/utils"
 
 const coachStore = useCoachStore()
@@ -59,6 +59,22 @@ const savePreferences = async () => {
   }
 }
 
+const loadWeekPlan = async () => {
+  try {
+    return await coachStore.loadWeekPlan()
+  } catch (err: any) {
+    toast.add({
+      severity: "error",
+      summary: "Erreur",
+      detail: resolveApiErrorMessage(
+        err,
+        "Impossible de charger le plan hebdo sauvegarde."
+      ),
+      life: 4000,
+    })
+  }
+}
+
 const buildWeekPlan = async () => {
   try {
     const response = await coachStore.buildWeekPlan()
@@ -81,8 +97,22 @@ const buildWeekPlan = async () => {
   }
 }
 
+const formattedWeekPlanUpdatedAt = computed(() => {
+  if (!coachStore.weekPlanUpdatedAt) {
+    return null
+  }
+  const parsed = new Date(coachStore.weekPlanUpdatedAt)
+  if (Number.isNaN(parsed.getTime())) {
+    return coachStore.weekPlanUpdatedAt
+  }
+  return new Intl.DateTimeFormat("fr-FR", {
+    dateStyle: "long",
+    timeStyle: "short",
+  }).format(parsed)
+})
+
 onMounted(async () => {
-  await loadPreferences()
+  await Promise.all([loadPreferences(), loadWeekPlan()])
 })
 </script>
 
@@ -208,6 +238,13 @@ onMounted(async () => {
             </div>
 
             <div v-else class="flex flex-column gap-3">
+              <div
+                v-if="formattedWeekPlanUpdatedAt"
+                class="text-sm text-gray-600"
+              >
+                Dernière mise à jour; le {{ formattedWeekPlanUpdatedAt }}
+              </div>
+
               <div
                 class="text-sm border-1 border-gray-200 border-round p-2 bg-white"
               >

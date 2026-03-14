@@ -96,3 +96,24 @@ class UserNutritionPreferences(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class UserWeekNutritionPlan(models.Model):
+    """
+    One stored weekly nutrition plan per user.
+    """
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="week_nutrition_plan",
+    )
+    plan_payload = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return f"WeekPlan<{self.user_id}>"
