@@ -13,6 +13,9 @@ import {
 } from "@/assets/js/interfaces"
 
 const API_URL = import.meta.env.VITE_API_URL
+const COACH_PLAN_TIMEOUT_MS = Number(
+  import.meta.env.VITE_COACH_PLAN_TIMEOUT_MS || 300000
+)
 
 const api = axios.create({
   baseURL: API_URL,
@@ -233,7 +236,15 @@ export const updateNutritionPreferences = async (
 export const generateWeekNutritionPlan = async () => {
   const response = await api.post<
     ApiResponse<{ plan: NutritionWeekPlan; updated_at: string | null }>
-  >("coach/week-plan/", {})
+  >(
+    "coach/week-plan/",
+    {},
+    {
+      timeout: COACH_PLAN_TIMEOUT_MS,
+      timeoutErrorMessage:
+        "La génération du plan prend plus de temps que prévu. Réessayez dans un instant.",
+    }
+  )
   return response.data
 }
 
