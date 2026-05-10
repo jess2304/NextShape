@@ -14,14 +14,6 @@ pipeline {
                 sh 'docker compose -f docker-compose.ci.yml config --quiet'
             }
         }
-        stage('Frontend Build') {
-            steps {
-                dir('UI') {
-                    sh 'npm ci'
-                    sh 'npm run build'
-                }
-            }
-        }
         stage('Build Images') {
             steps {
                 sh 'docker compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.ci.yml build'
