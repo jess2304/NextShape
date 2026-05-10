@@ -32,4 +32,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: pytest -q
+    command: pytest -q --junitxml=/tmp/test-results/pytest.xml
+    volumes:
+      - ./test-results:/tmp/test-results

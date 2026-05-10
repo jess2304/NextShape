@@ -14,9 +14,22 @@ pipeline {
                 sh 'docker compose -f docker-compose.ci.yml config --quiet'
             }
         }
+        stage('Frontend Build') {
+            steps {
+                dir('UI') {
+                    sh 'npm ci'
+                    sh 'npm run build'
+                }
+            }
+        }
         stage('Build Images') {
             steps {
                 sh 'docker compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.ci.yml build'
+            }
+        }
+        stage('Prepare Test Reports') {
+            steps {
+                sh 'rm -rf test-results && mkdir -p test-results'
             }
         }
         stage('Run Backend Tests') {
@@ -28,6 +41,7 @@ pipeline {
 
     post {
         always {
+            junit allowEmptyResults: true, testResults: 'test-results/*.xml'
             sh 'docker compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.ci.yml down -v --remove-orphans'
         }
     }
