@@ -6,7 +6,6 @@ import os
 import re
 import time
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Literal
 
 import httpx
@@ -18,13 +17,20 @@ def _build_llm_logger() -> logging.Logger:
     if logger.handlers:
         return logger
 
-    log_path = Path(__file__).resolve().parents[2] / "logger.txt"
-    handler = logging.FileHandler(log_path, encoding="utf-8")
+    log_file = os.getenv("LLM_LOG_FILE", "").strip()
+    handler: logging.Handler
+    if log_file:
+        handler = logging.FileHandler(log_file, encoding="utf-8")
+    else:
+        handler = logging.StreamHandler()
+
     handler.setFormatter(
         logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
     )
     logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
+
+    level_name = os.getenv("LLM_LOG_LEVEL", "INFO").strip().upper()
+    logger.setLevel(getattr(logging, level_name, logging.INFO))
     logger.propagate = False
     return logger
 

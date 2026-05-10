@@ -1,0 +1,42 @@
+# Secrets
+.env
+.env.*
+WS/.env
+WS/.env.*
+
+# Node / Vue
+UI/node_modules/
+UI/.vite/
+UI/dist/
+
+# Python
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+venv/
+.venv/
+WS/venv/
+WS/.venv/
+
+# Django runtime files
+WS/db.sqlite3
+WS/db.sqlite3-journal
+WS/staticfiles/
+WS/media/
+
+# Git / local tooling
+.git/
+.vscode/
+
+# Certs
+*.pem
+
+# Logs
+*.log
+WS/logger.txt

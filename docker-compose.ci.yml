@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_pass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: WS/Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000/api/
+    environment:
+      ENV: test
+      DJANGO_SECRET_KEY: test
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_NAME: test_db
+      DATABASE_USER: test_user
+      DATABASE_PASSWORD: test_pass
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      EMAIL_BACKEND: django.core.mail.backends.locmem.EmailBackend
+      VITE_API_URL: http://localhost:8000/api/
+      AI_LANGUAGE: FR
+    depends_on:
+      db:
+        condition: service_healthy
+    command: pytest -q
