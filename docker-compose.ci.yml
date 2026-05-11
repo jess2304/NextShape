@@ -12,6 +12,7 @@ services:
       retries: 5
 
   app:
+    image: nextshape-app:${IMAGE_TAG:-ci}
     build:
       context: .
       dockerfile: WS/Dockerfile

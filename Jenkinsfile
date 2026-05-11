@@ -6,6 +6,7 @@ pipeline {
     }
     environment {
         COMPOSE_PROJECT_NAME = "nextshape-ci-${BUILD_NUMBER}"
+        IMAGE_TAG = "${GIT_COMMIT}"
     }
     stages {
 
@@ -14,9 +15,14 @@ pipeline {
                 sh 'docker compose -f docker-compose.ci.yml config --quiet'
             }
         }
-        stage('Build Images') {
+        stage('Build Image') {
             steps {
                 sh 'docker compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.ci.yml build'
+            }
+        }
+        stage('Scan Image') {
+            steps {
+                sh 'trivy image --exit-code 1 --severity HIGH,CRITICAL nextshape-app:${IMAGE_TAG}'
             }
         }
         stage('Prepare Test Reports') {
