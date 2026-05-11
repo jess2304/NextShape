@@ -22,7 +22,7 @@ pipeline {
         }
         stage('Audit Backend Dependencies') {
             steps {
-                sh 'docker run --rm -v "$PWD:/app" -w /app python:3.11-slim sh -c "pip install --no-cache-dir pip-audit && pip-audit -r requirements.txt"'
+                sh 'docker run --rm -v "$PWD/WS:/app" -w /app python:3.11-slim sh -c "pip install --no-cache-dir pip-audit && pip-audit -r requirements.txt"'
             }
         }
         stage('Build Test Image') {
