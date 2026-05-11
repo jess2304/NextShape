@@ -15,6 +15,11 @@ pipeline {
                 sh 'docker compose -f docker-compose.ci.yml config --quiet'
             }
         }
+        stage('Audit Frontend Dependencies') {
+            steps {
+                sh 'docker run --rm -v "$PWD/UI:/app" -w /app node:20-alpine npm audit --audit-level=high'
+            }
+        }
         stage('Build Test Image') {
             steps {
                 sh 'docker compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.ci.yml build'
