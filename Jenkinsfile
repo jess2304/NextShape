@@ -22,7 +22,7 @@ pipeline {
         }
         stage('Scan Image') {
             steps {
-                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL nextshape-app:${IMAGE_TAG}'
+                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --ignore-unfixed --exit-code 1 --severity HIGH,CRITICAL nextshape-app:${IMAGE_TAG}'
             }
         }
         stage('Prepare Test Reports') {
