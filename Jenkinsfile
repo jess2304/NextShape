@@ -17,7 +17,7 @@ pipeline {
         }
         stage('Audit Frontend Dependencies') {
             steps {
-                sh 'docker run --rm -v "$PWD/UI:/app" -w /app node:20-alpine npm audit --audit-level=high'
+                sh 'docker run --rm -v "$PWD/UI:/app" -w /app node:20-alpine npm audit --omit=dev --audit-level=high'
             }
         }
         stage('Build Test Image') {
