@@ -12,10 +12,11 @@ services:
       retries: 5
 
   app:
-    image: nextshape-app:${IMAGE_TAG:-ci}
+    image: nextshape-app-test:${IMAGE_TAG:-ci}
     build:
       context: .
       dockerfile: WS/Dockerfile
+      target: test
       args:
         VITE_API_URL: http://localhost:8000/api/
     environment:

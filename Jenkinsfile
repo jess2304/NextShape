@@ -15,14 +15,9 @@ pipeline {
                 sh 'docker compose -f docker-compose.ci.yml config --quiet'
             }
         }
-        stage('Build Image') {
+        stage('Build Test Image') {
             steps {
                 sh 'docker compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.ci.yml build'
-            }
-        }
-        stage('Scan Image') {
-            steps {
-                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --ignore-unfixed --exit-code 1 --severity HIGH,CRITICAL nextshape-app:${IMAGE_TAG}'
             }
         }
         stage('Prepare Test Reports') {
@@ -33,6 +28,16 @@ pipeline {
         stage('Run Backend Tests') {
             steps {
                 sh 'docker compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.ci.yml up --abort-on-container-exit --exit-code-from app'
+            }
+        }
+        stage('Build Production Image') {
+            steps {
+                sh 'docker build --target production --build-arg VITE_API_URL=http://localhost:8000/api/ -t nextshape-app:${IMAGE_TAG} -f WS/Dockerfile .'
+            }
+        }
+        stage('Scan Production Image') {
+            steps {
+                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --ignore-unfixed --exit-code 1 --severity HIGH,CRITICAL nextshape-app:${IMAGE_TAG}'
             }
         }
     }

@@ -18,6 +18,8 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+RUN python -m pip install --no-cache-dir --upgrade pip setuptools wheel
+
 COPY WS/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -26,5 +28,14 @@ COPY WS/ ./
 COPY --from=frontend /app/UI/dist ./UI/dist
 
 EXPOSE 8000
+
+# Test image
+FROM backend AS test
+
+COPY WS/requirements-dev.txt ./
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+# Production image
+FROM backend AS production
 
 CMD ["gunicorn", "next_shape_ws.wsgi:application", "--bind", "0.0.0.0:8000"]
