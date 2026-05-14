@@ -50,6 +50,18 @@ pipeline {
                 sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --ignore-unfixed --exit-code 1 --severity HIGH,CRITICAL nextshape-app:${IMAGE_TAG}'
             }
         }
+        stage('Write Build Metadata') {
+            steps {
+                sh '''
+                mkdir -p build-metadata
+                echo "IMAGE_NAME=nextshape-app" > build-metadata/build-metadata/image.env
+                echo "IMAGE_TAG=${IMAGE_TAG}" >> build-metadata/build-metadata/image.env
+                echo "GIT_COMMIT=${GIT_COMMIT}" >> build-metadata/build-metadata/image.env
+                echo "BUILD_NUMBER=${BUILD_NUMBER}" >> build-metadata/build-metadata/image.env
+                echo "BUILD_URL=${BUILD_URL}" >> build-metadata/build-metadata/image.env
+                '''
+            }
+        }
     }
 
     post {
