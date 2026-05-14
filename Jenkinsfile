@@ -7,6 +7,8 @@ pipeline {
     environment {
         COMPOSE_PROJECT_NAME = "nextshape-ci-${BUILD_NUMBER}"
         IMAGE_TAG = "${GIT_COMMIT}"
+        REGISTERY = "ghcr.io"
+        REGISTERY_IMAGE = "ghcr.io/jess2304/NextShape/nextshape-app"
     }
     stages {
 
@@ -48,6 +50,19 @@ pipeline {
         stage('Scan Production Image') {
             steps {
                 sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --ignore-unfixed --exit-code 1 --severity HIGH,CRITICAL nextshape-app:${IMAGE_TAG}'
+            }
+        }
+        stage('Login to GitHub Container Registry') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'ghcr-credentials', usernameVariable: 'GHCR_USER', passwordVariable: 'GHCR_TOKEN')]) {
+                    sh 'echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin'
+                }
+            }
+        }
+        stage('Push Production Image to Registry') {
+            steps {
+                sh 'docker tag nextshape-app:${IMAGE_TAG} ${REGISTERY_IMAGE}:${IMAGE_TAG}'
+                sh 'docker push ${REGISTERY_IMAGE}:${IMAGE_TAG}'
             }
         }
         stage('Write Build Metadata') {
