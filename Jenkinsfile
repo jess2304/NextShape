@@ -7,8 +7,8 @@ pipeline {
     environment {
         COMPOSE_PROJECT_NAME = "nextshape-ci-${BUILD_NUMBER}"
         IMAGE_TAG = "${GIT_COMMIT}"
-        REGISTERY = "ghcr.io"
-        REGISTERY_IMAGE = "ghcr.io/jess2304/NextShape/nextshape-app"
+        REGISTRY = "ghcr.io"
+        REGISTRY_IMAGE = "ghcr.io/jess2304/nextshape/nextshape-app"
     }
     stages {
 
@@ -47,6 +47,20 @@ pipeline {
                 sh 'docker build --target production --build-arg VITE_API_URL=http://localhost:8000/api/ -t nextshape-app:${IMAGE_TAG} -f WS/Dockerfile .'
             }
         }
+        stage('Write Build Metadata') {
+            steps {
+                sh '''
+                mkdir -p build-metadata
+                echo "IMAGE_NAME=nextshape-app" > build-metadata/image.env
+                echo "REGISTRY_IMAGE=${REGISTRY_IMAGE}" >> build-metadata/image.env
+                echo "IMAGE_TAG=${IMAGE_TAG}" >> build-metadata/image.env
+                echo "FULL_IMAGE=${REGISTRY_IMAGE}:${IMAGE_TAG}" >> build-metadata/image.env
+                echo "GIT_COMMIT=${GIT_COMMIT}" >> build-metadata/image.env
+                echo "BUILD_NUMBER=${BUILD_NUMBER}" >> build-metadata/image.env
+                echo "BUILD_URL=${BUILD_URL}" >> build-metadata/image.env
+                '''
+            }
+        }
         stage('Scan Production Image') {
             steps {
                 sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --ignore-unfixed --exit-code 1 --severity HIGH,CRITICAL nextshape-app:${IMAGE_TAG}'
@@ -61,22 +75,10 @@ pipeline {
         }
         stage('Push Production Image to Registry') {
             steps {
-                sh 'docker tag nextshape-app:${IMAGE_TAG} ${REGISTERY_IMAGE}:${IMAGE_TAG}'
-                sh 'docker push ${REGISTERY_IMAGE}:${IMAGE_TAG}'
+                sh 'docker tag nextshape-app:${IMAGE_TAG} ${REGISTRY_IMAGE}:${IMAGE_TAG}'
+                sh 'docker push ${REGISTRY_IMAGE}:${IMAGE_TAG}'
             }
-        }
-        stage('Write Build Metadata') {
-            steps {
-                sh '''
-                mkdir -p build-metadata
-                echo "IMAGE_NAME=nextshape-app" > build-metadata/image.env
-                echo "IMAGE_TAG=${IMAGE_TAG}" >> build-metadata/image.env
-                echo "GIT_COMMIT=${GIT_COMMIT}" >> build-metadata/image.env
-                echo "BUILD_NUMBER=${BUILD_NUMBER}" >> build-metadata/image.env
-                echo "BUILD_URL=${BUILD_URL}" >> build-metadata/image.env
-                '''
-            }
-        }
+}
     }
 
     post {
