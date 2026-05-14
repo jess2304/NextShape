@@ -67,6 +67,8 @@ pipeline {
     post {
         always {
             junit allowEmptyResults: true, testResults: 'test-results/*.xml'
+            archiveArtifacts artifacts: 'test-results/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'build-metadata/*.env', allowEmptyArchive: true
             sh 'docker compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.ci.yml down -v --remove-orphans'
         }
     }
