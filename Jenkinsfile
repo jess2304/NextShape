@@ -54,11 +54,11 @@ pipeline {
             steps {
                 sh '''
                 mkdir -p build-metadata
-                echo "IMAGE_NAME=nextshape-app" > build-metadata/build-metadata/image.env
-                echo "IMAGE_TAG=${IMAGE_TAG}" >> build-metadata/build-metadata/image.env
-                echo "GIT_COMMIT=${GIT_COMMIT}" >> build-metadata/build-metadata/image.env
-                echo "BUILD_NUMBER=${BUILD_NUMBER}" >> build-metadata/build-metadata/image.env
-                echo "BUILD_URL=${BUILD_URL}" >> build-metadata/build-metadata/image.env
+                echo "IMAGE_NAME=nextshape-app" > build-metadata/image.env
+                echo "IMAGE_TAG=${IMAGE_TAG}" >> build-metadata/image.env
+                echo "GIT_COMMIT=${GIT_COMMIT}" >> build-metadata/image.env
+                echo "BUILD_NUMBER=${BUILD_NUMBER}" >> build-metadata/image.env
+                echo "BUILD_URL=${BUILD_URL}" >> build-metadata/image.env
                 '''
             }
         }
