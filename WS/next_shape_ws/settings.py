@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv_path = BASE_DIR / ".env"
-load_dotenv(dotenv_path, override=True)
+load_dotenv(dotenv_path, override=False)
 
 
 def _split_env_list(name: str, default: str = "") -> list[str]:

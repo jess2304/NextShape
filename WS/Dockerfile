@@ -38,4 +38,6 @@ RUN pip install --no-cache-dir -r requirements-dev.txt
 # Production image
 FROM backend AS production
 
+RUN DJANGO_SECRET_KEY=build-time-placeholder ENV=test python manage.py collectstatic --noinput
+
 CMD ["sh", "-c", "gunicorn next_shape_ws.wsgi:application --bind 0.0.0.0:${PORT:-8000} --access-logfile - --error-logfile -"]
