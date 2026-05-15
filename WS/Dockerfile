@@ -38,4 +38,4 @@ RUN pip install --no-cache-dir -r requirements-dev.txt
 # Production image
 FROM backend AS production
 
-CMD ["sh", "-c", "gunicorn", "next_shape_ws.wsgi:application", "--bind", "0.0.0.0:${PORT:-8000}", "--access-logfile - --error-logfile -"]
+CMD ["sh", "-c", "gunicorn next_shape_ws.wsgi:application --bind 0.0.0.0:${PORT:-8000} --access-logfile - --error-logfile -"]
