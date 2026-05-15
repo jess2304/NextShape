@@ -17,15 +17,20 @@ pipeline {
                 sh 'docker compose -f docker-compose.ci.yml config --quiet'
             }
         }
-        stage('Audit Frontend Dependencies') {
-            steps {
-                sh 'docker run --rm -v "$PWD/UI:/app" -w /app node:20-alpine npm audit --omit=dev --audit-level=high'
-            }
-        }
-        stage('Audit Backend Dependencies') {
-            steps {
-                sh 'docker run --rm -v "$PWD/WS:/app" -w /app python:3.11-slim sh -c "pip install --no-cache-dir pip-audit && pip-audit -r requirements.txt"'
-            }
+        stage('Audit Dependencies') {
+            parallel(
+                stage('Audit Frontend Dependencies'): {
+                    steps {
+                        sh 'docker run --rm -v "$PWD/UI:/app" -w /app node:20-alpine npm audit --omit=dev --audit-level=high'
+                    }
+                },
+                stage('Audit Backend Dependencies'): {
+                    steps {
+                        sh 'docker run --rm -v "$PWD/WS:/app" -w /app python:3.11-slim sh -c "pip install --no-cache-dir pip-audit && pip-audit -r requirements.txt"'
+                    }
+                }
+            )
+
         }
         stage('Build Test Image') {
             steps {
