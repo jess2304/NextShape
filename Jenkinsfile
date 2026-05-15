@@ -30,7 +30,6 @@ pipeline {
                     }
                 }
             )
-
         }
         stage('Build Test Image') {
             steps {
