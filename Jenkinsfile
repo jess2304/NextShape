@@ -49,7 +49,7 @@ pipeline {
         }
         stage('Build Production Image') {
             steps {
-                sh 'docker build --target production --build-arg VITE_API_URL=http://localhost:8000/api/ -t nextshape-app:${IMAGE_TAG} -f WS/Dockerfile .'
+                sh 'docker build --target production --build-arg VITE_API_URL=/api/ -t nextshape-app:${IMAGE_TAG} -f WS/Dockerfile .'
             }
         }
         stage('Write Build Metadata') {
