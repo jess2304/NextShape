@@ -4,6 +4,13 @@ pipeline {
     options {
         timestamps()
     }
+    parameters {
+        choice(
+            name: 'DEPLOY_ENV',
+            choices: ['none', 'staging'],
+            description: 'Select deployment target. Use none for CI only.'
+        )
+    }
     environment {
         COMPOSE_PROJECT_NAME = "nextshape-ci-${BUILD_NUMBER}"
         IMAGE_TAG = "${GIT_COMMIT}"
@@ -83,7 +90,46 @@ pipeline {
                 sh 'docker tag nextshape-app:${IMAGE_TAG} ${REGISTRY_IMAGE}:${IMAGE_TAG}'
                 sh 'docker push ${REGISTRY_IMAGE}:${IMAGE_TAG}'
             }
-}
+        }
+
+        stage('Run Staging Migrations') {
+            when {
+                expression { params.DEPLOY_ENV == 'staging' }
+            }
+            steps {
+                withCredentials([
+                    string(credentialsId: 'staging-django-secret-key', variable: 'STAGING_DJANGO_SECRET_KEY'),
+                    string(credentialsId: 'staging-database-name', variable: 'STAGING_DATABASE_NAME'),
+                    string(credentialsId: 'staging-database-user', variable: 'STAGING_DATABASE_USER'),
+                    string(credentialsId: 'staging-database-password', variable: 'STAGING_DATABASE_PASSWORD'),
+                    string(credentialsId: 'staging-database-host', variable: 'STAGING_DATABASE_HOST'),
+                    string(credentialsId: 'staging-database-port', variable: 'STAGING_DATABASE_PORT')
+                ]) {
+                    sh '''
+                    docker run --rm \
+                        -e ENV=test \
+                        -e DJANGO_SECRET_KEY="${STAGING_DJANGO_SECRET_KEY}" \
+                        -e DATABASE_NAME="${STAGING_DATABASE_NAME}" \
+                        -e DATABASE_USER="${STAGING_DATABASE_USER}" \
+                        -e DATABASE_PASSWORD="${STAGING_DATABASE_PASSWORD}" \
+                        -e DATABASE_HOST="${STAGING_DATABASE_HOST}" \
+                        -e DATABASE_PORT="${STAGING_DATABASE_PORT}" \
+                        ${REGISTRY_IMAGE}:${IMAGE_TAG} \
+                        python manage.py migrate --noinput
+                    '''
+                }
+            }
+        }
+        stage('Deploy Staging') {
+            when {
+                expression { params.DEPLOY_ENV == 'staging' }
+            }
+            steps {
+                withCredentials([string(credentialsId: 'render-staging-deploy-hook', variable: 'RENDER_DEPLOY_HOOK')]) {
+                    sh 'curl --fail --silent --show-error --request POST --get --data-urlencode "imgURL=${REGISTRY_IMAGE}:${IMAGE_TAG}" "$RENDER_DEPLOY_HOOK"'
+                }
+            }
+        }
     }
 
     post {
