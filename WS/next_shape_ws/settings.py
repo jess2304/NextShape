@@ -279,3 +279,26 @@ MODEL = os.getenv("AI_MODEL")
 
 # AI output language for coach responses
 AI_LANGUAGE = os.getenv("AI_LANGUAGE", "FR")
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "api": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
