@@ -3,7 +3,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class CookieJWTAuthentication(JWTAuthentication):
     """
-    Lit le token JWT depuis les cookies.
+    Read JWT token from cookies.
     """
 
     def authenticate(self, request):

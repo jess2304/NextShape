@@ -8,7 +8,7 @@ import AccordionHeader from "primevue/accordionheader"
 import AccordionPanel from "primevue/accordionpanel"
 import AccordionContent from "primevue/accordioncontent"
 
-// Appel des stores
+// Store
 const progressRecordStore = useProgressRecord()
 
 const formattedGender = computed(() => {
@@ -45,7 +45,7 @@ const calories = computed(
       Récapitulatif & Calcul
     </h2>
 
-    <!-- Section Informations -->
+    <!-- Information section -->
     <div class="card shadow-2 p-4 mb-5 border-round">
       <h3 class="text-2xl font-semibold text-surface-700 mb-3">
         Vos informations

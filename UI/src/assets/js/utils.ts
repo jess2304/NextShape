@@ -3,6 +3,7 @@ import {
   InternalAxiosRequestConfig,
   AxiosRequestHeaders,
 } from "axios"
+import { API_MESSAGES_FR } from "@/assets/js/messages.fr"
 
 const isPlainObject = (v: unknown) =>
   Object.prototype.toString.call(v) === "[object Object]"
@@ -50,6 +51,51 @@ export const showToast = (
     detail,
     life: 5000,
   })
+}
+
+const extractFirstError = (errors: any): string | null => {
+  if (!errors) return null
+  if (Array.isArray(errors) && errors.length) return String(errors[0])
+  if (typeof errors === "object") {
+    for (const value of Object.values(errors)) {
+      if (Array.isArray(value) && value.length) return String(value[0])
+      if (value) return String(value)
+    }
+  }
+  if (typeof errors === "string") return errors
+  return null
+}
+
+export const resolveApiMessage = (
+  payload: any,
+  fallback = "Une erreur est survenue."
+): string => {
+  if (!payload || typeof payload !== "object") return fallback
+
+  const code = typeof payload.code === "string" ? payload.code : ""
+  if (code && API_MESSAGES_FR[code]) {
+    return API_MESSAGES_FR[code]
+  }
+
+  if (typeof payload.message === "string" && payload.message.trim()) {
+    return payload.message
+  }
+
+  if (typeof payload.detail === "string" && payload.detail.trim()) {
+    return payload.detail
+  }
+
+  const firstError = extractFirstError(payload.errors)
+  return firstError || fallback
+}
+
+export const resolveApiErrorMessage = (
+  error: any,
+  fallback = "Une erreur est survenue."
+): string => {
+  const payload = error?.response?.data
+  if (!payload) return fallback
+  return resolveApiMessage(payload, fallback)
 }
 
 export const getAgeFromBirthDate = (

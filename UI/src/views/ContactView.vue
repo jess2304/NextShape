@@ -6,7 +6,11 @@ import Textarea from "primevue/textarea"
 import Button from "primevue/button"
 import Card from "primevue/card"
 import { sendMail } from "@/services/apiService"
-import { showToast } from "@/assets/js/utils"
+import {
+  resolveApiErrorMessage,
+  resolveApiMessage,
+  showToast,
+} from "@/assets/js/utils"
 
 const name = ref("")
 const email = ref("")
@@ -25,7 +29,7 @@ const sendMessage = async () => {
     return
   }
   try {
-    await sendMail({
+    const response = await sendMail({
       name: name.value,
       email: email.value,
       message: message.value,
@@ -34,7 +38,7 @@ const sendMessage = async () => {
       toast,
       "success",
       "Message envoyé",
-      "Nous vous répondrons bientôt !"
+      resolveApiMessage(response, "Nous vous répondrons bientôt !")
     )
     name.value = ""
     email.value = ""
@@ -44,9 +48,7 @@ const sendMessage = async () => {
       toast,
       "error",
       "Erreur",
-      error?.response?.data?.errors?.non_field_errors?.[0] ||
-        error?.response?.data?.message ||
-        "Échec de l'envoi de votre message." + error
+      resolveApiErrorMessage(error, "Échec de l'envoi de votre message.")
     )
   }
 }

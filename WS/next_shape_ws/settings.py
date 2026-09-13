@@ -14,27 +14,51 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv_path = BASE_DIR / ".env"
-load_dotenv(dotenv_path, override=True)
+load_dotenv(dotenv_path, override=False)
+
+
+def _split_env_list(name: str, default: str = "") -> list[str]:
+    raw_value = os.getenv(name, default)
+    return [item.strip() for item in raw_value.split(",") if item.strip()]
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw_value = os.getenv(name)
+    if raw_value is None:
+        return default
+    return raw_value.strip().lower() in {"1", "true", "yes", "on"}
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-secret-key-for-dev")
-
 # Environment
-ENV = os.getenv("ENV", "local")
+ENV = os.getenv("ENV", "local").strip().lower()
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is required.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = ENV == "local"
+IS_PRODUCTION_LIKE = ENV not in {"local", "test"}
 
-ALLOWED_HOSTS: list = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = _split_env_list("DJANGO_ALLOWED_HOSTS", "localhost")
+if IS_PRODUCTION_LIKE and ALLOWED_HOSTS == ["localhost"]:
+    raise ImproperlyConfigured(
+        "DJANGO_ALLOWED_HOSTS must be configured outside local/test."
+    )
+
+CSRF_TRUSTED_ORIGINS = _split_env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
+CORS_ALLOWED_ORIGINS = _split_env_list("DJANGO_CORS_ALLOWED_ORIGINS")
 
 
 # Application definition
@@ -51,8 +75,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -85,7 +109,44 @@ WSGI_APPLICATION = "next_shape_ws.wsgi.application"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("api.authentication.CookieJWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "EXCEPTION_HANDLER": "api.exception_handlers.api_exception_handler",
+    "DEFAULT_THROTTLE_RATES": {
+        "register": os.getenv("THROTTLE_REGISTER_RATE", "20/hour"),
+        "login": os.getenv("THROTTLE_LOGIN_RATE", "30/hour"),
+        "refresh_access": os.getenv("THROTTLE_REFRESH_ACCESS_RATE", "120/hour"),
+        "send_code_registration": os.getenv(
+            "THROTTLE_SEND_CODE_REGISTRATION_RATE", "10/hour"
+        ),
+        "send_code_reset_password": os.getenv(
+            "THROTTLE_SEND_CODE_RESET_RATE", "10/hour"
+        ),
+        "verify_code": os.getenv("THROTTLE_VERIFY_CODE_RATE", "30/hour"),
+        "reset_password": os.getenv("THROTTLE_RESET_PASSWORD_RATE", "10/hour"),
+        "contact": os.getenv("THROTTLE_CONTACT_RATE", "20/hour"),
+    },
 }
+
+# Cache configuration (used by DRF throttling among other things).
+DJANGO_CACHE_URL = os.getenv("DJANGO_CACHE_URL")
+if DJANGO_CACHE_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": DJANGO_CACHE_URL,
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "nextshape-local-cache",
+        }
+    }
+    if IS_PRODUCTION_LIKE:
+        raise ImproperlyConfigured(
+            "DJANGO_CACHE_URL is required outside local/test for shared throttling. "
+            "Use a Redis URL in Render or Jenkins-managed environments."
+        )
 
 
 # Database
@@ -119,6 +180,8 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False") == "True"
+EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT") or 10)
 
 # Model for the customised User
 AUTH_USER_MODEL = "api.CustomUser"
@@ -187,12 +250,55 @@ COOKIE_PARAMS = {
     "path": "/",
 }
 
-if ENV == "local":
-    # CORS config in local when we don't use docker,
-    # we may need the access between back and front
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = _env_flag("DJANGO_SECURE_SSL_REDIRECT", False)
+
+if ENV == "local" or CORS_ALLOWED_ORIGINS:
+    # CORS is needed for the local Vite server, and can be enabled explicitly
+    # in deployed environments when the frontend and backend are on different origins.
     INSTALLED_APPS += ["corsheaders"]
     MIDDLEWARE.insert(0, "corsheaders.middleware.CorsMiddleware")
 
-    CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
+    if ENV == "local":
+        CORS_ALLOWED_ORIGINS = list(
+            dict.fromkeys([*CORS_ALLOWED_ORIGINS, "http://localhost:5173"])
+        )
     CORS_ALLOW_CREDENTIALS = True
-    CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
+    if ENV == "local":
+        CSRF_TRUSTED_ORIGINS = list(
+            dict.fromkeys([*CSRF_TRUSTED_ORIGINS, "http://localhost:5173"])
+        )
+
+# Together API Key
+TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
+
+# AI model
+MODEL = os.getenv("AI_MODEL")
+
+# AI output language for coach responses
+AI_LANGUAGE = os.getenv("AI_LANGUAGE", "FR")
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "api": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}

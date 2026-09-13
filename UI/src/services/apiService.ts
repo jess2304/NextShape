@@ -3,41 +3,47 @@ import { dateTransformer } from "@/assets/js/utils"
 import { useAuthStore } from "@/stores/authStore"
 import router from "@/router"
 import {
-  CaloriesResponse,
-  LoginResponse,
+  ApiResponse,
+  CaloriesData,
+  NutritionPreferences,
+  NutritionWeekPlan,
   ProgressRecord,
+  User,
   VerifyCodeResponse,
 } from "@/assets/js/interfaces"
 
 const API_URL = import.meta.env.VITE_API_URL
+const COACH_PLAN_TIMEOUT_MS = Number(
+  import.meta.env.VITE_COACH_PLAN_TIMEOUT_MS || 300000
+)
 
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  timeout: 20000,
-  timeoutErrorMessage: "Le serveur na pas répondu à temps (20 secondes)",
+  timeout: 60000,
+  timeoutErrorMessage: "Le serveur n'a pas répondu à temps (60 secondes)",
   transformRequest: [
     dateTransformer,
     ...((axios.defaults.transformRequest as AxiosRequestTransformer[]) || []),
   ],
 })
 
-// Intercepteur de réponse
+// Response interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     if (error.response && error.response.status === 401) {
       try {
-        // Tenter le refresh-access
+        // Attempt access token refresh
         await axios.post(`${API_URL}refresh-access/`, null, {
           withCredentials: true,
         })
 
-        // Rejouer la requête originale après refresh
+        // Replay the original request after refresh
         const config = error.config
         return api(config!)
       } catch (refreshError) {
-        // Échec du refresh donc déconnexion
+        // Refresh failed, so force logout
         const authStore = useAuthStore()
         authStore.logout()
         router.push("/connexion")
@@ -49,67 +55,83 @@ api.interceptors.response.use(
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Auth Services
+// Auth services
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Inscription
+// Registration
 export const registerUser = async (userData: any) =>
-  await api.post(`register/`, userData)
+  await api.post<ApiResponse<null>>(`register/`, userData)
 
-// Connexion
+// Login
 export const loginUser = async (credentials: {
   email: string
   password: string
 }) => {
-  const response = await api.post<LoginResponse>(`login/`, credentials)
+  const response = await api.post<ApiResponse<User>>(`login/`, credentials)
   return response.data
 }
 
-// Déconnexion
+// Logout
 export const logoutUser = async () => {
-  await api.post(`logout/`)
+  const response = await api.post<ApiResponse<null>>(`logout/`)
+  return response.data
 }
 
 export const checkAuthentication = async () => {
   try {
-    const response = await api.get("check-authentication/")
-    return response.data.authenticated
+    const response = await api.get<ApiResponse<{ authenticated: boolean }>>(
+      "check-authentication/"
+    )
+    return response.data.data.authenticated
   } catch {
     return false
   }
 }
 
-// Update du profil
+// Profile update
 export const updateProfile = async (userData: any) => {
-  const response = await api.patch("profile/", userData)
+  const response = await api.patch<ApiResponse<User>>("profile/", userData)
   return response.data
 }
 
-// Suppression du compte
-export const deleteAccount = async () => await api.delete("delete-account/")
+// Account deletion
+export const deleteAccount = async () => {
+  const response = await api.delete<ApiResponse<null>>("delete-account/")
+  return response.data
+}
 
-// Envoi de code de vérification selon un contexte
+// Send verification code based on context
 export const sendVerificationCode = async (
   email: string,
   context: "registration" | "reset-password"
-) => await api.post(`send-code-${context}/`, { email })
+) => {
+  const response = await api.post<ApiResponse<null>>(`send-code-${context}/`, {
+    email,
+  })
+  return response.data
+}
 
-// Verifier le code
+// Verify code
 export const verifyCode = async (
   email: string,
   code: string
 ): Promise<VerifyCodeResponse> => {
-  const response = await api.post("verify-code/", {
+  const response = await api.post<VerifyCodeResponse>("verify-code/", {
     email,
     code,
   })
   return response.data
 }
 
-// Réinitialiser le mot de passe
-export const resetPassword = async (email: string, password: string) => {
-  const response = await api.post("reset-password/", {
+// Reset password
+export const resetPassword = async (
+  email: string,
+  password: string,
+  code: string
+) => {
+  const response = await api.post<ApiResponse<null>>("reset-password/", {
     email,
+    code,
     password,
   })
   return response.data
@@ -125,9 +147,12 @@ export const calculateCalories = async (payload: {
   height_cm: number | null
   activity_level: string | null
   goal: string | null
-}): Promise<CaloriesResponse> => {
+}): Promise<ApiResponse<CaloriesData>> => {
   try {
-    const response = await api.post("calculate-calories/", payload)
+    const response = await api.post<ApiResponse<CaloriesData>>(
+      "calculate-calories/",
+      payload
+    )
     return response.data
   } catch (error) {
     throw error
@@ -135,11 +160,15 @@ export const calculateCalories = async (payload: {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ProgressRecords (plural) services
+// ProgressRecords services
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const getProgressRecords = async (): Promise<ProgressRecord[]> => {
+export const getProgressRecords = async (): Promise<
+  ApiResponse<ProgressRecord[]>
+> => {
   try {
-    const response = await api.get("progress-records/")
+    const response = await api.get<ApiResponse<ProgressRecord[]>>(
+      "progress-records/"
+    )
     return response.data
   } catch (error) {
     throw error
@@ -149,9 +178,12 @@ export const getProgressRecords = async (): Promise<ProgressRecord[]> => {
 export const updateRecord = async (
   id: number,
   payload: Record<string, any>
-): Promise<ProgressRecord> => {
+): Promise<ApiResponse<ProgressRecord>> => {
   try {
-    const response = await api.patch(`progress-records/${id}/`, payload)
+    const response = await api.patch<ApiResponse<ProgressRecord>>(
+      `progress-records/${id}/`,
+      payload
+    )
     return response.data
   } catch (error) {
     throw error
@@ -160,7 +192,10 @@ export const updateRecord = async (
 
 export const deleteRecord = async (id: number) => {
   try {
-    await api.delete(`progress-records/${id}/`)
+    const response = await api.delete<ApiResponse<null>>(
+      `progress-records/${id}/`
+    )
+    return response.data
   } catch (error) {
     throw error
   }
@@ -171,8 +206,51 @@ export const deleteRecord = async (id: number) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const sendMail = async (payload: Record<string, any>) => {
   try {
-    await api.post(`${API_URL}contact/`, payload)
+    const response = await api.post<ApiResponse<null>>("contact/", payload)
+    return response.data
   } catch (error) {
     throw error
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// AI coach service
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const getNutritionPreferences = async () => {
+  const response = await api.get<ApiResponse<NutritionPreferences>>(
+    "nutrition-preferences/"
+  )
+  return response.data
+}
+
+export const updateNutritionPreferences = async (
+  payload: Partial<NutritionPreferences>
+) => {
+  const response = await api.patch<ApiResponse<NutritionPreferences>>(
+    "nutrition-preferences/",
+    payload
+  )
+  return response.data
+}
+
+export const generateWeekNutritionPlan = async () => {
+  const response = await api.post<
+    ApiResponse<{ plan: NutritionWeekPlan; updated_at: string | null }>
+  >(
+    "coach/week-plan/",
+    {},
+    {
+      timeout: COACH_PLAN_TIMEOUT_MS,
+      timeoutErrorMessage:
+        "La génération du plan prend plus de temps que prévu. Réessayez dans un instant.",
+    }
+  )
+  return response.data
+}
+
+export const getWeekNutritionPlan = async () => {
+  const response = await api.get<
+    ApiResponse<{ plan: NutritionWeekPlan | null; updated_at: string | null }>
+  >("coach/week-plan/")
+  return response.data
 }

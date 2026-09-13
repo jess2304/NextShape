@@ -6,21 +6,20 @@ from rest_framework.test import APIClient
 User = get_user_model()
 
 
-# Accès sans authentification
+# Access without authentication
 @pytest.mark.django_db
 def test_profile_patch_requires_auth():
     client = APIClient()
     response = client.patch("/api/profile/", {"first_name": "Anonymous"})
     assert isinstance(response, Response)
     assert response.status_code == 401
-    assert (
-        response.data is not None
-        and response.data.get("detail")
-        == "Informations d'authentification non fournies."
-    )
+    assert response.data is not None
+    assert response.data.get("success") is False
+    assert response.data.get("code") == "AUTH_REQUIRED"
+    assert "detail" in response.data.get("errors", {})
 
 
-# Patch simple d’un field
+# Simple patch update on one field
 @pytest.mark.django_db
 def test_profile_patch_first_name():
     user = User.objects.create_user(
@@ -36,16 +35,17 @@ def test_profile_patch_first_name():
     assert isinstance(response, Response)
     assert response.data is not None
     assert response.data.get("success") is True
+    assert response.data.get("code") == "PROFILE_UPDATE_SUCCESS"
     assert response.data["data"]["first_name"] == "NewName"
 
     user.refresh_from_db()
     assert user.first_name == "NewName"
 
 
-# Update vers un numéro déjà existant
+# Update to an already-used phone number
 @pytest.mark.django_db
 def test_profile_patch_phone_number_conflict():
-    # User A avec un numéro existant
+    # User A with an existing phone number
     User.objects.create_user(
         email="a@test.com",
         username="a@test.com",
@@ -64,10 +64,11 @@ def test_profile_patch_phone_number_conflict():
     assert isinstance(response, Response)
     assert response.data is not None
     assert response.data.get("success") is False
+    assert response.data.get("code") == "PROFILE_UPDATE_FAILED"
     assert "phone_number" in response.data.get("errors")
 
 
-# Update email et vérifie que le username a changé aussi
+# Update email and verify username is updated too
 @pytest.mark.django_db
 def test_profile_patch_email_sets_username():
     user = User.objects.create_user(

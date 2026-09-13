@@ -18,7 +18,7 @@ const code = ref("")
 const error = ref("")
 
 const submit = () => {
-  // Vérifie si le code est mentionné et s'il est validé.
+  // Ensure a code was entered before validating.
   if (code.value.trim() === "") {
     error.value = "Le code est requis"
     return
@@ -27,7 +27,7 @@ const submit = () => {
 }
 
 const cancel = () => {
-  // Annule la vérification par code.
+  // Cancel code verification.
   emits("cancelled")
   emits("update:visible", false)
 }

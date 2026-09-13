@@ -1,11 +1,15 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import Dialog from "primevue/dialog"
 import InputNumber from "primevue/inputnumber"
 import Select from "primevue/select"
 import Button from "primevue/button"
 import { ACTIVITY_LEVELS, ACTIVITY_DESCRIPTIONS } from "@/assets/js/constants"
 import { useProgressRecords } from "@/stores/progressRecordsStore"
-import { showToast } from "@/assets/js/utils"
+import {
+  resolveApiErrorMessage,
+  resolveApiMessage,
+  showToast,
+} from "@/assets/js/utils"
 import { useToast } from "primevue"
 import { ref, watch } from "vue"
 
@@ -25,7 +29,7 @@ const goalOptions: Array<Record<string, string>> = [
   { label: "Perte de poids", value: "perte" },
   { label: "Prise de masse", value: "prise" },
 ]
-// Préremplir quand on ouvre la modale
+// Load fields when opening the modal
 const load = () => {
   const record = store.progressRecords.find((r) => r.id === recordId.value)
   if (record) {
@@ -57,20 +61,20 @@ const save = async () => {
   }
 
   try {
-    await store.updateRecord(recordId.value!, {
+    const response = await store.updateRecord(recordId.value!, {
       weight_kg: weight_kg.value,
       height_cm: height_cm.value,
       activity_level: activity_level.value,
       goal: goal.value,
     })
-    showToast(toast, "success", "Succès", "Enregistrement modifié avec succès.")
+    showToast(toast, "success", "Succès", resolveApiMessage(response))
     visible.value = false
-  } catch (err) {
+  } catch (err: any) {
     showToast(
       toast,
       "error",
       "Erreur",
-      "Impossible de modifier l’enregistrement."
+      resolveApiErrorMessage(err, "Impossible de modifier l'enregistrement.")
     )
   }
 }

@@ -8,10 +8,14 @@ import { useToast } from "primevue/usetoast"
 import Button from "primevue/button"
 import Toast from "primevue/toast"
 import ResetPasswordModalComponent from "@/components/ResetPasswordModalComponent.vue"
-import { showToast, validateRequiredFields } from "@/assets/js/utils"
+import {
+  resolveApiErrorMessage,
+  showToast,
+  validateRequiredFields,
+} from "@/assets/js/utils"
 import { Credentials } from "@/assets/js/interfaces"
 
-// Initialisation des credentials et les données invalides.
+// Initialize credentials and invalid field state.
 const credentials = ref<Credentials>({ email: null, password: null })
 const invalidFields = ref<Record<string, boolean>>({
   email: false,
@@ -19,20 +23,20 @@ const invalidFields = ref<Record<string, boolean>>({
 })
 const resetPasswordVisible = ref(false)
 
-// Appel des stores et des routers
+// Store and router
 const authStore = useAuthStore()
 const toast = useToast()
 const router = useRouter()
 
-// Valider l'insertion et passer la connexion au Backend.
+// Validate input and send login request to the backend.
 const validateAndProceed = async () => {
-  // Checker si les champs obligatoires sont renseignés
+  // Check required fields
   const missingFields = validateRequiredFields(credentials.value, [
     "email",
     "password",
   ])
 
-  // Alerte champs obligatoires
+  // Warn when required fields are missing
   if (missingFields.length) {
     showToast(
       toast,
@@ -42,7 +46,7 @@ const validateAndProceed = async () => {
     )
     return
   }
-  // Tout est reseigné, on passe à la connexion
+  // All fields are set, continue with login
   try {
     await authStore.login({
       email: credentials.value.email || "",
@@ -51,8 +55,16 @@ const validateAndProceed = async () => {
     const redirectPath = router.currentRoute.value.query.redirect || "/"
     router.push(redirectPath as string)
     credentials.value = { email: null, password: null }
-  } catch (error) {
-    showToast(toast, "error", "Erreur lors de la connexion")
+  } catch (error: any) {
+    showToast(
+      toast,
+      "error",
+      "Erreur",
+      resolveApiErrorMessage(
+        error,
+        String(error || "Erreur lors de la connexion")
+      )
+    )
   }
 }
 

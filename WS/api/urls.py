@@ -1,13 +1,14 @@
 from django.urls import path
-from rest_framework.routers import DefaultRouter
 
 from .views import (
     CaloriesRecordView,
     CheckAuthenticationView,
     ContactView,
     DeleteAccountView,
+    GenerateWeekNutritionPlanView,
     LoginView,
     LogoutView,
+    NutritionPreferencesView,
     ProgressRecordsView,
     RefreshAccessView,
     RegisterView,
@@ -17,8 +18,6 @@ from .views import (
     UpdateProfileView,
     VerifyCodeView,
 )
-
-router = DefaultRouter()
 
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
@@ -57,5 +56,15 @@ urlpatterns = [
         "contact/",
         ContactView.as_view(),
         name="contact",
+    ),
+    path(
+        "nutrition-preferences/",
+        NutritionPreferencesView.as_view(),
+        name="nutrition-preferences",
+    ),
+    path(
+        "coach/week-plan/",
+        GenerateWeekNutritionPlanView.as_view(),
+        name="generate-week-plan",
     ),
 ]

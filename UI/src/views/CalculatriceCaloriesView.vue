@@ -9,14 +9,14 @@ import PhysicalActivityGoalFormComponent from "@/components/PhysicalActivityGoal
 import RecapComponent from "@/components/RecapComponent.vue"
 import { ref, onMounted, onBeforeUnmount } from "vue"
 import { useProgressRecord } from "@/stores/progressRecordStore"
-import { showToast } from "@/assets/js/utils"
+import { resolveApiErrorMessage, showToast } from "@/assets/js/utils"
 import { useToast } from "primevue"
 
-// Appel des stores
+// Store
 const progressRecordStore = useProgressRecord()
 const toast = useToast()
 
-// Vérifier si l'appareil est un smartphone ou pas (responsive design)
+// Detect mobile layout (responsive design)
 const isMobile = ref(false)
 const checkMobile = () => {
   isMobile.value = window.innerWidth < 768
@@ -45,14 +45,15 @@ const calculateCalories = async () => {
       toast,
       "error",
       "Erreur",
-      error?.response?.data?.errors?.non_field_errors?.[0] ||
-        error?.response?.data?.message ||
+      resolveApiErrorMessage(
+        error,
         "Échec de l'enregistrement des besoins caloriques"
+      )
     )
   }
 }
 
-// Init des données insérées et invalides
+// Initialize invalid field tracking
 const invalidFields = ref<Record<string, boolean>>({})
 
 const validatePersonalInformations = (): boolean => {
@@ -97,7 +98,7 @@ const handleForNextStep = async (
 }
 </script>
 <template>
-  <!-- PC -->
+  <!-- Desktop -->
   <Stepper
     v-if="!isMobile"
     value="1"
