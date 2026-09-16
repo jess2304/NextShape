@@ -61,6 +61,7 @@ export interface RegistrationForm {
   gender: string
   birth_date: Date | null
   email: string | null
+  code: string | null
   confirmEmail: string | null
   phone_number: string | null
   password: string | null

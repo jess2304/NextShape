@@ -10,6 +10,7 @@ from api.utils import calculs_calories
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import transaction
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -32,6 +33,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     username = serializers.CharField(required=False)
     password = serializers.CharField(write_only=True)
+    code = serializers.RegexField(required=True, write_only=True, regex=r"\A[0-9]{6}\Z")
 
     class Meta:
         model = User
@@ -44,6 +46,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "email",
             "phone_number",
             "password",
+            "code",
         ]
 
     def validate(self, data):
@@ -60,7 +63,32 @@ class RegisterSerializer(serializers.ModelSerializer):
         """
         Create a new user (password hashing is handled automatically).
         """
-        user = User.objects.create_user(**validated_data)
+        # Check if the provided code is valid and not expired
+        code = validated_data.pop("code")
+        email = validated_data.get("email")
+
+        # Validate the verification code
+        with transaction.atomic():
+            verification_code = (
+                EmailVerificationCode.objects.filter(
+                    email=email, code=code, is_used=False, context="registration"
+                )
+                .order_by("-created_at")
+                .first()
+            )
+
+            if verification_code is None or verification_code.is_expired():
+                raise serializers.ValidationError(
+                    "Le code de vérification est invalide ou expiré."
+                )
+
+            # Create the user
+            user = User.objects.create_user(**validated_data)
+
+            # Mark the verification code as used
+            verification_code.is_used = True
+            verification_code.used_at = timezone.now()
+            verification_code.save(update_fields=["is_used", "used_at"])
         return user
 
 
@@ -143,6 +171,13 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             "password": {"write_only": True, "required": False},
         }
 
+    def validate_email(self, value):
+        if value != self.instance.email:
+            raise serializers.ValidationError(
+                "Le changement d'adresse email nécessite une confirmation par code."
+            )
+        return value
+
     def validate_phone_number(self, value):
         if not value:
             return None
@@ -162,11 +197,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         if password:
             _validate_password_strength(password, user=instance)
             instance.set_password(password)
-
-        # Keep username aligned when email changes.
-        new_email = validated_data.get("email")
-        if new_email:
-            instance.username = new_email
+        # Handle phone number updates, allowing empty string to clear the field
         if "phone_number" in validated_data and validated_data["phone_number"] == "":
             validated_data["phone_number"] = None
         # Update remaining fields

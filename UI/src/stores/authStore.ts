@@ -31,6 +31,7 @@ export const useAuthStore = defineStore("auth", {
         email: userData.email,
         phone_number: userData.phone_number,
         password: userData.password,
+        code: userData.code,
       }
       try {
         const response = await registerUser(payload)
