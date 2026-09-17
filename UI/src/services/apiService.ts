@@ -28,15 +28,52 @@ const api = axios.create({
   ],
 })
 
+let csrfRequest: Promise<string> | null = null
+
+export const getCsrfToken = (): Promise<string> => {
+  if (csrfRequest == null) {
+    csrfRequest = api
+      .get<ApiResponse<{ csrfToken: string }>>("csrf/")
+      .then((response) => response.data.data.csrfToken)
+      .finally(() => {
+        csrfRequest = null
+      })
+  }
+  return csrfRequest
+}
+
+// Request interceptor
+api.interceptors.request.use(async (config) => {
+  const method = (config.method ?? "GET").toUpperCase()
+
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
+    const csrfToken = await getCsrfToken()
+    config.headers.set("X-CSRFToken", csrfToken)
+  }
+
+  return config
+})
+
 // Response interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    if (error.response && error.response.status === 401) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      error.config &&
+      error.config.url !== "csrf/"
+    ) {
       try {
+        // Refresh the CSRF token before attempting to refresh the access token
+        const csrfToken = await getCsrfToken()
+
         // Attempt access token refresh
         await axios.post(`${API_URL}refresh-access/`, null, {
           withCredentials: true,
+          headers: {
+            "X-CSRFToken": csrfToken,
+          },
         })
 
         // Replay the original request after refresh
