@@ -15,6 +15,7 @@ from api.models import (
 )
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.middleware.csrf import get_token
 from next_shape_ws.settings import COOKIE_PARAMS
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -40,6 +41,26 @@ from .serializers import (
 from .utils import generate_and_send_verification_code, send_contact_email
 
 User = get_user_model()
+
+
+class CsrfTokenView(APIView):
+    """
+    View to provide CSRF token for frontend.
+    """
+
+    authentication_classes: list = []
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """
+        Handle GET requests to retrieve CSRF token.
+        """
+        csrf_token = get_token(request)
+        response = success_response(
+            code="CSRF_TOKEN_SUCCESS", data={"csrfToken": csrf_token}
+        )
+        response["Cache-Control"] = "no-store"
+        return response
 
 
 class RegisterView(generics.CreateAPIView):
