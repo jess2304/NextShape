@@ -39,6 +39,7 @@ const formData = ref<RegistrationForm>({
   phone_number: null,
   password: null,
   confirmPassword: null,
+  code: null,
 })
 
 const validateAndProceed = async () => {
@@ -121,15 +122,7 @@ const handleCodeValidation = async (code: string) => {
   loading.value = true
 
   try {
-    const verification = await authStore.verifyCode(
-      formData.value.email || "",
-      code
-    )
-    if (!verification.success) {
-      showToast(toast, "error", "Erreur", resolveApiMessage(verification))
-      return
-    }
-
+    formData.value.code = code
     const registration = await authStore.register(formData.value)
     showToast(
       toast,
@@ -165,6 +158,7 @@ const resetForm = () => {
     phone_number: null,
     password: null,
     confirmPassword: null,
+    code: null,
   }
   showModal.value = false
 }

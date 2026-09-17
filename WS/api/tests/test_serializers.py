@@ -15,6 +15,9 @@ from django.utils import timezone
 # RegisterSerializer tests
 @pytest.mark.django_db
 def test_register_serializer_valid():
+    verification_code = EmailVerificationCode.objects.create(
+        email="test@test.com", code="123456", context="registration", is_used=False
+    )
     data = {
         "email": "test@test.com",
         "password": "StrongPassword!123",
@@ -22,12 +25,17 @@ def test_register_serializer_valid():
         "last_name": "User",
         "birth_date": "1999-01-01",
         "phone_number": "+3300000000",
+        "code": "123456",
     }
     serializer = RegisterSerializer(data=data)
     assert serializer.is_valid(), serializer.errors
     user = serializer.save()
     assert CustomUser.objects.filter(email="test@test.com").exists()
     assert user.username == "test@test.com"
+
+    verification_code.refresh_from_db()
+    assert verification_code.is_used is True
+    assert verification_code.used_at is not None
 
 
 @pytest.mark.django_db

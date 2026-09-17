@@ -70,9 +70,11 @@ def test_profile_patch_phone_number_conflict():
 
 # Update email and verify username is updated too
 @pytest.mark.django_db
-def test_profile_patch_email_sets_username():
+def test_profile_patch_email_change_rejected():
+    old_email = "old@test.com"
+    old_username = "old@test.com"
     user = User.objects.create_user(
-        email="old@test.com", username="old@test.com", password="password"
+        email=old_email, username=old_username, password="password"
     )
     client = APIClient()
     client.force_authenticate(user)
@@ -80,7 +82,12 @@ def test_profile_patch_email_sets_username():
     new_email = "new@test.com"
     response = client.patch("/api/profile/", {"email": new_email})
     assert isinstance(response, Response)
-    assert response.status_code == 200
+    # Expecting failure due to email change requiring code verification
+    assert response.status_code == 400
+    assert response.data is not None
+    assert response.data.get("code") == "PROFILE_UPDATE_FAILED"
+    assert "email" in response.data.get("errors")
+
     user.refresh_from_db()
-    assert user.email == new_email
-    assert user.username == new_email
+    assert user.email == old_email
+    assert user.username == old_username
