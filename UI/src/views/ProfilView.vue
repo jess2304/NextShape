@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isCancel } from "axios"
 import { computed, ref } from "vue"
 import { useAuthStore } from "@/stores/authStore"
 import Toast from "primevue/toast"
@@ -87,6 +88,7 @@ const saveEdit = async () => {
     showToast(toast, "success", "Succès", resolveApiMessage(response))
     cancelEdit()
   } catch (error: any) {
+    if (isCancel(error)) return
     showToast(
       toast,
       "error",
@@ -116,6 +118,7 @@ const confirmDeleteAccount = (event: Event) => {
         const response = await authStore.deleteAccount()
         showToast(toast, "success", "Succès", resolveApiMessage(response))
       } catch (error: any) {
+        if (isCancel(error)) return
         showToast(
           toast,
           "error",

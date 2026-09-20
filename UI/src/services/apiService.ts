@@ -1,4 +1,8 @@
-import axios, { AxiosError, AxiosRequestTransformer } from "axios"
+import axios, {
+  AxiosError,
+  AxiosRequestTransformer,
+  InternalAxiosRequestConfig,
+} from "axios"
 import { dateTransformer } from "@/assets/js/utils"
 import { useAuthStore } from "@/stores/authStore"
 import router from "@/router"
@@ -13,13 +17,19 @@ import {
 } from "@/assets/js/interfaces"
 
 const API_URL = import.meta.env.VITE_API_URL
+const REFRESH_URL = API_URL + "refresh-access/"
 const COACH_PLAN_TIMEOUT_MS = Number(
   import.meta.env.VITE_COACH_PLAN_TIMEOUT_MS || 300000
 )
 
+type RequestSignal = NonNullable<InternalAxiosRequestConfig["signal"]>
+type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean }
+
+let sessionController = new AbortController()
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
+  signal: sessionController.signal,
   timeout: 60000,
   timeoutErrorMessage: "Le serveur n'a pas répondu à temps (60 secondes)",
   transformRequest: [
@@ -29,65 +39,138 @@ const api = axios.create({
 })
 
 let csrfRequest: Promise<string> | null = null
+let refreshRequest: { signal: RequestSignal; promise: Promise<void> } | null =
+  null
+
+const assertActiveSession = (signal?: RequestSignal): void => {
+  if (signal?.aborted) throw new axios.CanceledError("Connexion terminée")
+}
+
+export const resetApiSession = (): void => {
+  const previousController = sessionController
+  sessionController = new AbortController()
+  api.defaults.signal = sessionController.signal
+  csrfRequest = null
+  refreshRequest = null
+  previousController.abort()
+}
+
+// apply et finish doivent être synchrones : aucune fonction async ici.
+export async function runSessionRequest<T>(
+  request: () => Promise<T>,
+  apply: (response: T) => void,
+  finish?: () => void
+): Promise<T> {
+  const signal = sessionController.signal
+  try {
+    const response = await request()
+    assertActiveSession(signal)
+    apply(response)
+    return response
+  } catch (error) {
+    assertActiveSession(signal)
+    throw error
+  } finally {
+    if (!signal.aborted) finish?.()
+  }
+}
 
 export const getCsrfToken = (): Promise<string> => {
-  if (csrfRequest == null) {
-    csrfRequest = api
+  if (csrfRequest === null) {
+    const request: Promise<string> = api
       .get<ApiResponse<{ csrfToken: string }>>("csrf/")
       .then((response) => response.data.data.csrfToken)
       .finally(() => {
-        csrfRequest = null
+        if (csrfRequest === request) csrfRequest = null
       })
+    csrfRequest = request
   }
   return csrfRequest
 }
 
-// Request interceptor
-api.interceptors.request.use(async (config) => {
-  const method = (config.method ?? "GET").toUpperCase()
+const refreshAccess = (signal: RequestSignal): Promise<void> => {
+  assertActiveSession(signal)
+  if (refreshRequest?.signal === signal) return refreshRequest.promise
 
+  const request: Promise<void> = (async () => {
+    const csrfToken = await getCsrfToken()
+    assertActiveSession(signal)
+    await axios.post(REFRESH_URL, null, {
+      signal,
+      withCredentials: true,
+      timeout: 60000,
+      headers: { "X-CSRFToken": csrfToken },
+    })
+    assertActiveSession(signal)
+  })().finally(() => {
+    if (refreshRequest?.promise === request) refreshRequest = null
+  })
+
+  refreshRequest = { signal, promise: request }
+  return request
+}
+
+api.interceptors.request.use(async (config) => {
+  assertActiveSession(config.signal)
+  const method = (config.method ?? "GET").toUpperCase()
   if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
     const csrfToken = await getCsrfToken()
+    assertActiveSession(config.signal)
     config.headers.set("X-CSRFToken", csrfToken)
   }
-
   return config
 })
 
-// Response interceptor
+const noRefresh = new Set(["csrf/", "login/", "logout/", "refresh-access/"])
+
+const expireLocalSession = (): void => {
+  useAuthStore().clearLocalSession(true)
+  void router.replace("/connexion")
+}
+
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    assertActiveSession(response.config.signal)
+    return response
+  },
   async (error: AxiosError) => {
+    if (axios.isCancel(error)) throw error
+    const config = error.config as RetryConfig | undefined
+    assertActiveSession(config?.signal)
+
     if (
-      error.response &&
-      error.response.status === 401 &&
-      error.config &&
-      error.config.url !== "csrf/"
+      error.response?.status !== 401 ||
+      !config?.signal ||
+      noRefresh.has(config.url ?? "") ||
+      (useAuthStore().isChangingSession && config.url !== "delete-account/")
     ) {
-      try {
-        // Refresh the CSRF token before attempting to refresh the access token
-        const csrfToken = await getCsrfToken()
-
-        // Attempt access token refresh
-        await axios.post(`${API_URL}refresh-access/`, null, {
-          withCredentials: true,
-          headers: {
-            "X-CSRFToken": csrfToken,
-          },
-        })
-
-        // Replay the original request after refresh
-        const config = error.config
-        return api(config!)
-      } catch (refreshError) {
-        // Refresh failed, so force logout
-        const authStore = useAuthStore()
-        authStore.logout()
-        router.push("/connexion")
-        return Promise.reject(refreshError)
-      }
+      throw error
     }
-    return Promise.reject(error)
+
+    if (config._retry) {
+      expireLocalSession()
+      throw new axios.CanceledError("Session expirée")
+    }
+
+    config._retry = true
+    try {
+      await refreshAccess(config.signal)
+      assertActiveSession(config.signal)
+    } catch (refreshError) {
+      assertActiveSession(config.signal)
+      if (axios.isCancel(refreshError)) throw refreshError
+      if (
+        axios.isAxiosError(refreshError) &&
+        refreshError.response?.status === 401 &&
+        refreshError.config?.url === REFRESH_URL
+      ) {
+        expireLocalSession()
+        throw new axios.CanceledError("Session expirée")
+      }
+      throw refreshError
+    }
+
+    return api(config)
   }
 )
 
@@ -114,15 +197,14 @@ export const logoutUser = async () => {
   return response.data
 }
 
-export const checkAuthentication = async () => {
-  try {
-    const response = await api.get<ApiResponse<{ authenticated: boolean }>>(
-      "check-authentication/"
-    )
-    return response.data.data.authenticated
-  } catch {
-    return false
-  }
+export const checkAuthentication = async (): Promise<{
+  authenticated: boolean
+  user: User | null
+}> => {
+  const response = await api.get<
+    ApiResponse<{ authenticated: boolean; user: User | null }>
+  >("check-authentication/")
+  return response.data.data
 }
 
 // Profile update

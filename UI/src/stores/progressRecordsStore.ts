@@ -3,6 +3,7 @@ import {
   getProgressRecords,
   updateRecord,
   deleteRecord,
+  runSessionRequest,
 } from "@/services/apiService"
 import { defineStore } from "pinia"
 
@@ -11,42 +12,33 @@ export const useProgressRecords = defineStore("progressRecords", {
     progressRecords: [] as ProgressRecord[],
   }),
   actions: {
-    async getProgressRecords() {
-      try {
-        const response = await getProgressRecords()
-        this.progressRecords = response.data
-        return response
-      } catch (error) {
-        throw error
-      }
-    },
-    async updateRecord(id: number, payload: Record<string, any>) {
-      try {
-        const index = this.progressRecords.findIndex((r) => r.id === id)
-        if (index !== -1) {
-          const response = await updateRecord(id, payload)
-          this.progressRecords[index] = response.data
-          return response
+    getProgressRecords() {
+      return runSessionRequest(
+        () => getProgressRecords(),
+        (response) => {
+          this.progressRecords = response.data
         }
-      } catch (error) {
-        throw error
-      }
+      )
     },
-    async deleteRecord(id: number) {
-      try {
-        const index = this.progressRecords.findIndex((r) => r.id === id)
-        if (index !== -1) {
-          const response = await deleteRecord(id)
-          this.progressRecords.splice(index, 1)
-          return response
+    updateRecord(id: number, payload: Record<string, any>) {
+      return runSessionRequest(
+        () => updateRecord(id, payload),
+        (response) => {
+          const index = this.progressRecords.findIndex((r) => r.id === id)
+          if (index !== -1) this.progressRecords[index] = response.data
         }
-      } catch (error) {
-        throw error
-      }
+      )
+    },
+    deleteRecord(id: number) {
+      return runSessionRequest(
+        () => deleteRecord(id),
+        () => {
+          this.progressRecords = this.progressRecords.filter((r) => r.id !== id)
+        }
+      )
     },
     reset() {
       this.progressRecords = []
     },
   },
-  persist: true,
 })

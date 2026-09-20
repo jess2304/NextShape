@@ -1,4 +1,5 @@
 ﻿<script setup lang="ts">
+import { isCancel } from "axios"
 import Dialog from "primevue/dialog"
 import InputNumber from "primevue/inputnumber"
 import Select from "primevue/select"
@@ -70,6 +71,7 @@ const save = async () => {
     showToast(toast, "success", "Succès", resolveApiMessage(response))
     visible.value = false
   } catch (err: any) {
+    if (isCancel(err)) return
     showToast(
       toast,
       "error",

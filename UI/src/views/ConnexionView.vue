@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isCancel } from "axios"
 import { ref } from "vue"
 import { useRouter } from "vue-router"
 import InputText from "primevue/inputtext"
@@ -56,6 +57,7 @@ const validateAndProceed = async () => {
     router.push(redirectPath as string)
     credentials.value = { email: null, password: null }
   } catch (error: any) {
+    if (isCancel(error)) return
     showToast(
       toast,
       "error",

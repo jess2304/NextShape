@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { isCancel } from "axios"
 import Menu from "primevue/menu"
 import Button from "primevue/button"
 import Avatar from "primevue/avatar"
 import { useRouter } from "vue-router"
 import { ref, computed } from "vue"
 import { useAuthStore } from "@/stores/authStore"
+import { useToast } from "primevue/usetoast"
 
 const router = useRouter()
+const toast = useToast()
 
 const authStore = useAuthStore()
 const isLoggedIn = computed(() => authStore.user !== null)
@@ -22,7 +25,20 @@ const userMenuItems = computed(() => [
   {
     label: "Déconnexion",
     icon: "pi pi-sign-out",
-    command: async () => await authStore.logout(),
+    command: async () => {
+      try {
+        await authStore.logout()
+      } catch (error) {
+        if (isCancel(error)) return
+        toast.add({
+          severity: "error",
+          summary: "Déconnexion impossible",
+          detail:
+            "La déconnexion n'a pas pu être confirmée. Réessaie quand le serveur est accessible.",
+          life: 5000,
+        })
+      }
+    },
   },
 ])
 </script>
