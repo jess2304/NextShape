@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isCancel } from "axios"
 import Stepper from "primevue/stepper"
 import StepList from "primevue/steplist"
 import Step from "primevue/step"
@@ -41,6 +42,7 @@ const calculateCalories = async () => {
         "Échec de l'enregistrement des besoins caloriques"
       )
   } catch (error: any) {
+    if (isCancel(error)) return
     showToast(
       toast,
       "error",

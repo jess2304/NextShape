@@ -1,5 +1,5 @@
 import { defineStore } from "pinia"
-import { calculateCalories } from "@/services/apiService"
+import { calculateCalories, runSessionRequest } from "@/services/apiService"
 import { useAuthStore } from "@/stores/authStore"
 import { getAgeFromBirthDate } from "@/assets/js/utils"
 import { ProgressRecord } from "@/assets/js/interfaces"
@@ -37,27 +37,25 @@ export const useProgressRecord = defineStore("progressRecord", {
       return Math.round(imc * 100) / 100
     },
     async calculateCalories() {
-      try {
-        const payload = {
-          gender: this.progressRecord.gender,
-          age: this.progressRecord.age,
-          date: this.progressRecord.date,
-          weight_kg: this.progressRecord.weight_kg,
-          height_cm: this.progressRecord.height_cm,
-          activity_level: this.progressRecord.activity_level,
-          goal: this.progressRecord.goal,
-        }
-        const result = await calculateCalories(payload)
-
-        this.progressRecord.bmr = result.data.bmr
-        this.progressRecord.tdee = result.data.tdee
-        this.progressRecord.calories_recommandees =
-          result.data.calories_recommandees
-        return { success: result.success, message: result.message }
-      } catch (error) {
-        throw error
+      const payload = {
+        gender: this.progressRecord.gender,
+        age: this.progressRecord.age,
+        date: this.progressRecord.date,
+        weight_kg: this.progressRecord.weight_kg,
+        height_cm: this.progressRecord.height_cm,
+        activity_level: this.progressRecord.activity_level,
+        goal: this.progressRecord.goal,
       }
+      const result = await runSessionRequest(
+        () => calculateCalories(payload),
+        (response) => {
+          this.progressRecord.bmr = response.data.bmr
+          this.progressRecord.tdee = response.data.tdee
+          this.progressRecord.calories_recommandees =
+            response.data.calories_recommandees
+        }
+      )
+      return { success: result.success, message: result.message }
     },
   },
-  persist: true,
 })

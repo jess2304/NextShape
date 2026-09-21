@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isCancel } from "axios"
 import Fieldset from "primevue/fieldset"
 import Avatar from "primevue/avatar"
 import { useProgressRecords } from "@/stores/progressRecordsStore"
@@ -30,6 +31,7 @@ onMounted(async () => {
   try {
     await progressRecordsStore.getProgressRecords()
   } catch (error: any) {
+    if (isCancel(error)) return
     showToast(
       toast,
       "error",
@@ -105,6 +107,7 @@ const onRowEditSave = async (event: any) => {
       resolveApiMessage(response, "La mise à jour a été faite avec succès")
     )
   } catch (error: any) {
+    if (isCancel(error)) return
     showToast(
       toast,
       "error",
@@ -124,6 +127,7 @@ const deleteRecord = async (id: number) => {
       life: 3000,
     })
   } catch (err) {
+    if (isCancel(err)) return
     toast.add({
       severity: "error",
       summary: "Erreur",

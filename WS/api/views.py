@@ -159,10 +159,20 @@ class CheckAuthenticationView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        return success_response(
+        authenticated = request.user.is_authenticated
+        response = success_response(
             code="AUTH_CHECK_SUCCESS",
-            data={"authenticated": request.user.is_authenticated},
+            data={
+                "authenticated": authenticated,
+                "user": (
+                    UpdateProfileSerializer(request.user).data
+                    if authenticated
+                    else None
+                ),
+            },
         )
+        response["Cache-Control"] = "no-store"
+        return response
 
 
 class RefreshAccessView(APIView):
@@ -241,7 +251,15 @@ class DeleteAccountView(APIView):
     def delete(self, request):
         user = request.user
         user.delete()
-        return success_response(code="ACCOUNT_DELETE_SUCCESS", status_code=200)
+        response = success_response(code="ACCOUNT_DELETE_SUCCESS", status_code=200)
+        for cookie in ["access_token", "refresh_token"]:
+            response.set_cookie(
+                key=cookie,
+                value="",
+                max_age=0,
+                **COOKIE_PARAMS,
+            )
+        return response
 
 
 class SendCodeForRegistrationView(APIView):

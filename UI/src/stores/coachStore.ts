@@ -1,3 +1,4 @@
+import { CanceledError } from "axios"
 import { NutritionPreferences, NutritionWeekPlan } from "@/assets/js/interfaces"
 import { defineStore } from "pinia"
 import {
@@ -5,6 +6,7 @@ import {
   getWeekNutritionPlan,
   getNutritionPreferences,
   updateNutritionPreferences,
+  runSessionRequest,
 } from "@/services/apiService"
 
 export const useCoachStore = defineStore("coach", {
@@ -22,59 +24,72 @@ export const useCoachStore = defineStore("coach", {
   }),
 
   actions: {
-    async loadNutritionPreferences() {
-      const response = await getNutritionPreferences()
-      this.nutritionPreferences = {
-        allergies: response.data.allergies || "",
-        diet_type: response.data.diet_type || "",
-        disliked_foods: response.data.disliked_foods || "",
-        supplements: Array.isArray(response.data.supplements)
-          ? response.data.supplements
-          : [],
-        meals_per_day: response.data.meals_per_day || 3,
-      }
-      return response
-    },
-
-    async saveNutritionPreferences() {
-      const response = await updateNutritionPreferences(
-        this.nutritionPreferences
+    loadNutritionPreferences() {
+      return runSessionRequest(
+        () => getNutritionPreferences(),
+        (response) => {
+          this.nutritionPreferences = {
+            allergies: response.data.allergies || "",
+            diet_type: response.data.diet_type || "",
+            disliked_foods: response.data.disliked_foods || "",
+            supplements: Array.isArray(response.data.supplements)
+              ? response.data.supplements
+              : [],
+            meals_per_day: response.data.meals_per_day || 3,
+          }
+        }
       )
-      this.nutritionPreferences = {
-        allergies: response.data.allergies || "",
-        diet_type: response.data.diet_type || "",
-        disliked_foods: response.data.disliked_foods || "",
-        supplements: Array.isArray(response.data.supplements)
-          ? response.data.supplements
-          : [],
-        meals_per_day: response.data.meals_per_day || 3,
-      }
-      return response
     },
 
-    async buildWeekPlan() {
-      this.isPlanLoading = true
-      try {
-        const response = await generateWeekNutritionPlan()
-        this.weekPlan = response.data.plan
-        this.weekPlanUpdatedAt = response.data.updated_at
-        return response
-      } finally {
-        this.isPlanLoading = false
-      }
+    saveNutritionPreferences() {
+      return runSessionRequest(
+        () => updateNutritionPreferences(this.nutritionPreferences),
+        (response) => {
+          this.nutritionPreferences = {
+            allergies: response.data.allergies || "",
+            diet_type: response.data.diet_type || "",
+            disliked_foods: response.data.disliked_foods || "",
+            supplements: Array.isArray(response.data.supplements)
+              ? response.data.supplements
+              : [],
+            meals_per_day: response.data.meals_per_day || 3,
+          }
+        }
+      )
     },
 
-    async loadWeekPlan() {
-      this.isPlanLoading = true
-      try {
-        const response = await getWeekNutritionPlan()
-        this.weekPlan = response.data.plan
-        this.weekPlanUpdatedAt = response.data.updated_at
-        return response
-      } finally {
-        this.isPlanLoading = false
+    buildWeekPlan() {
+      if (this.isPlanLoading) {
+        return Promise.reject(new CanceledError("Chargement en cours"))
       }
+      this.isPlanLoading = true
+      return runSessionRequest(
+        () => generateWeekNutritionPlan(),
+        (response) => {
+          this.weekPlan = response.data.plan
+          this.weekPlanUpdatedAt = response.data.updated_at
+        },
+        () => {
+          this.isPlanLoading = false
+        }
+      )
+    },
+
+    loadWeekPlan() {
+      if (this.isPlanLoading) {
+        return Promise.reject(new CanceledError("Chargement en cours"))
+      }
+      this.isPlanLoading = true
+      return runSessionRequest(
+        () => getWeekNutritionPlan(),
+        (response) => {
+          this.weekPlan = response.data.plan
+          this.weekPlanUpdatedAt = response.data.updated_at
+        },
+        () => {
+          this.isPlanLoading = false
+        }
+      )
     },
   },
-  persist: true,
 })

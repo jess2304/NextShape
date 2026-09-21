@@ -1,3 +1,4 @@
+import axios from "axios"
 import { defineStore } from "pinia"
 import {
   sendVerificationCode as sendVerificationCodeRequest,
@@ -9,15 +10,22 @@ import {
   loginUser,
   logoutUser,
   checkAuthentication,
+  resetApiSession,
+  runSessionRequest,
 } from "@/services/apiService"
 import router from "@/router"
 import { useProgressRecord } from "@/stores/progressRecordStore"
 import { User, VerifyCodeResponse } from "@/assets/js/interfaces"
 import { resolveApiErrorMessage } from "@/assets/js/utils"
+import { useProgressRecords } from "./progressRecordsStore"
+import { useCoachStore } from "./coachStore"
+
+let sessionChannel: BroadcastChannel | null = null
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as User | null,
+    isChangingSession: false,
   }),
 
   actions: {
@@ -37,71 +45,98 @@ export const useAuthStore = defineStore("auth", {
         const response = await registerUser(payload)
         return response.data
       } catch (error: any) {
+        if (axios.isCancel(error)) throw error
         throw resolveApiErrorMessage(error, "Erreur lors de l'inscription.")
       }
     },
 
+    setSessionUser(userData: User | null, notifyOtherTabs = false): void {
+      resetApiSession()
+      this.user = userData
+      useProgressRecord().$reset()
+      useProgressRecords().$reset()
+      useCoachStore().$reset()
+      if (notifyOtherTabs) sessionChannel?.postMessage("changed")
+    },
+
+    clearLocalSession(notifyOtherTabs = false): void {
+      this.setSessionUser(null, notifyOtherTabs)
+    },
+
     async login(credentials: { email: string; password: string }) {
+      if (this.isChangingSession)
+        throw new axios.CanceledError("Connexion en cours")
+      this.isChangingSession = true
+      this.setSessionUser(this.user)
       try {
-        const response = await loginUser(credentials)
-        this.setUser(response.data)
-        const progressStore = useProgressRecord()
-        progressStore.$reset()
-        return response
-      } catch (error: any) {
-        throw resolveApiErrorMessage(error, "Erreur lors de la connexion.")
+        return await runSessionRequest(
+          () => loginUser(credentials),
+          (response) => this.setSessionUser(response.data, true)
+        )
+      } finally {
+        this.isChangingSession = false
       }
     },
 
-    setUser(userData: User) {
-      this.user = userData
-    },
-
     async logout() {
+      if (this.isChangingSession)
+        throw new axios.CanceledError("Connexion en cours")
+      this.isChangingSession = true
+      this.setSessionUser(this.user)
       try {
-        await logoutUser()
-      } catch {
+        await runSessionRequest(
+          () => logoutUser(),
+          () => {
+            this.setSessionUser(null, true)
+            void router.replace("/connexion")
+          }
+        )
       } finally {
-        this.user = null
-        const progressStore = useProgressRecord()
-        progressStore.$reset()
-        router.push("/connexion")
+        this.isChangingSession = false
       }
     },
 
     async checkAuthentication() {
-      const isAuthenticated = await checkAuthentication()
-      if (!isAuthenticated) {
-        await this.logout()
-      }
-      return isAuthenticated
+      if (this.isChangingSession)
+        throw new axios.CanceledError("Connexion en cours")
+      const result = await runSessionRequest(
+        () => checkAuthentication(),
+        ({ authenticated, user }) => {
+          const nextUser = authenticated ? user : null
+          if (nextUser?.email !== this.user?.email) {
+            this.setSessionUser(nextUser)
+          } else {
+            this.user = nextUser
+          }
+        }
+      )
+      return result.authenticated
     },
 
     async updateProfileField(field: string, value: any) {
-      const payload: Record<string, any> = { [field]: value }
-      try {
-        const response = await updateProfileRequest(payload)
-        this.user = response.data
-        return response
-      } catch (error: any) {
-        throw resolveApiErrorMessage(
-          error,
-          "Erreur lors de la mise à jour de votre profil."
-        )
-      }
+      return runSessionRequest(
+        () => updateProfileRequest({ [field]: value }),
+        (response) => {
+          this.user = response.data
+        }
+      )
     },
 
     async deleteAccount() {
+      if (this.isChangingSession)
+        throw new axios.CanceledError("Connexion en cours")
+      this.isChangingSession = true
+      this.setSessionUser(this.user)
       try {
-        const response = await deleteAccountRequest()
-        await this.logout()
-        router.push("/")
-        return response
-      } catch (error) {
-        throw resolveApiErrorMessage(
-          error,
-          "Échec de la suppression du compte."
+        return await runSessionRequest(
+          () => deleteAccountRequest(),
+          () => {
+            this.setSessionUser(null, true)
+            void router.replace("/")
+          }
         )
+      } finally {
+        this.isChangingSession = false
       }
     },
 
@@ -112,6 +147,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         return await sendVerificationCodeRequest(email, context)
       } catch (error) {
+        if (axios.isCancel(error)) throw error
         throw resolveApiErrorMessage(error, "Échec de l'envoi du code.")
       }
     },
@@ -120,6 +156,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         return await verifyCodeRequest(email, code)
       } catch (error) {
+        if (axios.isCancel(error)) throw error
         throw resolveApiErrorMessage(error, "Erreur lors de la vérification.")
       }
     },
@@ -128,6 +165,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         return await resetPasswordRequest(email, newPassword, code)
       } catch (error) {
+        if (axios.isCancel(error)) throw error
         throw resolveApiErrorMessage(
           error,
           "Erreur lors de la mise à jour du mot de passe."
@@ -135,6 +173,21 @@ export const useAuthStore = defineStore("auth", {
       }
     },
   },
-
-  persist: true,
 })
+
+// Called after Pinia is installed; only a notification crosses tabs, never user data.
+export const startSessionSync = (): (() => void) => {
+  if (typeof BroadcastChannel === "undefined") return () => {}
+  sessionChannel?.close()
+  const channel = new BroadcastChannel("nextshape-session")
+  sessionChannel = channel
+  channel.addEventListener("message", (event) => {
+    if (event.data !== "changed") return
+    useAuthStore().clearLocalSession()
+    void router.replace({ path: "/", force: true })
+  })
+  return () => {
+    channel.close()
+    if (sessionChannel === channel) sessionChannel = null
+  }
+}

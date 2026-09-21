@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isCancel } from "axios"
 import { ref } from "vue"
 import Dialog from "primevue/dialog"
 import Button from "primevue/button"
@@ -71,6 +72,7 @@ const sendCode = async () => {
       resolveApiMessage(response, "Un code vous a été envoyé par e-mail.")
     )
   } catch (err: any) {
+    if (isCancel(err)) return
     showToast(
       toast,
       "error",
@@ -100,6 +102,7 @@ const verifyCode = async () => {
       showToast(toast, "error", "Erreur", resolveApiMessage(response))
     }
   } catch (error: any) {
+    if (isCancel(error)) return
     showToast(
       toast,
       "error",
@@ -148,6 +151,7 @@ const updatePassword = async () => {
     emits("validated", { email: email.value })
     closeModal()
   } catch (err: any) {
+    if (isCancel(err)) return
     showToast(
       toast,
       "error",

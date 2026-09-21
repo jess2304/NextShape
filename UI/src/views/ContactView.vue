@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isCancel } from "axios"
 import { ref } from "vue"
 import { useToast } from "primevue/usetoast"
 import InputText from "primevue/inputtext"
@@ -44,6 +45,7 @@ const sendMessage = async () => {
     email.value = ""
     message.value = ""
   } catch (error: any) {
+    if (isCancel(error)) return
     showToast(
       toast,
       "error",

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isCancel } from "axios"
 import { ref } from "vue"
 import InputText from "primevue/inputtext"
 import InputMask from "primevue/inputmask"
@@ -107,6 +108,7 @@ const sendCode = async () => {
       )
     )
   } catch (err: any) {
+    if (isCancel(err)) return
     showToast(
       toast,
       "error",
@@ -133,6 +135,7 @@ const handleCodeValidation = async (code: string) => {
     resetForm()
     router.push("/connexion")
   } catch (error: any) {
+    if (isCancel(error)) return
     showToast(
       toast,
       "error",

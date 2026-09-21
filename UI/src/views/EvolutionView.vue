@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isCancel } from "axios"
 import Splitter from "primevue/splitter"
 import SplitterPanel from "primevue/splitterpanel"
 import Button from "primevue/button"
@@ -25,6 +26,7 @@ const loadPreferences = async () => {
   try {
     return await coachStore.loadNutritionPreferences()
   } catch (err: any) {
+    if (isCancel(err)) return
     toast.add({
       severity: "error",
       summary: "Erreur",
@@ -47,6 +49,7 @@ const savePreferences = async () => {
       life: 3000,
     })
   } catch (err: any) {
+    if (isCancel(err)) return
     toast.add({
       severity: "error",
       summary: "Erreur",
@@ -63,6 +66,7 @@ const loadWeekPlan = async () => {
   try {
     return await coachStore.loadWeekPlan()
   } catch (err: any) {
+    if (isCancel(err)) return
     toast.add({
       severity: "error",
       summary: "Erreur",
@@ -85,6 +89,7 @@ const buildWeekPlan = async () => {
       life: 3000,
     })
   } catch (err: any) {
+    if (isCancel(err)) return
     toast.add({
       severity: "error",
       summary: "Erreur",
