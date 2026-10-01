@@ -201,10 +201,39 @@ export const checkAuthentication = async (): Promise<{
   authenticated: boolean
   user: User | null
 }> => {
-  const response = await api.get<
-    ApiResponse<{ authenticated: boolean; user: User | null }>
-  >("check-authentication/")
-  return response.data.data
+  const signal = sessionController.signal
+  const readSession = async () => {
+    const response = await api.get<
+      ApiResponse<{
+        authenticated: boolean
+        user: User | null
+        has_refresh_token: boolean
+      }>
+    >("check-authentication/", { signal })
+    assertActiveSession(signal)
+    return response.data.data
+  }
+
+  // First validation of connexion
+  const session = await readSession()
+  if (session.authenticated || !session.has_refresh_token) return session
+
+  // No access then try to renew access before returning the result
+  try {
+    await refreshAccess(signal)
+  } catch (error) {
+    assertActiveSession(signal)
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      error.config?.url === REFRESH_URL
+    ) {
+      return { authenticated: false, user: null }
+    }
+    throw error
+  }
+  // Renewed access, check again the session and return the result
+  return readSession()
 }
 
 // Profile update

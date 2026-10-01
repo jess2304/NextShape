@@ -40,7 +40,11 @@ def test_check_authentication_response_contract():
         status_code=200,
         code="AUTH_CHECK_SUCCESS",
     )
-    assert response.data["data"]["authenticated"] is False
+    assert response.data["data"] == {
+        "authenticated": False,
+        "has_refresh_token": False,
+        "user": None,
+    }
 
 
 @pytest.mark.django_db

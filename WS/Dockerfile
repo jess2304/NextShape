@@ -9,7 +9,7 @@ COPY UI/ ./
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
 
-RUN npm run build
+RUN npm test && npm run build
 
 # Build backend
 FROM python:3.11-slim AS backend

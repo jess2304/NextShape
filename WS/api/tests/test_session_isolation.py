@@ -34,6 +34,7 @@ def test_session_check_returns_only_current_profile_fields(test_user):
     assert response["Cache-Control"] == "no-store"
     assert response.data["data"] == {
         "authenticated": True,
+        "has_refresh_token": True,
         "user": {
             "first_name": "Alice",
             "last_name": "Example",
@@ -50,7 +51,11 @@ def test_anonymous_session_check_returns_no_profile():
 
     assert response.status_code == 200
     assert response["Cache-Control"] == "no-store"
-    assert response.data["data"] == {"authenticated": False, "user": None}
+    assert response.data["data"] == {
+        "authenticated": False,
+        "has_refresh_token": False,
+        "user": None,
+    }
 
 
 def test_deleted_account_cookie_is_anonymous_on_public_and_private_routes(test_user):
@@ -60,7 +65,11 @@ def test_deleted_account_cookie_is_anonymous_on_public_and_private_routes(test_u
     response = client.get("/api/check-authentication/")
 
     assert response.status_code == 200
-    assert response.data["data"] == {"authenticated": False, "user": None}
+    assert response.data["data"] == {
+        "authenticated": False,
+        "has_refresh_token": True,
+        "user": None,
+    }
     assert client.get("/api/progress-records/").status_code == 401
 
 
@@ -102,8 +111,11 @@ def test_account_deletion_expires_both_auth_cookies(test_user):
         assert cookie["max-age"] == 0
         assert cookie["path"] == "/"
         assert cookie["httponly"]
+        # APIClient retains expired cookies; mirror their removal by the browser.
+        del client.cookies[name]
     assert client.get("/api/check-authentication/").data["data"] == {
         "authenticated": False,
+        "has_refresh_token": False,
         "user": None,
     }
 

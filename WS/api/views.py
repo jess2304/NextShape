@@ -18,9 +18,11 @@ from django.contrib.auth import get_user_model
 from django.middleware.csrf import get_token
 from next_shape_ws.settings import COOKIE_PARAMS
 from rest_framework import generics, status
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -139,6 +141,13 @@ class LogoutView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        refresh_token = request.COOKIES.get("refresh_token")
+        if refresh_token:
+            try:
+                RefreshToken(refresh_token).blacklist()
+            except TokenError:
+                pass
+
         response = success_response(code="AUTH_LOGOUT_SUCCESS")
 
         for cookie in ["access_token", "refresh_token"]:
@@ -164,6 +173,7 @@ class CheckAuthenticationView(APIView):
             code="AUTH_CHECK_SUCCESS",
             data={
                 "authenticated": authenticated,
+                "has_refresh_token": "refresh_token" in request.COOKIES,
                 "user": (
                     UpdateProfileSerializer(request.user).data
                     if authenticated
@@ -192,8 +202,9 @@ class RefreshAccessView(APIView):
 
         try:
             refresh = RefreshToken(refresh_token)
+            JWTAuthentication().get_user(refresh)
             access_token = refresh.access_token
-        except TokenError:
+        except (TokenError, AuthenticationFailed):
             return error_response(code="AUTH_REFRESH_INVALID", status_code=401)
 
         response = success_response(code="AUTH_REFRESH_SUCCESS")
