@@ -115,7 +115,7 @@ pipeline {
                         -e DATABASE_HOST="${STAGING_DATABASE_HOST}" \
                         -e DATABASE_PORT="${STAGING_DATABASE_PORT}" \
                         ${REGISTRY_IMAGE}:${IMAGE_TAG} \
-                        python manage.py migrate --noinput
+                        sh -c 'python manage.py migrate --noinput && python manage.py migrate token_blacklist --check --noinput'
                     '''
                 }
             }

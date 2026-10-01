@@ -35,6 +35,20 @@ L'application est réalisée avec :
 
 ## Installation
 
+### Tests et migrations de déploiement
+
+Les tests frontend se lancent avec `npm test` depuis `UI`. La construction Docker
+exécute ces tests avant la compilation du frontend. Les tests backend se lancent
+avec `python -m pytest api/tests` depuis `WS`, avec l'environnement Python et la
+base de test configurés ; Jenkins les exécute avec `docker-compose.ci.yml`.
+
+Pour un déploiement staging, le pipeline Jenkins applique les migrations Django,
+puis vérifie avec `python manage.py migrate token_blacklist --check --noinput`
+que les migrations de révocation des jetons sont appliquées. Un échec empêche
+le déclenchement du déploiement Render. Pour un déploiement manuel, exécuter
+`python manage.py migrate --noinput` puis cette vérification avec la configuration
+de la base cible avant de démarrer la nouvelle version.
+
 ### Prérequis
 
 - Docker + Docker Compose + PostgreSQL
