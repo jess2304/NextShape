@@ -1,8 +1,9 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { useProgressRecord } from "@/stores/progressRecordStore"
 import { ACTIVITY_LEVELS, GENDER, GOALS } from "@/assets/js/constants"
 import { computed } from "vue"
 import { formatDate } from "@/assets/js/utils"
+import NsBadge from "@/components/ui/NsBadge.vue"
 import Accordion from "primevue/accordion"
 import AccordionHeader from "primevue/accordionheader"
 import AccordionPanel from "primevue/accordionpanel"
@@ -38,220 +39,299 @@ const calories = computed(
   () => progressRecordStore.progressRecord.calories_recommandees || null
 )
 </script>
-
 <template>
-  <div class="fadein animation-duration-800">
-    <h2 class="text-5xl text-center text-primary mb-6">
-      Récapitulatif & Calcul
-    </h2>
+  <section class="recap" aria-labelledby="recap-title">
+    <div class="step-heading">
+      <span>ÉTAPE 03</span>
+      <h2 id="recap-title">Tout est prêt pour le calcul.</h2>
+      <p>Vérifiez vos informations, puis calculez vos besoins caloriques.</p>
+    </div>
 
-    <!-- Information section -->
-    <div class="card shadow-2 p-4 mb-5 border-round">
-      <h3 class="text-2xl font-semibold text-surface-700 mb-3">
-        Vos informations
-      </h3>
-      <div class="grid">
-        <div class="col-12 md:col-6">
-          Sexe : <b>{{ formattedGender }}</b>
+    <div class="recap-information">
+      <div class="information-heading">
+        <h3>Vos informations</h3>
+        <NsBadge>Récapitulatif</NsBadge>
+      </div>
+      <dl class="information-grid">
+        <div>
+          <dt>Genre</dt>
+          <dd>{{ formattedGender }}</dd>
         </div>
-        <div class="col-12 md:col-6">
-          Âge : <b>{{ progressRecordStore.progressRecord.age }} ans</b>
+        <div>
+          <dt>Âge</dt>
+          <dd>{{ progressRecordStore.progressRecord.age }} ans</dd>
         </div>
-        <div class="col-12 md:col-6">
-          Taille : <b>{{ progressRecordStore.progressRecord.height_cm }} cm</b>
+        <div>
+          <dt>Taille</dt>
+          <dd>{{ progressRecordStore.progressRecord.height_cm }} cm</dd>
         </div>
-        <div class="col-12 md:col-6">
-          Poids : <b>{{ progressRecordStore.progressRecord.weight_kg }} kg</b>
+        <div>
+          <dt>Poids</dt>
+          <dd>{{ progressRecordStore.progressRecord.weight_kg }} kg</dd>
         </div>
-        <div class="col-12 md:col-6">
-          Activité : <b>{{ fromattedActivity }}</b>
+        <div>
+          <dt>Activité physique</dt>
+          <dd>{{ fromattedActivity || "Non renseignée" }}</dd>
         </div>
-        <div class="col-12 md:col-6">
-          Objectif : <b>{{ formattedGoal }}</b>
+        <div>
+          <dt>Objectif</dt>
+          <dd>{{ formattedGoal || "Non renseigné" }}</dd>
         </div>
+      </dl>
+    </div>
+
+    <div class="results" aria-live="polite" aria-atomic="true">
+      <div class="metric">
+        <span class="metric-label">Au repos</span>
+        <strong>{{ bmr ?? "—" }} <small v-if="bmr">kcal</small></strong>
+        <span class="metric-caption">Métabolisme de base · BMR</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Avec votre activité</span>
+        <strong>{{ tdee ?? "—" }} <small v-if="tdee">kcal</small></strong>
+        <span class="metric-caption">Dépense quotidienne · TDEE</span>
+      </div>
+      <div class="metric metric-target">
+        <span class="metric-label">Votre objectif</span>
+        <strong
+          >{{ calories ?? "—" }} <small v-if="calories">kcal</small></strong
+        >
+        <span class="metric-caption">Calories recommandées / jour</span>
       </div>
     </div>
-    <div class="card shadow-1 bg-surface-100 p-4 mb-5 border-round">
-      <h3 class="text-xl font-semibold text-surface-700 mb-4">
-        Formules utilisées & définitions
-      </h3>
+    <p v-if="!calories" class="result-note">
+      Vos résultats s'afficheront après le calcul.
+    </p>
+    <p v-else class="result-note">
+      <template v-if="progressRecordStore.progressRecord.date"
+        >Calcul du {{ formatDate(progressRecordStore.progressRecord.date) }} ·
+      </template>
+      Objectif : {{ formattedGoal }}.
+    </p>
 
-      <div class="grid">
-        <div class="col-12 md:col-6">
-          <p class="font-mono text-sm mb-3">
-            <strong>BMR :</strong><br />
-            <span v-if="progressRecordStore.progressRecord.gender === 'H'">
-              BMR = 10 × poids(kg) + 6.25 × taille(cm) – 5 × âge + 5
-            </span>
-            <span v-else>
-              BMR = 10 × poids(kg) + 6.25 × taille(cm) – 5 × âge – 161
-            </span>
-          </p>
-
-          <p class="font-mono text-sm mb-3">
-            <strong>TDEE :</strong><br />
-            TDEE = BMR × facteur d'activité
-          </p>
-
-          <p class="font-mono text-sm">
-            <strong>Calories recommandées :</strong><br />
-            Idéalement, créez un écart calorique
-            <span class="font-semibold">entre 200 et 300 kcal</span> par rapport
-            à votre TDEE.
-            <br />
-            Un écart trop petit (<200 kcal) → pas de résultats visibles. Un
-            écart trop grand (>400–500 kcal) → résultats rapides mais rarement
-            durables.
-            <br /><br />
-
-            <span v-if="progressRecordStore.progressRecord.goal === 'perte'">
-              🔽 <strong>Objectif : Perte de poids</strong> →
-              <span class="text-blue-600">TDEE – 300 kcal</span> (déficit
-              modéré)
-            </span>
-
-            <span
-              v-else-if="progressRecordStore.progressRecord.goal === 'prise'"
-            >
-              🔼 <strong>Objectif : Prise de masse</strong> →
-              <span class="text-green-600">TDEE + 300 kcal</span> (surplus
-              contrôlé)
-            </span>
-
-            <span v-else>
-              ⚖️ <strong>Objectif : Maintien</strong> →
-              <span class="text-orange-600">TDEE</span> (équilibre)
-            </span>
-          </p>
-          <Accordion value="-1">
-            <AccordionPanel value="0">
-              <AccordionHeader
-                >effets négatifs si l’écart est mal calibré</AccordionHeader
+    <Accordion value="-1" class="formula-accordion">
+      <AccordionPanel value="0">
+        <AccordionHeader
+          >Comment ces résultats sont-ils calculés ?</AccordionHeader
+        >
+        <AccordionContent>
+          <div class="formula-details">
+            <div>
+              <h4>1. Votre métabolisme de base</h4>
+              <p>
+                Le BMR estime l'énergie dépensée au repos pour assurer les
+                fonctions vitales du corps.
+              </p>
+              <p
+                class="equation"
+                v-if="progressRecordStore.progressRecord.gender === 'H'"
               >
-              <AccordionContent>
-                <div class="space-y-4 text-sm">
-                  <div>
-                    <strong>💡 Perte de poids (déficit trop grand)</strong>
-                    <ul class="list-disc ml-6 mt-1 text-gray-700">
-                      <li>
-                        Ralentissement du métabolisme (mode “économie
-                        d’énergie”)
-                      </li>
-                      <li>Perte musculaire si protéines insuffisantes</li>
-                      <li>Baisse d’énergie et performance</li>
-                      <li>
-                        Fringales et compulsions → craquage assuré après 1–2
-                        semaines
-                      </li>
-                      <li>
-                        Effet yo-yo : reprise rapide du poids perdu, voire plus
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <strong>💡 Prise de masse (surplus trop grand)</strong>
-                    <ul class="list-disc ml-6 mt-1 text-gray-700">
-                      <li>Prise de gras excessive</li>
-                      <li>Problèmes digestifs (ballonnements, inconfort)</li>
-                      <li>Baisse de sensibilité à l’insuline</li>
-                      <li>
-                        “Marathon de bouffe” → tu tiens 1–2 semaines, puis tu
-                        craques, et retour en arrière
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionPanel>
-          </Accordion>
-        </div>
-        <div class="col-12 md:col-6 text-sm leading-relaxed">
-          <p class="mb-3">
-            <strong>BMR (Basal Metabolic Rate)</strong> : c'est le nombre de
-            calories que votre corps dépense au repos complet, pour assurer ses
-            fonctions vitales (respiration, circulation, température...).
-          </p>
-          <p class="mb-3">
-            <strong>TDEE (Total Daily Energy Expenditure)</strong> : c'est le
-            total des calories brûlées dans une journée complète, en tenant
-            compte de votre activité physique. Il est obtenu en multipliant le
-            BMR par un facteur lié à votre niveau d'activité.
-          </p>
-          <p>
-            <strong>Calories recommandées</strong> : selon votre objectif, vous
-            devez viser un
-            <span class="text-primary font-medium">déficit</span> (perte de
-            poids), un <span class="text-primary font-medium">maintien</span> ou
-            un <span class="text-primary font-medium">excédent</span> (prise de
-            masse) calorique.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="grid mb-6">
-      <div class="col-12 md:col-4">
-        <div
-          class="shadow-2 p-4 text-center border-left-4 border-primary bg-surface-50 rounded"
-        >
-          <h4 class="text-xl mb-1">BMR</h4>
-          <div class="text-2xl font-bold text-primary">
-            {{ bmr }} <span v-if="bmr">kcal</span> <span v-else>-</span>
+                10 × poids (kg) + 6,25 × taille (cm) − 5 × âge + 5
+              </p>
+              <p class="equation" v-else>
+                10 × poids (kg) + 6,25 × taille (cm) − 5 × âge − 161
+              </p>
+            </div>
+            <div>
+              <h4>2. Votre dépense quotidienne</h4>
+              <p>Le TDEE tient compte de votre niveau d'activité physique.</p>
+              <p class="equation">TDEE = BMR × facteur d'activité</p>
+            </div>
+            <div>
+              <h4>3. L'ajustement selon votre objectif</h4>
+              <p v-if="progressRecordStore.progressRecord.goal === 'perte'">
+                Perte de poids : le calcul applique un déficit de 300 kcal.
+              </p>
+              <p
+                v-else-if="progressRecordStore.progressRecord.goal === 'prise'"
+              >
+                Prise de masse : le calcul applique un surplus de 300 kcal.
+              </p>
+              <p v-else>Maintien : le calcul conserve la valeur du TDEE.</p>
+              <p
+                class="equation"
+                v-if="progressRecordStore.progressRecord.goal === 'perte'"
+              >
+                Objectif = TDEE − 300 kcal
+              </p>
+              <p
+                class="equation"
+                v-else-if="progressRecordStore.progressRecord.goal === 'prise'"
+              >
+                Objectif = TDEE + 300 kcal
+              </p>
+              <p class="equation" v-else>Objectif = TDEE</p>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="col-12 md:col-4">
-        <div
-          class="shadow-2 p-4 text-center border-left-4 border-primary bg-surface-50 rounded"
-        >
-          <h4 class="text-xl mb-1">TDEE</h4>
-          <div class="text-2xl font-bold text-primary">
-            {{ tdee }} <span v-if="tdee">kcal</span><span v-else>-</span>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 md:col-4">
-        <div
-          class="shadow-2 p-4 text-center border-left-4 border-primary bg-surface-50 rounded"
-        >
-          <h4 class="text-xl mb-1">Objectif</h4>
-          <div class="text-2xl font-bold text-primary">
-            {{ calories }} <span v-if="calories">kcal</span
-            ><span v-else>-</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      v-if="calories"
-      class="text-center text-lg text-surface-700 mt-4 mb-6 italic"
-    >
-      À la date du
-      <span
-        v-if="progressRecordStore.progressRecord.date"
-        class="font-semibold"
-      >
-        {{ formatDate(progressRecordStore.progressRecord.date) }}
-      </span>
-      , pour <b>{{ formattedGoal }}</b
-      >, vous devriez consommer environ
-      <span class="text-primary font-bold text-2xl">{{ calories }} kcal</span>
-      par jour.
-    </div>
-  </div>
+        </AccordionContent>
+      </AccordionPanel>
+    </Accordion>
+  </section>
 </template>
 
 <style scoped>
-.fadein {
-  animation: fadein 0.4s ease;
+.step-heading {
+  margin-bottom: 2rem;
 }
-@keyframes fadein {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+.step-heading > span {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #718074;
+  margin-bottom: 0.75rem;
+}
+.step-heading h2 {
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  margin: 0 0 0.65rem;
+}
+.step-heading p {
+  font-size: 0.875rem;
+  color: #69766f;
+  line-height: 1.65;
+  margin: 0;
+}
+.recap-information {
+  border: 1px solid #e5e9e1;
+  border-radius: 0.875rem;
+  padding: 1.25rem;
+}
+.information-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+.information-heading h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+}
+.information-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0 0;
+}
+.information-grid dt {
+  font-size: 0.75rem;
+  color: #69766f;
+  margin-bottom: 0.4rem;
+}
+.information-grid dd {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.results {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+.metric {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f5f6f1;
+  border: 1px solid #e5e9e1;
+  border-radius: 0.875rem;
+  padding: 1.15rem;
+}
+.metric-label {
+  color: #52685a;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.metric > strong {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+  color: #1d4d40;
+  margin: 0.8rem 0 0.5rem;
+}
+.metric small {
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.metric-caption {
+  color: #69766f;
+  font-size: 0.67rem;
+  line-height: 1.5;
+}
+.metric-target {
+  background: #1d4d40;
+  border-color: #1d4d40;
+}
+.metric-target .metric-label,
+.metric-target .metric-caption {
+  color: #c7d8ce;
+}
+.metric-target > strong {
+  color: #fff;
+}
+.result-note {
+  color: #69766f;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  margin: 0.75rem 0 1.5rem;
+}
+.formula-accordion {
+  font-size: 0.85rem;
+}
+.formula-details {
+  display: grid;
+  gap: 1.25rem;
+  padding-top: 0.5rem;
+}
+.formula-details h4 {
+  font-size: 0.875rem;
+  margin: 0 0 0.5rem;
+}
+.formula-details p {
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: #69766f;
+  margin: 0;
+}
+.formula-details .equation {
+  margin-top: 0.6rem;
+  color: #1d4d40;
+  background: #f3f6ef;
+  padding: 0.7rem 0.875rem;
+  border-radius: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 600px) {
+  .information-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .results {
+    grid-template-columns: 1fr;
+  }
+  .metric {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 0.5rem;
+    align-items: center;
+  }
+  .metric > strong {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    margin: 0;
+    font-size: 1.65rem;
+  }
+  .metric-caption {
+    grid-column: 1;
+    margin-top: 0.35rem;
+  }
+  .step-heading {
+    margin-bottom: 1.5rem;
   }
 }
 </style>

@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { isCancel } from "axios"
-import Fieldset from "primevue/fieldset"
-import Avatar from "primevue/avatar"
 import { useProgressRecords } from "@/stores/progressRecordsStore"
-import { computed, onMounted, ref } from "vue"
+import { onMounted, onUnmounted, ref } from "vue"
 import {
   formatDate,
   resolveApiErrorMessage,
@@ -14,32 +12,48 @@ import { ACTIVITY_DESCRIPTIONS, ACTIVITY_LEVELS } from "@/assets/js/constants"
 import { useToast } from "primevue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
-import Button from "primevue/button"
-import Select from "primevue/select"
-import Tag from "primevue/tag"
-import InputNumber from "primevue/inputnumber"
+import NsButton from "@/components/ui/NsButton.vue"
+import NsSelect from "@/components/ui/NsSelect.vue"
+import NsBadge from "@/components/ui/NsBadge.vue"
+import NsNumberInput from "@/components/ui/NsNumberInput.vue"
+import NsCard from "@/components/ui/NsCard.vue"
+import NsEmptyState from "@/components/ui/NsEmptyState.vue"
+import NsSkeleton from "@/components/ui/NsSkeleton.vue"
+import PageHeader from "@/components/layout/PageHeader.vue"
 import MobileEditModal from "@/components/MobileEditModal.vue"
 
-const isMobile = computed(() => window.innerWidth <= 768)
+const mobileQuery = window.matchMedia("(max-width: 1100px)")
+const isMobile = ref(mobileQuery.matches)
+const updateLayout = (event: MediaQueryListEvent) => {
+  isMobile.value = event.matches
+}
+onMounted(() => mobileQuery.addEventListener("change", updateLayout))
+onUnmounted(() => mobileQuery.removeEventListener("change", updateLayout))
+const isLoading = ref(true)
+const loadError = ref("")
 
 // Store
 const progressRecordsStore = useProgressRecords()
 const toast = useToast()
 const editingRows = ref([])
-// Load stored history records.
-onMounted(async () => {
+// Keep request state local to the presentation; session ownership stays in the store.
+const loadRecords = async () => {
+  isLoading.value = true
+  loadError.value = ""
   try {
     await progressRecordsStore.getProgressRecords()
   } catch (error: any) {
     if (isCancel(error)) return
-    showToast(
-      toast,
-      "error",
-      "Erreur",
-      resolveApiErrorMessage(error, "Échec du chargement de votre historique")
+    loadError.value = resolveApiErrorMessage(
+      error,
+      "Échec du chargement de votre historique"
     )
+    showToast(toast, "error", "Erreur", loadError.value)
+  } finally {
+    isLoading.value = false
   }
-})
+}
+onMounted(loadRecords)
 
 const goalOptions: Array<Record<string, string>> = [
   { label: "Maintien", value: "maintien" },
@@ -51,9 +65,10 @@ const goalLabels: Record<string, string> = {
   perte: "Perte de poids",
   prise: "Prise de masse",
 }
-const goalSeverity: Record<string, string> = {
-  maintien: "info",
-  perte: "warn",
+type BadgeTone = "neutral" | "success" | "warning" | "danger"
+const goalTone: Record<string, BadgeTone> = {
+  maintien: "neutral",
+  perte: "warning",
   prise: "success",
 }
 
@@ -61,11 +76,11 @@ const activityLabels = Object.fromEntries(
   ACTIVITY_LEVELS.map((lvl) => [lvl.value, lvl.label])
 )
 
-const activitySeverity: Record<string, string> = {
-  sedentaire: "secondary",
-  leger: "info",
+const activityTone: Record<string, BadgeTone> = {
+  sedentaire: "neutral",
+  leger: "neutral",
   modere: "success",
-  intense: "warn",
+  intense: "warning",
   tres_intense: "danger",
 }
 
@@ -148,229 +163,473 @@ const openMobileEdit = (recordId: number) => {
   editMobileVisible.value = true
 }
 </script>
+
 <template>
-  <Fieldset
-    :pt="{
-      legend: { class: 'bg-transparent' },
-      root: { class: 'shadow-2 border-round-lg p-4' },
-    }"
-  >
-    <template #legend>
-      <div class="flex items-center pl-2 gap-3">
-        <Avatar image="Historique.png" shape="circle" class="w-1 h-1" />
-        <span class="font-bold text-xl md:text-2xl text-gray-800"
-          >Historique de calculs</span
-        >
-      </div>
-    </template>
+  <div class="history-page">
+    <PageHeader
+      eyebrow="Votre parcours"
+      title="Historique de calculs"
+      description="Retrouvez vos mesures et les repères nutritionnels calculés au fil du temps."
+    >
+      <template #actions>
+        <RouterLink to="/calculatrice-calories" class="history-new-link">
+          <i class="pi pi-plus" aria-hidden="true" /> Nouveau calcul
+        </RouterLink>
+      </template>
+    </PageHeader>
 
-    <div v-if="isMobile" class="space-y-3">
-      <div
-        v-for="record in progressRecordsStore.progressRecords"
-        :key="record.id"
-        class="border border-gray-200 shadow-sm p-4 rounded-md"
+    <NsCard
+      v-if="isLoading"
+      class="history-loading"
+      aria-busy="true"
+      aria-label="Chargement de l’historique"
+    >
+      <NsSkeleton width="11rem" height="1.25rem" />
+      <NsSkeleton v-for="index in 4" :key="index" height="3rem" />
+      <span class="history-status" role="status"
+        >Chargement de votre historique…</span
       >
-        <div class="text-xs text-gray-500 mb-1">
-          Date : {{ formatDate(record.date ?? "") }}
-        </div>
-
-        <div class="mb-2">
-          <div
-            class="flex justify-between gap-2 whitespace-nowrap overflow-auto text-sm"
-          >
-            <strong>Poids :</strong> {{ record.weight_kg }} kg
+    </NsCard>
+    <NsCard v-else-if="loadError">
+      <NsEmptyState
+        icon="pi pi-exclamation-circle"
+        title="L’historique n’a pas pu être chargé"
+        :description="loadError"
+      >
+        <NsButton
+          label="Réessayer"
+          icon="pi pi-refresh"
+          outlined
+          @click="loadRecords"
+        />
+      </NsEmptyState>
+    </NsCard>
+    <NsCard v-else-if="!progressRecordsStore.progressRecords.length">
+      <NsEmptyState
+        icon="pi pi-history"
+        title="Votre parcours commence ici"
+        description="Vos calculs enregistrés apparaîtront ici. Vous pourrez retrouver vos mesures et les modifier à tout moment."
+      >
+        <RouterLink to="/calculatrice-calories" class="history-new-link"
+          >Faire mon premier calcul
+          <i class="pi pi-arrow-right" aria-hidden="true"
+        /></RouterLink>
+      </NsEmptyState>
+    </NsCard>
+    <template v-else>
+      <div class="history-caption">
+        <span
+          >{{ progressRecordsStore.progressRecords.length }} enregistrement{{
+            progressRecordsStore.progressRecords.length > 1 ? "s" : ""
+          }}</span
+        >
+        <span>Vos données, au même endroit.</span>
+      </div>
+      <div v-if="isMobile" class="history-records">
+        <NsCard
+          v-for="record in progressRecordsStore.progressRecords"
+          :key="record.id"
+          class="history-record"
+        >
+          <div class="record-heading">
+            <div>
+              <span class="record-label">Calcul enregistré</span>
+              <h2>{{ formatDate(record.date ?? "") }}</h2>
+            </div>
+            <NsBadge :tone="goalTone[record.goal ?? '']">{{
+              goalLabels[record.goal ?? ""] ?? "Objectif non renseigné"
+            }}</NsBadge>
           </div>
-          <div
-            class="flex justify-between gap-2 whitespace-nowrap overflow-auto text-sm"
-          >
-            <strong>Taille :</strong> {{ record.height_cm }} cm
-          </div>
-          <div
-            class="flex justify-between gap-2 whitespace-nowrap overflow-auto text-sm"
-          >
-            <strong>Activité :</strong>
-            <Tag
-              :value="activityLabels[record.activity_level ?? '']"
-              :severity="activitySeverity[record.activity_level ?? '']"
-              rounded
-              class="text-xs"
-            />
-          </div>
-          <div
-            class="flex justify-between gap-2 whitespace-nowrap overflow-auto text-sm"
-          >
-            <strong>Objectif :</strong>
-            <Tag
-              :value="goalLabels[record.goal ?? '']"
-              :severity="goalSeverity[record.goal ?? '']"
-              rounded
-              class="text-xs"
-            />
-          </div>
-          <div class="text-sm flex flex-column">
-            <span><strong>IMC :</strong> {{ record.imc?.toFixed(1) }}</span>
-            <span><strong>BMR :</strong> {{ record.bmr }} kcal</span>
-            <span><strong>TDEE :</strong> {{ record.tdee }} kcal</span>
-            <span
-              ><strong>Calories recommandées :</strong>
-              {{ record.calories_recommandees }} kcal</span
+          <dl class="record-metrics">
+            <div>
+              <dt>Poids</dt>
+              <dd>{{ record.weight_kg ?? "—" }} <small>kg</small></dd>
+            </div>
+            <div>
+              <dt>Taille</dt>
+              <dd>{{ record.height_cm ?? "—" }} <small>cm</small></dd>
+            </div>
+            <div>
+              <dt>IMC</dt>
+              <dd>{{ record.imc?.toFixed(1) ?? "—" }}</dd>
+            </div>
+          </dl>
+          <dl class="record-details">
+            <div>
+              <dt>Activité physique</dt>
+              <dd>
+                <NsBadge :tone="activityTone[record.activity_level ?? '']">{{
+                  activityLabels[record.activity_level ?? ""] ??
+                  "Non renseignée"
+                }}</NsBadge>
+              </dd>
+            </div>
+            <div>
+              <dt>Métabolisme de base (BMR)</dt>
+              <dd>{{ record.bmr ?? "—" }} kcal</dd>
+            </div>
+            <div>
+              <dt>Dépense quotidienne (TDEE)</dt>
+              <dd>{{ record.tdee ?? "—" }} kcal</dd>
+            </div>
+          </dl>
+          <div class="record-target">
+            <span>Calories recommandées</span
+            ><strong
+              >{{ record.calories_recommandees ?? "—" }}
+              <small>kcal / jour</small></strong
             >
           </div>
-        </div>
-
-        <div class="flex justify-end gap-2">
-          <Button icon="pi pi-pencil" @click="openMobileEdit(record.id)" text />
-          <Button
-            icon="pi pi-trash"
-            @click="deleteRecord(record.id)"
-            text
-            severity="danger"
-          />
-        </div>
-        <div>
-          <hr />
-        </div>
+          <div class="record-actions">
+            <NsButton
+              label="Modifier"
+              icon="pi pi-pencil"
+              severity="secondary"
+              text
+              @click="openMobileEdit(record.id)"
+            />
+            <NsButton
+              label="Supprimer"
+              icon="pi pi-trash"
+              text
+              severity="danger"
+              @click="deleteRecord(record.id)"
+            />
+          </div>
+        </NsCard>
       </div>
-      <MobileEditModal
-        v-model:visible="editMobileVisible"
-        v-model:recordId="editingId"
-      />
-    </div>
-    <DataTable
-      v-else
-      :value="progressRecordsStore.progressRecords"
-      dataKey="id"
-      responsiveLayout="scroll"
-      editMode="row"
-      v-model:editingRows="editingRows"
-      @row-edit-save="onRowEditSave"
-      paginator
-      :rows="5"
-      :rowsPerPageOptions="[5, 10, 20, 50]"
-    >
-      <Column field="date" header="Date">
-        <template #body="{ data }">
-          {{ formatDate(data.date) }}
-        </template>
-      </Column>
-
-      <Column field="weight_kg" header="Poids (kg)">
-        <template #body="{ data }"> {{ data.weight_kg }} kg </template>
-        <template #editor="{ data, field }">
-          <InputNumber
-            v-model="data[field]"
-            suffix=" kg"
-            class="w-full"
-            :minFractionDigits="1"
-            :maxFractionDigits="1"
-            :min="0"
-            showButtons
-            fluid
-          />
-        </template>
-      </Column>
-
-      <Column field="height_cm" header="Taille (cm)">
-        <template #body="{ data }"> {{ data.height_cm }} cm </template>
-        <template #editor="{ data, field }">
-          <InputNumber
-            v-model="data[field]"
-            suffix=" cm"
-            class="w-full"
-            :minFractionDigits="1"
-            :maxFractionDigits="1"
-            :min="0"
-            showButtons
-            fluid
-          />
-        </template>
-      </Column>
-
-      <Column field="activity_level" header="Activité physique">
-        <template #body="{ data }">
-          <Tag
-            :value="activityLabels[data.activity_level]"
-            :severity="activitySeverity[data.activity_level]"
-            rounded
-          />
-        </template>
-        <template #editor="{ data, field }">
-          <Select
-            v-model="data[field]"
-            :options="ACTIVITY_LEVELS"
-            option-label="label"
-            option-value="value"
-            class="w-full"
-            placeholder="Choisir"
+      <NsCard v-else class="history-table-card">
+        <DataTable
+          :value="progressRecordsStore.progressRecords"
+          dataKey="id"
+          responsiveLayout="scroll"
+          editMode="row"
+          v-model:editingRows="editingRows"
+          @row-edit-save="onRowEditSave"
+          paginator
+          :rows="5"
+          :rowsPerPageOptions="[5, 10, 20, 50]"
+          class="history-table"
+          :tableStyle="{ minWidth: '70rem' }"
+        >
+          <Column field="date" header="Date"
+            ><template #body="{ data }"
+              ><span class="table-date">{{
+                formatDate(data.date)
+              }}</span></template
+            ></Column
           >
-            <template #option="slotProps">
-              <div class="flex flex-col gap-2">
-                <span class="font-semibold">{{ slotProps.option.label }}</span>
-                <small class="text-xs text-gray-500">
-                  {{ ACTIVITY_DESCRIPTIONS[slotProps.option.value] }}
-                </small>
-              </div>
+          <Column field="weight_kg" header="Poids">
+            <template #body="{ data }">{{ data.weight_kg ?? "—" }} kg</template>
+            <template #editor="{ data, field }"
+              ><NsNumberInput
+                v-model="data[field]"
+                aria-label="Poids en kilogrammes"
+                suffix=" kg"
+                :minFractionDigits="1"
+                :maxFractionDigits="1"
+                :min="0"
+                showButtons
+                fluid
+                class="table-number-input"
+            /></template>
+          </Column>
+          <Column field="height_cm" header="Taille">
+            <template #body="{ data }">{{ data.height_cm ?? "—" }} cm</template>
+            <template #editor="{ data, field }"
+              ><NsNumberInput
+                v-model="data[field]"
+                aria-label="Taille en centimètres"
+                suffix=" cm"
+                :minFractionDigits="1"
+                :maxFractionDigits="1"
+                :min="0"
+                showButtons
+                fluid
+                class="table-number-input"
+            /></template>
+          </Column>
+          <Column field="activity_level" header="Activité physique">
+            <template #body="{ data }"
+              ><NsBadge :tone="activityTone[data.activity_level]">{{
+                activityLabels[data.activity_level] ?? "Non renseignée"
+              }}</NsBadge></template
+            >
+            <template #editor="{ data, field }">
+              <NsSelect
+                v-model="data[field]"
+                :options="ACTIVITY_LEVELS"
+                option-label="label"
+                option-value="value"
+                placeholder="Choisir"
+                aria-label="Activité physique"
+                class="table-select-input"
+              >
+                <template #option="slotProps"
+                  ><div class="activity-option">
+                    <span>{{ slotProps.option.label }}</span
+                    ><small>{{
+                      ACTIVITY_DESCRIPTIONS[slotProps.option.value]
+                    }}</small>
+                  </div></template
+                >
+              </NsSelect>
             </template>
-          </Select>
-        </template>
-      </Column>
-
-      <Column field="goal" header="Objectif">
-        <template #body="{ data }">
-          <Tag
-            :value="goalLabels[data.goal]"
-            :severity="goalSeverity[data.goal]"
-            rounded
-          />
-        </template>
-        <template #editor="{ data, field }">
-          <Select
-            v-model="data[field]"
-            :options="goalOptions"
-            option-label="label"
-            option-value="value"
-            class="w-full"
-          />
-        </template>
-      </Column>
-
-      <Column field="imc" header="IMC">
-        <template #body="{ data }">
-          {{ data.imc.toFixed(1) }}
-        </template>
-      </Column>
-
-      <Column field="bmr" header="BMR">
-        <template #body="{ data }"> {{ data.bmr }} kcal </template>
-      </Column>
-
-      <Column field="tdee" header="TDEE">
-        <template #body="{ data }"> {{ data.tdee }} kcal </template>
-      </Column>
-
-      <Column field="calories_recommandees" header="Calories">
-        <template #body="{ data }">
-          <span class="font-semibold text-primary"
-            >{{ data.calories_recommandees }} kcal</span
+          </Column>
+          <Column field="goal" header="Objectif">
+            <template #body="{ data }"
+              ><NsBadge :tone="goalTone[data.goal]">{{
+                goalLabels[data.goal] ?? "Non renseigné"
+              }}</NsBadge></template
+            >
+            <template #editor="{ data, field }"
+              ><NsSelect
+                v-model="data[field]"
+                :options="goalOptions"
+                option-label="label"
+                option-value="value"
+                aria-label="Objectif"
+                class="table-select-input"
+            /></template>
+          </Column>
+          <Column field="imc" header="IMC"
+            ><template #body="{ data }">{{
+              data.imc?.toFixed(1) ?? "—"
+            }}</template></Column
           >
-        </template>
-      </Column>
-
-      <Column header="">
-        <template #body="{ data }">
-          <Button
-            icon="pi pi-trash"
-            severity="danger"
-            text
-            @click="deleteRecord(data.id)"
+          <Column field="bmr" header="BMR"
+            ><template #body="{ data }"
+              >{{ data.bmr ?? "—" }} kcal</template
+            ></Column
+          >
+          <Column field="tdee" header="TDEE"
+            ><template #body="{ data }"
+              >{{ data.tdee ?? "—" }} kcal</template
+            ></Column
+          >
+          <Column field="calories_recommandees" header="Calories"
+            ><template #body="{ data }"
+              ><strong class="table-target"
+                >{{ data.calories_recommandees ?? "—" }} kcal</strong
+              ></template
+            ></Column
+          >
+          <Column header=""
+            ><template #body="{ data }"
+              ><NsButton
+                icon="pi pi-trash"
+                severity="danger"
+                text
+                aria-label="Supprimer cet enregistrement"
+                @click="deleteRecord(data.id)" /></template
+          ></Column>
+          <Column
+            :rowEditor="true"
+            header="Modifier"
+            style="min-width: 7rem"
+            bodyStyle="text-align:center"
           />
-        </template>
-      </Column>
-      <Column
-        :rowEditor="true"
-        style="width: 5%; min-width: 8rem"
-        bodyStyle="text-align:center"
-      ></Column>
-    </DataTable>
-  </Fieldset>
+        </DataTable>
+        <p class="history-table-help">
+          BMR : métabolisme de base · TDEE : dépense énergétique quotidienne.
+        </p>
+      </NsCard>
+    </template>
+    <MobileEditModal
+      v-model:visible="editMobileVisible"
+      v-model:recordId="editingId"
+    />
+  </div>
 </template>
+
+<style scoped>
+.history-page {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}
+.history-new-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 2.75rem;
+  padding: 0.7rem 1rem;
+  border-radius: 0.65rem;
+  background: var(--ns-primary);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+.history-new-link:hover {
+  background: #163d32;
+}
+.history-new-link:focus-visible {
+  outline: 3px solid #91b5a5;
+  outline-offset: 3px;
+}
+.history-loading {
+  display: grid;
+  gap: 1rem;
+}
+.history-status,
+.history-caption {
+  color: var(--ns-muted);
+  font-size: 0.875rem;
+}
+.history-caption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.history-records {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.record-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.record-label {
+  font-size: 0.75rem;
+  color: var(--ns-muted);
+}
+.record-heading h2 {
+  margin: 0.2rem 0 0;
+  font-size: 1rem;
+  color: var(--ns-ink);
+}
+.record-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 1.25rem 0;
+  margin: 1rem 0;
+  border-block: 1px solid var(--ns-border);
+}
+.record-metrics dt,
+.record-details dt {
+  font-size: 0.8rem;
+  color: var(--ns-muted);
+}
+.record-metrics dd {
+  margin: 0.3rem 0 0;
+  font-size: 1.35rem;
+  color: var(--ns-ink);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.record-metrics small {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--ns-muted);
+}
+.record-details {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+}
+.record-details > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.record-details dd {
+  margin: 0;
+  text-align: right;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+.record-target {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.9rem;
+  background: var(--ns-sage);
+  border-radius: 0.65rem;
+  margin-top: 1.25rem;
+  color: var(--ns-primary);
+  font-size: 0.8rem;
+}
+.record-target strong {
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.record-target small {
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+.record-actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.9rem -0.5rem -0.4rem;
+}
+.history-table-card {
+  min-width: 0;
+  overflow: hidden;
+  padding: 0;
+}
+.history-table {
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+.history-table :deep(th),
+.history-table :deep(td) {
+  white-space: nowrap;
+  padding-block: 1rem;
+}
+.history-table :deep(.p-datatable-table-container) {
+  overflow-x: auto;
+}
+.table-date {
+  font-weight: 500;
+}
+.table-target {
+  color: var(--ns-primary);
+}
+.table-number-input {
+  min-width: 7rem;
+  max-width: 9rem;
+}
+.table-select-input {
+  min-width: 10rem;
+}
+.activity-option {
+  display: grid;
+  gap: 0.3rem;
+  max-width: 17rem;
+  white-space: normal;
+}
+.activity-option > span {
+  font-weight: 600;
+}
+.activity-option small {
+  color: var(--ns-muted);
+  line-height: 1.4;
+}
+.history-table-help {
+  margin: 0;
+  padding: 0.9rem 1.25rem;
+  border-top: 1px solid var(--ns-border);
+  color: var(--ns-muted);
+  font-size: 0.75rem;
+}
+@media (max-width: 700px) {
+  .history-records {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .history-caption > span:last-child {
+    display: none;
+  }
+}
+</style>

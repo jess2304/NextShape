@@ -1,9 +1,10 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { isCancel } from "axios"
-import Dialog from "primevue/dialog"
-import InputNumber from "primevue/inputnumber"
-import Select from "primevue/select"
-import Button from "primevue/button"
+import NsDialog from "@/components/ui/NsDialog.vue"
+import NsNumberInput from "@/components/ui/NsNumberInput.vue"
+import NsSelect from "@/components/ui/NsSelect.vue"
+import NsButton from "@/components/ui/NsButton.vue"
+import NsFormField from "@/components/ui/NsFormField.vue"
 import { ACTIVITY_LEVELS, ACTIVITY_DESCRIPTIONS } from "@/assets/js/constants"
 import { useProgressRecords } from "@/stores/progressRecordsStore"
 import {
@@ -25,6 +26,7 @@ const height_cm = ref<number | null>(null)
 const activity_level = ref("")
 
 const goal = ref("")
+const isSaving = ref(false)
 const goalOptions: Array<Record<string, string>> = [
   { label: "Maintien", value: "maintien" },
   { label: "Perte de poids", value: "perte" },
@@ -61,6 +63,7 @@ const save = async () => {
     return
   }
 
+  isSaving.value = true
   try {
     const response = await store.updateRecord(recordId.value!, {
       weight_kg: weight_kg.value,
@@ -78,84 +81,131 @@ const save = async () => {
       "Erreur",
       resolveApiErrorMessage(err, "Impossible de modifier l'enregistrement.")
     )
+  } finally {
+    isSaving.value = false
   }
 }
 </script>
 
 <template>
-  <Dialog
+  <NsDialog
     v-model:visible="visible"
     modal
-    header="Modifier l'enregistrement"
-    class="mx-1 w-full sm:w-10 md:w-6"
+    header="Modifier le calcul"
+    class="record-edit-dialog"
+    :style="{ width: '30rem', maxWidth: 'calc(100vw - 2rem)' }"
   >
-    <div class="formgrid grid">
-      <div class="field col-12">
-        <label>Poids (kg)</label>
-        <InputNumber
-          v-model="weight_kg"
-          suffix=" kg"
-          showButtons
-          class="w-full"
-          :min="0"
-          :minFractionDigits="1"
-          :maxFractionDigits="1"
-        />
+    <p class="record-edit-intro">
+      Mettez à jour vos mesures et votre objectif pour cet enregistrement.
+    </p>
+    <form id="record-edit-form" class="record-edit-form" @submit.prevent="save">
+      <div class="record-edit-measures">
+        <NsFormField id="record-weight" label="Poids" required>
+          <NsNumberInput
+            inputId="record-weight"
+            v-model="weight_kg"
+            suffix=" kg"
+            showButtons
+            :min="0"
+            :minFractionDigits="1"
+            :maxFractionDigits="1"
+            fluid
+          />
+        </NsFormField>
+        <NsFormField id="record-height" label="Taille" required>
+          <NsNumberInput
+            inputId="record-height"
+            v-model="height_cm"
+            suffix=" cm"
+            showButtons
+            :min="0"
+            :minFractionDigits="1"
+            :maxFractionDigits="1"
+            fluid
+          />
+        </NsFormField>
       </div>
-
-      <div class="field col-12">
-        <label>Taille (cm)</label>
-        <InputNumber
-          v-model="height_cm"
-          suffix=" cm"
-          showButtons
-          class="w-full"
-          :min="0"
-          :minFractionDigits="1"
-          :maxFractionDigits="1"
-        />
-      </div>
-
-      <div class="field col-12">
-        <label>Activité physique</label>
-        <Select
+      <NsFormField id="record-activity" label="Activité physique" required>
+        <NsSelect
+          inputId="record-activity"
           v-model="activity_level"
           :options="ACTIVITY_LEVELS"
           optionLabel="label"
           optionValue="value"
-          class="w-full"
+          fluid
         >
           <template #option="slotProps">
-            <div class="flex flex-col gap-1">
-              <span class="font-semibold">{{ slotProps.option.label }}</span>
-              <small class="text-xs text-gray-500">
-                {{ ACTIVITY_DESCRIPTIONS[slotProps.option.value] }}
-              </small>
+            <div class="record-activity-option">
+              <span>{{ slotProps.option.label }}</span
+              ><small>{{
+                ACTIVITY_DESCRIPTIONS[slotProps.option.value]
+              }}</small>
             </div>
           </template>
-        </Select>
-      </div>
-
-      <div class="field col-12">
-        <label>Objectif</label>
-        <Select
+        </NsSelect>
+      </NsFormField>
+      <NsFormField id="record-goal" label="Objectif" required>
+        <NsSelect
+          inputId="record-goal"
           v-model="goal"
           :options="goalOptions"
           optionLabel="label"
           optionValue="value"
-          class="w-full"
+          fluid
         />
-      </div>
-    </div>
-
-    <div class="flex justify-end gap-2 mt-4">
-      <Button label="Annuler" severity="secondary" @click="visible = false" />
-      <Button
+      </NsFormField>
+    </form>
+    <template #footer>
+      <NsButton
+        label="Annuler"
+        severity="secondary"
+        outlined
+        @click="visible = false"
+      />
+      <NsButton
+        type="submit"
+        form="record-edit-form"
         label="Enregistrer"
         icon="pi pi-check"
-        severity="success"
-        @click="save"
+        :loading="isSaving"
+        :disabled="isSaving"
       />
-    </div>
-  </Dialog>
+    </template>
+  </NsDialog>
 </template>
+
+<style scoped>
+.record-edit-intro {
+  margin: 0 0 1.5rem;
+  color: var(--ns-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.record-edit-form {
+  display: grid;
+  gap: 1.25rem;
+}
+.record-edit-measures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.record-activity-option {
+  display: grid;
+  gap: 0.3rem;
+  max-width: min(20rem, 75vw);
+  white-space: normal;
+}
+.record-activity-option > span {
+  font-weight: 600;
+}
+.record-activity-option small {
+  color: var(--ns-muted);
+  line-height: 1.4;
+}
+@media (max-width: 420px) {
+  .record-edit-measures {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>
