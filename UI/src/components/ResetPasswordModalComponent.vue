@@ -206,7 +206,7 @@ const cancel = () => {
       novalidate
     >
       <p class="description">
-        Indiquez l’adresse e-mail de votre compte. Nous vous enverrons un code
+        Indiquez l'adresse e-mail de votre compte. Nous vous enverrons un code
         de vérification.
       </p>
       <NsFormField id="reset-email" label="Adresse e-mail" required>

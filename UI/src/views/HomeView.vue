@@ -58,7 +58,7 @@ const steps = [
           />
         </div>
         <p class="home-hero__note">
-          <i class="pi pi-check-circle" aria-hidden="true" />Le calcul de l’IMC
+          <i class="pi pi-check-circle" aria-hidden="true" />Le calcul de l'IMC
           est accessible sans compte.
         </p>
       </div>
@@ -94,7 +94,7 @@ const steps = [
 
     <section class="home-tools" aria-labelledby="tools-title">
       <div class="home-tools__heading">
-        <p class="ns-eyebrow">L’essentiel, simplement</p>
+        <p class="ns-eyebrow">L'essentiel, simplement</p>
         <h2 id="tools-title">Votre quotidien.<br />Un peu plus clair.</h2>
       </div>
       <div class="home-tools__grid">

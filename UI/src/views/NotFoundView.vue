@@ -8,12 +8,12 @@ import NsButton from "@/components/ui/NsButton.vue"
     <span class="eyebrow">UN PETIT DÉTOUR</span>
     <h1>Cette page est introuvable.</h1>
     <p>
-      Le lien a peut-être changé. Retrouvez votre chemin depuis l’accueil de
+      Le lien a peut-être changé. Retrouvez votre chemin depuis l'accueil de
       NextShape.
     </p>
     <NsButton
       as="router-link"
-      label="Retour à l’accueil"
+      label="Retour à l'accueil"
       icon="pi pi-arrow-left"
       to="/"
     />

@@ -34,7 +34,7 @@ const options = [
   <PageHeader
     eyebrow="Développement uniquement"
     title="Les composants NextShape"
-    description="La même base visuelle pour tous les écrans. Cette page n’est pas incluse dans l’application de production."
+    description="La même base visuelle pour tous les écrans. Cette page n'est pas incluse dans l'application de production."
   />
   <div class="kit">
     <NsCard>

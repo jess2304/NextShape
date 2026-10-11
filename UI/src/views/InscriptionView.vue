@@ -258,7 +258,7 @@ const resetForm = () => {
             </NsFormField>
             <NsFormField
               id="signup-confirm-email"
-              label="Confirmer l’adresse e-mail"
+              label="Confirmer l'adresse e-mail"
               required
             >
               <NsInput

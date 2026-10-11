@@ -182,7 +182,7 @@ const openMobileEdit = (recordId: number) => {
       v-if="isLoading"
       class="history-loading"
       aria-busy="true"
-      aria-label="Chargement de l’historique"
+      aria-label="Chargement de l'historique"
     >
       <NsSkeleton width="11rem" height="1.25rem" />
       <NsSkeleton v-for="index in 4" :key="index" height="3rem" />
@@ -193,7 +193,7 @@ const openMobileEdit = (recordId: number) => {
     <NsCard v-else-if="loadError">
       <NsEmptyState
         icon="pi pi-exclamation-circle"
-        title="L’historique n’a pas pu être chargé"
+        title="L'historique n'a pas pu être chargé"
         :description="loadError"
       >
         <NsButton

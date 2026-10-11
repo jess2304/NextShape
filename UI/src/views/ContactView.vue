@@ -69,7 +69,7 @@ const sendMessage = async () => {
       <div class="contact-note">
         <span class="pi pi-envelope" aria-hidden="true"></span>
         <p>
-          Votre retour nous aide à améliorer votre quotidien sur l’application.
+          Votre retour nous aide à améliorer votre quotidien sur l'application.
         </p>
       </div>
     </div>
