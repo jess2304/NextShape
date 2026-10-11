@@ -74,6 +74,8 @@ class ProgressRecord(models.Model):
     tdee = models.FloatField()
     calories_recommandees = models.FloatField()
     goal = models.CharField(max_length=20)
+    calculation_age = models.PositiveSmallIntegerField(null=True, blank=True)
+    calculation_gender = models.CharField(max_length=1, null=True, blank=True)
     created_at = models.DateField(auto_now_add=True)
     modified_at = models.DateField(auto_now=True)
 

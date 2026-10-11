@@ -1,4 +1,5 @@
-﻿from typing import cast
+﻿from math import isfinite
+from typing import cast
 
 from api.models import (
     CustomUser,
@@ -26,7 +27,23 @@ def _validate_password_strength(password: str, user=None) -> None:
         raise serializers.ValidationError(list(exc.messages)) from exc
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+def _validate_finite_number(value):
+    if not isfinite(value):
+        raise serializers.ValidationError("La valeur doit être un nombre fini.")
+
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    gender = serializers.ChoiceField(choices=["H", "F"], required=False)
+
+    def validate_birth_date(self, value):
+        if value is not None and value > timezone.localdate():
+            raise serializers.ValidationError(
+                "La date de naissance ne peut pas être dans le futur."
+            )
+        return value
+
+
+class RegisterSerializer(UserDetailsSerializer):
     """
     Serializer for user registration.
     """
@@ -139,7 +156,7 @@ class LoginSerializer(serializers.Serializer):
         return instance["user"]
 
 
-class UpdateProfileSerializer(serializers.ModelSerializer):
+class UpdateProfileSerializer(UserDetailsSerializer):
     birth_date = serializers.DateField(
         input_formats=[
             "%Y-%m-%d",
@@ -275,7 +292,7 @@ class ResetPasswordSerializer(serializers.Serializer):
         return user
 
 
-class CaloriesRecordSerializer(serializers.ModelSerializer):
+class CaloriesInputSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProgressRecord
         fields = [
@@ -287,6 +304,12 @@ class CaloriesRecordSerializer(serializers.ModelSerializer):
             "activity_level",
         ]
 
+    weight_kg = serializers.FloatField(
+        min_value=0.1, max_value=500, validators=[_validate_finite_number]
+    )
+    height_cm = serializers.FloatField(
+        min_value=0.1, max_value=300, validators=[_validate_finite_number]
+    )
     gender = serializers.ChoiceField(choices=["H", "F"])
     age = serializers.IntegerField(min_value=10, max_value=100)
     activity_level = serializers.ChoiceField(
@@ -306,14 +329,9 @@ class CaloriesRecordSerializer(serializers.ModelSerializer):
         ]
     )
 
-    def validate(self, data):
-        if data["weight_kg"] <= 0:
-            raise serializers.ValidationError("Le poids doit être supérieur à 0.")
-        if data["height_cm"] <= 0:
-            raise serializers.ValidationError("La taille doit être supérieure à 0.")
-        if data["age"] <= 0:
-            raise serializers.ValidationError("L'âge doit être supérieur à 0.")
 
+class CaloriesRecordSerializer(CaloriesInputSerializer):
+    def validate(self, data):
         user = self.context["request"].user
         today = timezone.localdate()
 
@@ -345,11 +363,13 @@ class CaloriesRecordSerializer(serializers.ModelSerializer):
             calories_recommandees=result["calories_recommandees"],
             goal=goal,
             activity_level=activity_level,
+            calculation_age=age,
+            calculation_gender=gender,
             date=timezone.localdate(),
         )
 
 
-class ProgressRecordSerializer(serializers.ModelSerializer):
+class ProgressRecordSerializer(CaloriesInputSerializer):
     class Meta:
         model = ProgressRecord
         fields = [
@@ -377,21 +397,54 @@ class ProgressRecordSerializer(serializers.ModelSerializer):
             "modified_at",
         ]
 
-    def update(self, instance, validated_data):
-        for attr in ["weight_kg", "height_cm", "goal", "activity_level"]:
-            if attr in validated_data:
-                setattr(instance, attr, validated_data[attr])
+    def validate(self, data):
+        instance = self.instance
+        age = instance.calculation_age
+        gender = instance.calculation_gender
 
-        user = instance.user
-        weight = instance.weight_kg
-        height = instance.height_cm
-        goal = instance.goal
-        activity_level = instance.activity_level
-        gender = user.gender
-        age = self._get_age(user.birth_date)
+        # Older records have no snapshot: use the profile at the record's date,
+        # then keep these parameters on the first successful update.
+        if age is None:
+            age = self._get_age(instance.user.birth_date, instance.date)
+        if gender is None:
+            gender = instance.user.gender
+        if age is None:
+            raise serializers.ValidationError(
+                {
+                    "age": (
+                        "Complétez votre date de naissance dans le profil "
+                        "pour modifier cet ancien calcul."
+                    )
+                }
+            )
+
+        inputs = CaloriesInputSerializer(
+            data={
+                **{
+                    field: data.get(field, getattr(instance, field))
+                    for field in ["weight_kg", "height_cm", "goal", "activity_level"]
+                },
+                "age": age,
+                "gender": gender,
+            }
+        )
+        inputs.is_valid(raise_exception=True)
+        data["calculation_age"] = inputs.validated_data["age"]
+        data["calculation_gender"] = inputs.validated_data["gender"]
+        return data
+
+    def update(self, instance, validated_data):
+        weight = validated_data.get("weight_kg", instance.weight_kg)
+        height = validated_data.get("height_cm", instance.height_cm)
+        goal = validated_data.get("goal", instance.goal)
+        activity_level = validated_data.get("activity_level", instance.activity_level)
+        gender = validated_data["calculation_gender"]
+        age = validated_data["calculation_age"]
 
         result = calculs_calories(weight, height, age, gender, activity_level, goal)
 
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
         instance.imc = result["imc"]
         instance.bmr = result["bmr"]
         instance.tdee = result["tdee"]
@@ -400,14 +453,16 @@ class ProgressRecordSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    def _get_age(self, birth_date):
-        from datetime import date
-
-        today = date.today()
+    def _get_age(self, birth_date, record_date):
+        if birth_date is None:
+            return None
         return (
-            today.year
+            record_date.year
             - birth_date.year
-            - ((today.month, today.day) < (birth_date.month, birth_date.day))
+            - (
+                (record_date.month, record_date.day)
+                < (birth_date.month, birth_date.day)
+            )
         )
 
 

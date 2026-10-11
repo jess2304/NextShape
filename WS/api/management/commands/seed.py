@@ -66,5 +66,7 @@ class Command(BaseCommand):
                 tdee=result["tdee"],
                 calories_recommandees=result["calories_recommandees"],
                 goal=goal,
+                calculation_age=age,
+                calculation_gender=user.gender,
             )
         self.stdout.write(self.style.SUCCESS("60 progress records added."))

@@ -20,6 +20,19 @@ NextShape est une application web de suivi de forme physique, qui permet à un u
 - Envoi de codes par email via SMTP (Brevo)
 - Pipeline CI/CD avec test et déploiement Render (dev/prod)
 
+Les calculs enregistrés conservent l'âge et le genre saisis dans la calculatrice.
+Une modification de l'historique réutilise ces paramètres, même si le profil
+change ensuite. Pour les anciens enregistrements sans ces paramètres, la première
+modification utilise le genre du profil et l'âge à la date de l'enregistrement,
+puis les conserve. Si le profil ne permet pas un calcul valide, la modification
+est refusée en 400 sans changement en base ; une date de naissance manquante doit
+être complétée dans le profil. Les paramètres saisis à l'origine ne peuvent pas
+être reconstitués pour ces anciens enregistrements.
+
+La création et la modification acceptent des nombres finis : poids de 0,1 à
+500 kg, taille de 0,1 à 300 cm et âge de 10 à 100 ans. Le genre, l'objectif et
+l'activité doivent correspondre aux choix proposés.
+
 ## Outils :
 
 L'application est réalisée avec :
