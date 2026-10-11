@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { isCancel } from "axios"
 import { ref } from "vue"
-import InputText from "primevue/inputtext"
-import InputMask from "primevue/inputmask"
-import Password from "primevue/password"
-import Button from "primevue/button"
-import DatePicker from "primevue/datepicker"
-import SelectButton from "primevue/selectbutton"
-import Toast from "primevue/toast"
+import NsInput from "@/components/ui/NsInput.vue"
+import NsInputMask from "@/components/ui/NsInputMask.vue"
+import NsPasswordInput from "@/components/ui/NsPasswordInput.vue"
+import NsButton from "@/components/ui/NsButton.vue"
+import NsCard from "@/components/ui/NsCard.vue"
+import NsFormField from "@/components/ui/NsFormField.vue"
+import NsDatePicker from "@/components/ui/NsDatePicker.vue"
+import NsSelectButton from "@/components/ui/NsSelectButton.vue"
 import { useToast } from "primevue/usetoast"
 import { useAuthStore } from "@/stores/authStore"
 import router from "@/router"
@@ -168,121 +169,313 @@ const resetForm = () => {
 </script>
 
 <template>
-  <div
-    class="card p-4 surface-card shadow-2 border-round-lg w-full md:w-6 mx-auto"
-  >
-    <h2 class="text-5xl text-center text-primary">Inscription</h2>
-    <div class="formgrid grid">
-      <div class="field col-12 md:col-6">
-        <label>Prénom *</label>
-        <InputText
-          class="w-full"
-          v-model="formData.first_name"
-          placeholder="Votre prénom"
-          :invalid="invalidFields.first_name"
-        />
-      </div>
-      <div class="field col-12 md:col-6">
-        <label>Nom *</label>
-        <InputText
-          class="w-full"
-          v-model="formData.last_name"
-          placeholder="Votre nom"
-          :invalid="invalidFields.last_name"
-        />
-      </div>
-      <div class="field col-12 md:col-6">
-        <label>Genre*</label>
-        <SelectButton
-          class="w-full"
-          v-model="formData.gender"
-          :invalid="invalidFields.gender"
-          :options="GENDER"
-          optionLabel="label"
-          optionValue="value"
-          defaultValue="H"
-        />
-      </div>
-      <div class="field col-12 md:col-6">
-        <label>Date de naissance *</label>
-        <DatePicker
-          class="w-full"
-          v-model="formData.birth_date"
-          showIcon
-          dateFormat="dd/mm/yy"
-          :invalid="invalidFields.birth_date"
-          :maxDate="today"
-        />
-      </div>
-      <div class="field col-12 md:col-6">
-        <label>Téléphone</label>
-        <InputMask
-          id="phone_number"
-          v-model="formData.phone_number"
-          mask="(+33) 9-99-99-99-99"
-          placeholder="(+33) 0-00-00-00-00"
-          fluid
-        />
-      </div>
-      <div class="field col-12 md:col-6">
-        <label for="email">Adresse Email *</label>
-        <InputText
-          class="w-full"
-          id="email"
-          type="email"
-          v-model="formData.email"
-          placeholder="Votre email"
-          :invalid="invalidFields.email"
-        />
-      </div>
-      <div class="field col-12 md:col-6">
-        <label>Confirmez votre adresse email *</label>
-        <InputText
-          class="w-full"
-          type="email"
-          v-model="formData.confirmEmail"
-          placeholder="Confirmez l'email"
-          :invalid="invalidFields.confirmEmail"
-        />
-      </div>
-      <div class="field col-12 md:col-6">
-        <label for="password">Mot de passe *</label>
-        <Password
-          class="w-full"
-          v-model="formData.password"
-          toggleMask
-          :invalid="invalidFields.password"
-        />
-      </div>
-      <div class="field col-12 md:col-6">
-        <label for="confirmPassword">Confirmez votre mot de passe *</label>
-        <Password
-          class="w-full"
-          v-model="formData.confirmPassword"
-          toggleMask
-          :invalid="invalidFields.confirmPassword"
-        />
-      </div>
-      <CodeVerificationModalComponent
-        :visible="showModal"
-        @update:visible="showModal = $event"
-        @validated="handleCodeValidation"
-        @sendBack="sendCode"
-      />
+  <section class="signup-page">
+    <div class="signup-intro">
+      <span class="eyebrow">UN PREMIER PAS POUR VOUS</span>
+      <h1>Votre parcours commence ici.</h1>
+      <p>
+        Créez votre espace pour retrouver vos calculs et suivre votre évolution.
+      </p>
     </div>
-    <Toast />
-    <div>
-      <Button
-        label="Confirmer l'inscription"
-        icon="pi pi-arrow-right"
-        @click="validateAndProceed"
-        :loading="loading"
-      />
-    </div>
-  </div>
+    <NsCard class="signup-card">
+      <form @submit.prevent="validateAndProceed" novalidate>
+        <div class="form-title">
+          <h2>Créer un compte</h2>
+          <span>* Champs obligatoires</span>
+        </div>
+        <fieldset class="form-section">
+          <legend>
+            <span class="section-number">01</span> À propos de vous
+          </legend>
+          <div class="form-grid">
+            <NsFormField id="signup-first-name" label="Prénom" required>
+              <NsInput
+                id="signup-first-name"
+                v-model="formData.first_name"
+                autocomplete="given-name"
+                placeholder="Votre prénom"
+                :invalid="invalidFields.first_name"
+                fluid
+              />
+            </NsFormField>
+            <NsFormField id="signup-last-name" label="Nom" required>
+              <NsInput
+                id="signup-last-name"
+                v-model="formData.last_name"
+                autocomplete="family-name"
+                placeholder="Votre nom"
+                :invalid="invalidFields.last_name"
+                fluid
+              />
+            </NsFormField>
+            <div class="gender-field">
+              <span id="signup-gender-label" class="field-label"
+                >Genre <span aria-hidden="true">*</span></span
+              >
+              <NsSelectButton
+                v-model="formData.gender"
+                aria-labelledby="signup-gender-label"
+                :invalid="invalidFields.gender"
+                :options="GENDER"
+                optionLabel="label"
+                optionValue="value"
+                defaultValue="H"
+              />
+            </div>
+            <NsFormField
+              id="signup-birth-date"
+              label="Date de naissance"
+              required
+            >
+              <NsDatePicker
+                inputId="signup-birth-date"
+                v-model="formData.birth_date"
+                showIcon
+                dateFormat="dd/mm/yy"
+                placeholder="JJ/MM/AAAA"
+                :invalid="invalidFields.birth_date"
+                :maxDate="today"
+                fluid
+              />
+            </NsFormField>
+          </div>
+        </fieldset>
+        <fieldset class="form-section">
+          <legend>
+            <span class="section-number">02</span> Vos coordonnées
+          </legend>
+          <div class="form-grid">
+            <NsFormField id="signup-email" label="Adresse e-mail" required>
+              <NsInput
+                id="signup-email"
+                type="email"
+                autocomplete="email"
+                v-model="formData.email"
+                placeholder="vous@exemple.fr"
+                :invalid="invalidFields.email"
+                fluid
+              />
+            </NsFormField>
+            <NsFormField
+              id="signup-confirm-email"
+              label="Confirmer l'adresse e-mail"
+              required
+            >
+              <NsInput
+                id="signup-confirm-email"
+                type="email"
+                autocomplete="email"
+                v-model="formData.confirmEmail"
+                placeholder="La même adresse e-mail"
+                :invalid="invalidFields.confirmEmail"
+                fluid
+              />
+            </NsFormField>
+            <NsFormField id="signup-phone" label="Téléphone" hint="Facultatif">
+              <NsInputMask
+                id="signup-phone"
+                v-model="formData.phone_number"
+                autocomplete="tel"
+                aria-describedby="signup-phone-hint"
+                mask="(+33) 9-99-99-99-99"
+                placeholder="(+33) 0-00-00-00-00"
+                fluid
+              />
+            </NsFormField>
+          </div>
+        </fieldset>
+        <fieldset class="form-section">
+          <legend>
+            <span class="section-number">03</span> Votre mot de passe
+          </legend>
+          <div class="form-grid">
+            <NsFormField id="signup-password" label="Mot de passe" required>
+              <NsPasswordInput
+                inputId="signup-password"
+                v-model="formData.password"
+                :inputProps="{ autocomplete: 'new-password' }"
+                toggleMask
+                :invalid="invalidFields.password"
+                fluid
+              />
+            </NsFormField>
+            <NsFormField
+              id="signup-confirm-password"
+              label="Confirmer le mot de passe"
+              required
+            >
+              <NsPasswordInput
+                inputId="signup-confirm-password"
+                v-model="formData.confirmPassword"
+                :inputProps="{ autocomplete: 'new-password' }"
+                toggleMask
+                :invalid="invalidFields.confirmPassword"
+                :feedback="false"
+                fluid
+              />
+            </NsFormField>
+          </div>
+        </fieldset>
+        <div class="signup-actions">
+          <p>Nous vous enverrons un code pour vérifier votre adresse e-mail.</p>
+          <NsButton
+            label="Créer mon compte"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            type="submit"
+            :loading="loading"
+          />
+        </div>
+      </form>
+    </NsCard>
+    <p class="auth-switch">
+      Déjà un compte ? <RouterLink to="/connexion">Me connecter</RouterLink>
+    </p>
+    <CodeVerificationModalComponent
+      :visible="showModal"
+      @update:visible="showModal = $event"
+      @validated="handleCodeValidation"
+      @sendBack="sendCode"
+    />
+  </section>
 </template>
-<style>
-.p-password-input {
-  width: 100% !important;
+
+<style scoped>
+.signup-page {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 1.5rem 0 2rem;
+}
+.signup-intro {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.eyebrow {
+  color: #1d4d40;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+h1 {
+  margin: 0.8rem 0;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+}
+.signup-intro p {
+  color: #69766f;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.signup-card {
+  padding: clamp(1.3rem, 4vw, 2.5rem);
+}
+.form-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  letter-spacing: -0.025em;
+}
+.form-title > span {
+  font-size: 0.73rem;
+  color: #69766f;
+}
+.form-section {
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 1.8rem;
+  border: 0;
+}
+.form-section + .form-section {
+  padding-top: 1.3rem;
+  border-top: 1px solid #e7ebe5;
+}
+legend {
+  float: left;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.3rem;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+.section-number {
+  font-size: 0.7rem;
+  color: #52735f;
+  background: #eef3ed;
+  border-radius: 7px;
+  padding: 0.35rem 0.45rem;
+  font-variant-numeric: tabular-nums;
+}
+.form-grid {
+  clear: both;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.2rem 1.4rem;
+}
+.gender-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.field-label {
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+.field-label > span {
+  color: #69766f;
+}
+.signup-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #e7ebe5;
+}
+.signup-actions p {
+  max-width: 280px;
+  margin: 0;
+  color: #69766f;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.signup-actions :deep(.p-button) {
+  flex-shrink: 0;
+}
+.auth-switch {
+  text-align: center;
+  color: #69766f;
+  font-size: 0.86rem;
+  margin-top: 1.5rem;
+}
+.auth-switch a {
+  color: #1d4d40;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .form-title {
+    align-items: start;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .signup-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .signup-actions p {
+    max-width: none;
+  }
 }
 </style>

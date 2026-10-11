@@ -1,0 +1,205 @@
+.public-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+.public-header {
+  background: rgb(246 245 240 / 96%);
+  border-bottom: 1px solid var(--ns-border);
+}
+.public-content {
+  width: min(1200px, calc(100% - 5rem));
+  margin: 0 auto;
+  padding: 3.5rem 0 4.5rem;
+  flex: 1;
+}
+.app-layout {
+  min-height: 100dvh;
+}
+.app-sidebar {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 236px;
+  padding: 1.6rem 1.1rem;
+  background: #fafaf7;
+  border-right: 1px solid var(--ns-border);
+}
+.app-sidebar > .brand-mark {
+  margin-left: 0.35rem;
+}
+.app-sidebar__nav {
+  margin-top: 3rem;
+}
+.nav-caption {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ns-muted);
+  margin: 0 0.9rem 0.75rem;
+}
+.side-nav {
+  display: grid;
+  gap: 0.35rem;
+}
+.side-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border-radius: 8px;
+  min-height: 2.9rem;
+  padding: 0.75rem 0.9rem;
+  color: #56645b;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+.side-nav a:hover {
+  background: #eef1ea;
+  color: var(--ns-primary);
+}
+.side-nav a.router-link-exact-active {
+  background: var(--ns-sage);
+  color: var(--ns-primary);
+  font-weight: 650;
+}
+.side-nav .pi {
+  font-size: 1rem;
+  width: 1.1rem;
+  text-align: center;
+}
+.app-sidebar__bottom {
+  margin-top: auto;
+  padding-top: 2rem;
+}
+.sidebar-note {
+  margin: 0 0.5rem 1.5rem;
+  padding: 1.25rem 0.5rem;
+  color: var(--ns-primary);
+  border-top: 1px solid var(--ns-border);
+}
+.sidebar-note .pi {
+  font-size: 1.25rem;
+}
+.sidebar-note p {
+  font-size: 0.8rem;
+  line-height: 1.8;
+  margin: 0.75rem 0 0;
+}
+.sidebar-note strong {
+  font-weight: 600;
+}
+.app-workspace {
+  margin-left: 236px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  min-width: 0;
+}
+.app-topbar {
+  min-height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem clamp(1.5rem, 3vw, 3rem);
+  background: rgb(250 250 247 / 85%);
+  border-bottom: 1px solid var(--ns-border);
+}
+.app-topbar__label {
+  font-size: 0.8rem;
+  color: var(--ns-muted);
+}
+.app-topbar__mobile {
+  display: none;
+}
+.app-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 2.75rem clamp(1.5rem, 3vw, 3rem);
+}
+.app-footer {
+  padding: 1rem 2rem 1.5rem;
+  color: var(--ns-muted);
+  text-align: center;
+  font-size: 0.7rem;
+}
+.mobile-tabbar {
+  display: none;
+}
+@media (max-width: 900px) {
+  .public-content {
+    width: calc(100% - 3rem);
+    padding-top: 2.5rem;
+  }
+  .app-sidebar,
+  .app-topbar__label {
+    display: none;
+  }
+  .app-workspace {
+    margin-left: 0;
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+  .app-topbar {
+    min-height: 72px;
+    padding: 0.6rem 1rem;
+  }
+  .app-topbar__mobile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .app-content {
+    padding: 2rem 1.5rem;
+  }
+  .mobile-tabbar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    position: fixed;
+    inset: auto 0 0;
+    padding: 0.5rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--ns-border);
+    background: #fafaf7;
+    z-index: 20;
+  }
+  .mobile-tabbar a {
+    display: grid;
+    gap: 0.35rem;
+    justify-items: center;
+    text-decoration: none;
+    color: var(--ns-muted);
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 0.5rem 0.25rem;
+    border-radius: 8px;
+  }
+  .mobile-tabbar .pi {
+    font-size: 1.1rem;
+  }
+  .mobile-tabbar a.router-link-exact-active {
+    color: var(--ns-primary);
+    background: var(--ns-sage);
+    font-weight: 650;
+  }
+}
+@media (max-width: 480px) {
+  .public-content {
+    width: calc(100% - 2rem);
+    padding: 2rem 0 3rem;
+  }
+  .app-content {
+    padding: 1.75rem 1rem;
+  }
+  .app-topbar {
+    padding: 0.5rem;
+    gap: 0.25rem;
+  }
+  .app-topbar__mobile {
+    gap: 0;
+  }
+}

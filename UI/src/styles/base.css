@@ -1,0 +1,247 @@
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/InterVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #202b26;
+  background: #f6f5f0;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+  --ns-bg: #f6f5f0;
+  --ns-surface: #fff;
+  --ns-primary: #1d4d40;
+  --ns-sage: #e7eee7;
+  --ns-ink: #202b26;
+  --ns-muted: #69766f;
+  --ns-border: #dee4dd;
+  --ns-danger: #ab4132;
+  --ns-radius: 16px;
+  --ns-shadow: 0 2px 8px rgb(29 77 64 / 2.5%);
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  line-height: 1.6;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button:not(:disabled),
+a {
+  touch-action: manipulation;
+}
+a {
+  color: var(--ns-primary);
+  text-underline-offset: 0.2em;
+}
+img {
+  display: block;
+  max-width: 100%;
+}
+h1,
+h2,
+h3,
+h4,
+p {
+  overflow-wrap: anywhere;
+}
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.25;
+}
+h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+::selection {
+  background: #cbdcd0;
+  color: #12332a;
+}
+:focus-visible {
+  outline: 2px solid var(--ns-primary);
+  outline-offset: 4px;
+}
+.ns-eyebrow {
+  color: var(--ns-primary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin: 0 0 0.85rem;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 1rem;
+  z-index: 9999;
+  transform: translateY(-200%);
+  background: var(--ns-primary);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Constraints also apply to PrimeVue content teleported to the body. */
+.p-button {
+  line-height: 1.3;
+  min-height: 2.75rem;
+  text-decoration: none;
+}
+.p-button-icon-only {
+  min-width: 2.75rem;
+}
+.p-inputtext,
+.p-inputnumber,
+.p-select,
+.p-multiselect,
+.p-password,
+.p-datepicker,
+.p-textarea {
+  max-width: 100%;
+}
+.p-inputnumber-input,
+.p-password-input {
+  min-width: 0;
+  width: 100%;
+}
+.p-select-label,
+.p-multiselect-label {
+  min-width: 0;
+}
+.p-dialog.ns-dialog {
+  width: min(32rem, calc(100vw - 2rem));
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
+}
+.p-dialog-title {
+  font-size: 1.2rem;
+  letter-spacing: -0.025em;
+}
+.p-dialog-content {
+  line-height: 1.6;
+}
+.p-dialog-footer {
+  flex-wrap: wrap;
+}
+.p-drawer.ns-drawer {
+  max-width: min(22rem, 90vw);
+}
+.p-select-overlay,
+.p-multiselect-overlay {
+  max-width: calc(100vw - 2rem);
+}
+.p-select-option,
+.p-multiselect-option {
+  white-space: normal;
+}
+.p-inputotp {
+  gap: 0.5rem;
+}
+.p-inputotp-input {
+  width: 2.75rem;
+  min-width: 0;
+  height: 3rem;
+  font-variant-numeric: tabular-nums;
+}
+.p-toast {
+  max-width: calc(100vw - 2rem);
+}
+.p-toast-top-right {
+  top: 1rem;
+  right: 1rem;
+}
+.p-toast-message-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.p-toast-message-detail {
+  line-height: 1.5;
+}
+.p-datatable {
+  font-size: 0.875rem;
+}
+.p-datatable th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ns-muted);
+  white-space: nowrap;
+}
+.p-datatable td {
+  font-variant-numeric: tabular-nums;
+}
+.p-paginator {
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  padding-top: 1rem;
+}
+.p-confirmpopup {
+  max-width: calc(100vw - 2rem);
+}
+
+@media (max-width: 640px) {
+  .p-dialog-header {
+    padding: 1.25rem;
+  }
+  .p-dialog-content {
+    padding: 0 1.25rem 1.25rem;
+  }
+  .p-dialog-footer {
+    padding: 0 1.25rem 1.25rem;
+  }
+  .p-inputotp {
+    gap: 0.375rem;
+  }
+  .p-inputotp-input {
+    width: 2.25rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

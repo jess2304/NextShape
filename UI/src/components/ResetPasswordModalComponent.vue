@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { isCancel } from "axios"
 import { ref } from "vue"
-import Dialog from "primevue/dialog"
-import Button from "primevue/button"
-import InputText from "primevue/inputtext"
-import InputOtp from "primevue/inputotp"
+import NsDialog from "@/components/ui/NsDialog.vue"
+import NsButton from "@/components/ui/NsButton.vue"
+import NsInput from "@/components/ui/NsInput.vue"
+import NsPasswordInput from "@/components/ui/NsPasswordInput.vue"
+import NsInputOtp from "@/components/ui/NsInputOtp.vue"
+import NsFormField from "@/components/ui/NsFormField.vue"
 import { useAuthStore } from "@/stores/authStore"
 import { useToast } from "primevue/usetoast"
 import {
@@ -178,88 +180,245 @@ const cancel = () => {
 </script>
 
 <template>
-  <Dialog
-    v-model:visible="props.visible"
-    header="Réinitialisation du mot de passe"
-    :modal="true"
+  <NsDialog
+    :visible="props.visible"
+    @update:visible="emits('update:visible', $event)"
+    header="Retrouver votre accès"
+    modal
     :closable="false"
+    :style="{ width: '30rem', maxWidth: 'calc(100vw - 2rem)' }"
   >
-    <div v-if="step === 1">
-      <div class="field">
-        <label for="email">Adresse Email</label>
-        <InputText
-          id="email"
-          type="email"
+    <ol class="reset-steps" aria-label="Étapes de réinitialisation">
+      <li
+        v-for="(label, index) in ['E-mail', 'Vérification', 'Mot de passe']"
+        :key="label"
+        :class="{ current: step === index + 1, completed: step > index + 1 }"
+        :aria-current="step === index + 1 ? 'step' : undefined"
+      >
+        <span>{{ index + 1 }}</span
+        >{{ label }}
+      </li>
+    </ol>
+    <form
+      v-if="step === 1"
+      class="reset-form"
+      @submit.prevent="sendCode"
+      novalidate
+    >
+      <p class="description">
+        Indiquez l'adresse e-mail de votre compte. Nous vous enverrons un code
+        de vérification.
+      </p>
+      <NsFormField id="reset-email" label="Adresse e-mail" required>
+        <NsInput
+          id="reset-email"
           v-model="email"
+          type="email"
           autocomplete="email"
-          class="w-full"
+          placeholder="vous@exemple.fr"
           :invalid="invalidFields.email"
+          fluid
         />
-      </div>
-      <div class="flex justify-content-end mt-3 gap-2">
-        <Button label="Annuler" severity="secondary" @click="cancel" />
-        <Button
-          type="submit"
+      </NsFormField>
+      <div class="dialog-actions">
+        <NsButton
+          label="Annuler"
+          type="button"
+          severity="secondary"
+          text
+          @click="cancel"
+        /><NsButton
           label="Envoyer le code"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          type="submit"
           :loading="loading"
-          @click="sendCode"
         />
       </div>
-    </div>
-
-    <div v-else-if="step === 2">
-      <div class="field">
-        <label for="code">Entrez le code reçu par email :</label>
-        <InputOtp
-          id="code"
+    </form>
+    <form
+      v-else-if="step === 2"
+      class="reset-form"
+      @submit.prevent="verifyCode"
+      novalidate
+    >
+      <p class="description">
+        Saisissez le code à six chiffres envoyé à <strong>{{ email }}</strong
+        >.
+      </p>
+      <div class="otp-field">
+        <span id="reset-code-label" class="field-label"
+          >Code de vérification</span
+        >
+        <NsInputOtp
           v-model="code"
+          role="group"
+          aria-labelledby="reset-code-label"
+          :pt="{
+            pcInputText: {
+              root: {
+                'aria-label': 'Chiffre du code de vérification',
+                autocomplete: 'one-time-code',
+              },
+            },
+          }"
           integerOnly
-          size="small"
           :length="6"
           :invalid="invalidFields.code"
         />
       </div>
-      <div class="flex justify-content-end mt-3 gap-2">
-        <Button label="Retour" severity="secondary" @click="() => (step = 1)" />
-        <Button
-          label="Valider le code"
-          :loading="loading"
-          @click="verifyCode"
-        />
+      <div class="dialog-actions">
+        <NsButton
+          label="Retour"
+          type="button"
+          severity="secondary"
+          text
+          @click="() => (step = 1)"
+        /><NsButton label="Valider le code" type="submit" :loading="loading" />
       </div>
-    </div>
-
-    <div v-else-if="step === 3">
-      <div class="field">
-        <label for="newPassword">Nouveau mot de passe</label>
-        <InputText
-          id="newPassword"
-          type="password"
+    </form>
+    <form
+      v-else-if="step === 3"
+      class="reset-form"
+      @submit.prevent="updatePassword"
+      novalidate
+    >
+      <p class="description">
+        Choisissez votre nouveau mot de passe pour vous reconnecter.
+      </p>
+      <NsFormField
+        id="reset-new-password"
+        label="Nouveau mot de passe"
+        required
+      >
+        <NsPasswordInput
+          inputId="reset-new-password"
           v-model="newPassword"
-          class="w-full"
-          autocomplete="new-password"
+          :inputProps="{ autocomplete: 'new-password' }"
+          toggleMask
+          :feedback="false"
           :invalid="invalidFields.newPassword"
+          fluid
         />
-      </div>
-      <div class="field">
-        <label for="confirmPassword">Confirmez le mot de passe</label>
-        <InputText
-          id="confirmPassword"
-          type="password"
+      </NsFormField>
+      <NsFormField
+        id="reset-confirm-password"
+        label="Confirmer le mot de passe"
+        required
+      >
+        <NsPasswordInput
+          inputId="reset-confirm-password"
           v-model="confirmPassword"
-          class="w-full"
-          autocomplete="new-password"
+          :inputProps="{ autocomplete: 'new-password' }"
+          toggleMask
+          :feedback="false"
           :invalid="invalidFields.confirmPassword"
+          fluid
         />
-      </div>
-      <div class="flex justify-content-end mt-3 gap-2">
-        <Button label="Annuler" severity="secondary" @click="cancel" />
-        <Button
+      </NsFormField>
+      <div class="dialog-actions">
+        <NsButton
+          label="Annuler"
+          type="button"
+          severity="secondary"
+          text
+          @click="cancel"
+        /><NsButton
           label="Mettre à jour"
+          icon="pi pi-check"
+          type="submit"
           :loading="loading"
-          @click="updatePassword"
         />
       </div>
-    </div>
-  </Dialog>
+    </form>
+  </NsDialog>
 </template>
+
+<style scoped>
+.reset-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0 0 1.3rem;
+  margin: 0.3rem 0 1.3rem;
+  border-bottom: 1px solid #e7ebe5;
+}
+.reset-steps li {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  color: #69766f;
+  font-size: 0.68rem;
+  text-align: center;
+}
+.reset-steps li > span {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f0f2ed;
+  font-size: 0.73rem;
+  font-weight: 600;
+}
+.reset-steps li.current {
+  color: #1d4d40;
+  font-weight: 650;
+}
+.reset-steps li.current > span {
+  background: #1d4d40;
+  color: white;
+}
+.reset-steps li.completed > span {
+  color: #1d4d40;
+  background: #e7eee7;
+}
+.reset-form {
+  display: grid;
+  gap: 1.3rem;
+}
+.description {
+  margin: 0;
+  color: #69766f;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.description strong {
+  color: #202b26;
+  font-weight: 600;
+}
+.otp-field {
+  display: grid;
+  gap: 0.8rem;
+}
+.field-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.otp-field :deep(.p-inputotp) {
+  display: flex;
+  gap: clamp(0.3rem, 1.5vw, 0.65rem);
+}
+.otp-field :deep(.p-inputotp-input) {
+  width: clamp(2rem, 8.5vw, 2.9rem);
+  height: 3rem;
+  min-width: 0;
+  font-size: 1.15rem;
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid #e7ebe5;
+}
+@media (max-width: 400px) {
+  .dialog-actions {
+    flex-direction: column-reverse;
+  }
+}
+</style>
