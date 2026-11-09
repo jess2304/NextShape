@@ -1,0 +1,245 @@
+# Ingredients used by the coach recipes.
+#
+# Each entry links a stable identifier to a food of the Ciqual 2025 table
+# (Anses, doi:10.57745/RDMHWY). Recipe weights are given in the stated state
+# (raw, dry, canned = drained, cooked, ready = ready to eat, frozen).
+# Names and labels are French: they are shown to users.
+#
+# Fields:
+#   name       displayed name
+#   ciqual     Ciqual food code
+#   state      state in which the food is weighed
+#   aisle      shopping-list aisle
+#   animal     animal origin: poultry, beef, veal, pork, lamb, fish,
+#              crustacean, mollusc, egg, dairy, honey
+#   allergens  plant allergens (animal ones are deduced from `animal`)
+#   nut        precise tree nut (fine-grained exclusion)
+#   cereal     precise gluten cereal (fine-grained exclusion)
+#   families   families used for dislikes
+#   unit       kitchen measure [label, grams]
+#   buy        purchase pack [label, grams]
+#   ratio      cooked weight / weighed weight, for display
+#   liquid     displayed in centilitres
+#   spicy      hot ingredient
+#   lactose    false for aged cheeses and butter
+#   alcohol    contains alcohol
+#   approx     approximated composition: reason shown to users
+#   buy_factor purchase weight / edible weight (shellfish)
+
+# Poultry and meat
+chicken_breast: {name: Blanc de poulet, ciqual: 36017, state: raw, aisle: boucherie, animal: poultry, families: [volaille], unit: [filet, 140], buy: [barquette, 500], ratio: 0.75}
+chicken_thigh: {name: Haut de cuisse de poulet désossé, ciqual: 36019, state: raw, aisle: boucherie, animal: poultry, families: [volaille], buy: [barquette, 600], ratio: 0.75}
+turkey_breast: {name: Escalope de dinde, ciqual: 36304, state: raw, aisle: boucherie, animal: poultry, families: [volaille], unit: [escalope, 120], buy: [barquette, 400], ratio: 0.75}
+duck_breast: {name: Magret de canard, ciqual: 36206, state: raw, aisle: boucherie, animal: poultry, families: [volaille, canard], unit: [magret, 350], buy: [magret, 350], ratio: 0.65}
+beef_mince: {name: Bœuf haché 5 % MG, ciqual: 6250, state: raw, aisle: boucherie, animal: beef, families: [viande_rouge], buy: [barquette, 500], ratio: 0.75}
+beef_steak: {name: Rumsteck de bœuf, ciqual: 6206, state: raw, aisle: boucherie, animal: beef, families: [viande_rouge], buy: [pièce, 300], ratio: 0.75}
+beef_stew: {name: Bœuf à braiser (paleron), ciqual: 6270, state: raw, aisle: boucherie, animal: beef, families: [viande_rouge], buy: [barquette, 800], ratio: 0.65}
+ham: {name: Jambon cuit découenné dégraissé, ciqual: 28913, state: ready, aisle: charcuterie, animal: pork, families: [porc, charcuterie], unit: [tranche, 45], buy: [paquet de 4 tranches, 180]}
+bacon: {name: Lardons fumés, ciqual: 28720, state: raw, aisle: charcuterie, animal: pork, families: [porc, charcuterie], buy: [barquette, 200], ratio: 0.7}
+sausage: {name: Saucisse de Toulouse, ciqual: 30110, state: raw, aisle: boucherie, animal: pork, families: [porc, charcuterie], unit: [saucisse, 100], buy: [barquette, 400], ratio: 0.8}
+lamb_shoulder: {name: Épaule d'agneau maigre, ciqual: 21505, state: raw, aisle: boucherie, animal: lamb, families: [viande_rouge, agneau], buy: [barquette, 600], ratio: 0.7}
+veal_shank: {name: Jarret de veau (osso buco), ciqual: 6583, state: raw, aisle: boucherie, animal: veal, families: [viande_rouge], buy: [tranche, 300], ratio: 0.7}
+veal_escalope: {name: Escalope de veau, ciqual: 6521, state: raw, aisle: boucherie, animal: veal, families: [viande_rouge], unit: [escalope, 120], buy: [barquette, 360], ratio: 0.75}
+pork_tenderloin: {name: Filet mignon de porc, ciqual: 28204, state: raw, aisle: boucherie, animal: pork, families: [porc], buy: [pièce, 500], ratio: 0.75}
+merguez: {name: Merguez, ciqual: 30150, state: raw, aisle: boucherie, animal: beef, families: [viande_rouge, charcuterie], spicy: true, unit: [merguez, 60], buy: [barquette, 360], ratio: 0.8}
+ham_cured: {name: Jambon cru, ciqual: 28800, state: ready, aisle: charcuterie, animal: pork, families: [porc, charcuterie], unit: [tranche, 15], buy: [paquet, 100]}
+
+# Fish, crustaceans and molluscs
+salmon: {name: Pavé de saumon, ciqual: 26036, state: raw, aisle: poissonnerie, animal: fish, families: [poisson], unit: [pavé, 125], buy: ["barquette de 2 pavés", 250], ratio: 0.8}
+cod: {name: Dos de cabillaud, ciqual: 26043, state: raw, aisle: poissonnerie, animal: fish, families: [poisson], unit: [dos, 140], buy: ["barquette de 2 dos", 280], ratio: 0.8}
+sea_bream: {name: Filet de dorade, ciqual: 26088, state: raw, aisle: poissonnerie, animal: fish, families: [poisson], buy: [barquette, 300], ratio: 0.8}
+tuna_fresh: {name: Thon frais, ciqual: 26064, state: raw, aisle: poissonnerie, animal: fish, families: [poisson], buy: [pavé, 250], ratio: 0.8}
+tuna_canned: {name: Thon au naturel, ciqual: 26039, state: canned, aisle: conserves, animal: fish, families: [poisson], buy: [boîte, 140]}
+anchovies: {name: Filets d'anchois à l'huile, ciqual: 26177, state: ready, aisle: conserves, animal: fish, families: [poisson], buy: [bocal, 80]}
+shrimp: {name: Crevettes crues décortiquées, ciqual: 10021, state: raw, aisle: poissonnerie, animal: crustacean, families: [fruits_de_mer], buy: [barquette, 300], ratio: 0.85}
+mussels: {name: Moules (chair), ciqual: 10014, state: raw, aisle: poissonnerie, animal: mollusc, families: [fruits_de_mer], buy: [filet de moules, 1000], buy_factor: 4}
+clams: {name: Palourdes (chair), ciqual: 10017, state: raw, aisle: poissonnerie, animal: mollusc, families: [fruits_de_mer], buy: [filet de palourdes, 1000], buy_factor: 5}
+salt_cod: {name: Morue salée (à dessaler), ciqual: 26098, state: dry, aisle: poissonnerie, animal: fish, families: [poisson], buy: [morceau, 400], ratio: 1.6}
+trout: {name: Filet de truite, ciqual: 27008, state: raw, aisle: poissonnerie, animal: fish, families: [poisson], buy: [barquette, 300], ratio: 0.8}
+
+# Eggs, dairy and alternatives
+egg: {name: Œuf, ciqual: 22000, state: raw, aisle: oeufs, animal: egg, families: [oeuf], unit: [œuf, 50], buy: [boîte de 6, 300]}
+milk: {name: Lait demi-écrémé, ciqual: 19041, state: ready, aisle: cremerie, animal: dairy, families: [lait], liquid: true, buy: [brique, 1000]}
+yogurt: {name: Yaourt nature, ciqual: 19593, state: ready, aisle: cremerie, animal: dairy, families: [lait], unit: [pot, 125], buy: [pack de 4, 500]}
+greek_yogurt: {name: Yaourt à la grecque nature, ciqual: 19860, state: ready, aisle: cremerie, animal: dairy, families: [lait], unit: [pot, 150], buy: [pot, 500]}
+fromage_blanc: {name: Fromage blanc 0 %, ciqual: 19644, state: ready, aisle: cremerie, animal: dairy, families: [lait], unit: [pot, 100], buy: [pot, 500]}
+mozzarella: {name: Mozzarella, ciqual: 19590, state: ready, aisle: cremerie, animal: dairy, families: [lait, fromage], unit: [boule, 125], buy: [boule, 125]}
+parmesan: {name: Parmesan, ciqual: 12120, state: ready, aisle: cremerie, animal: dairy, families: [lait, fromage], lactose: false, buy: [morceau, 150]}
+emmental: {name: Emmental râpé, ciqual: 12118, state: ready, aisle: cremerie, animal: dairy, families: [lait, fromage], lactose: false, buy: [sachet, 200]}
+comte: {name: Comté, ciqual: 12110, state: ready, aisle: cremerie, animal: dairy, families: [lait, fromage], lactose: false, buy: [morceau, 200]}
+cheddar: {name: Cheddar, ciqual: 12726, state: ready, aisle: cremerie, animal: dairy, families: [lait, fromage], lactose: false, buy: [morceau, 200]}
+goat_cheese: {name: Fromage de chèvre frais, ciqual: 12805, state: ready, aisle: cremerie, animal: dairy, families: [lait, fromage, chevre], buy: [bûche, 150]}
+ricotta: {name: Ricotta, ciqual: 19585, state: ready, aisle: cremerie, animal: dairy, families: [lait, fromage], buy: [pot, 250]}
+cream: {name: Crème légère 15 %, ciqual: 19436, state: ready, aisle: cremerie, animal: dairy, families: [lait], liquid: true, buy: [brique, 200]}
+butter: {name: Beurre doux, ciqual: 16400, state: ready, aisle: cremerie, animal: dairy, families: [lait], lactose: false, unit: [noisette, 10], buy: [plaquette, 250]}
+soy_drink: {name: Boisson au soja nature, ciqual: 18900, state: ready, aisle: cremerie, allergens: [soy], liquid: true, buy: [brique, 1000]}
+almond_drink: {name: Boisson à l'amande, ciqual: 18111, state: ready, aisle: cremerie, allergens: [nuts], nut: amande, liquid: true, buy: [brique, 1000]}
+soy_yogurt: {name: Yaourt au soja nature, ciqual: 19693, state: ready, aisle: cremerie, allergens: [soy], unit: [pot, 100], buy: [pack de 4, 400]}
+soy_cream: {name: Crème de soja, ciqual: 11214, state: ready, aisle: cremerie, allergens: [soy], liquid: true, buy: [brique, 200]}
+
+# Plant proteins and pulses
+tofu: {name: Tofu ferme, ciqual: 20904, state: ready, aisle: frais_vegetal, allergens: [soy], families: [soja], buy: [bloc, 200]}
+tofu_silken: {name: Tofu soyeux, ciqual: 20906, state: ready, aisle: frais_vegetal, allergens: [soy], families: [soja], buy: [bloc, 300]}
+tofu_smoked: {name: Tofu fumé, ciqual: 20912, state: ready, aisle: frais_vegetal, allergens: [soy], families: [soja], buy: [bloc, 200]}
+tempeh: {name: Tempeh, ciqual: 20917, state: ready, aisle: frais_vegetal, allergens: [soy], families: [soja], buy: [bloc, 200]}
+tvp: {name: Protéines de soja texturées réhydratées, ciqual: 20591, state: cooked, aisle: epicerie, allergens: [soy], families: [soja], buy: ["sachet sec (×2,5 une fois réhydraté)", 100]}
+lentils_green: {name: Lentilles vertes, ciqual: 20585, state: dry, aisle: epicerie, families: [legumineuses], buy: [sachet, 500], ratio: 2.5}
+chickpeas: {name: Pois chiches cuits, ciqual: 20532, state: canned, aisle: conserves, families: [legumineuses], buy: [boîte (égouttée), 265]}
+kidney_beans: {name: Haricots rouges cuits, ciqual: 20524, state: canned, aisle: conserves, families: [legumineuses], buy: [boîte (égouttée), 250]}
+black_beans: {name: Haricots noirs cuits, ciqual: 20524, state: canned, aisle: conserves, families: [legumineuses], approx: "composition approchée par les haricots rouges", buy: [boîte (égouttée), 250]}
+white_beans: {name: Haricots blancs cuits, ciqual: 20511, state: canned, aisle: conserves, families: [legumineuses], buy: [boîte (égouttée), 250]}
+
+# Starches, cereals and breads
+rice: {name: Riz blanc, ciqual: 9100, state: dry, aisle: epicerie, families: [riz], buy: [sachet, 1000], ratio: 2.8}
+pasta: {name: Pâtes sèches, ciqual: 9810, state: dry, aisle: epicerie, allergens: [gluten], cereal: ble, buy: [paquet, 500], ratio: 2.4}
+lasagna_sheets: {name: Feuilles de lasagne, ciqual: 9810, state: dry, aisle: epicerie, allergens: [gluten], cereal: ble, buy: [paquet, 250], ratio: 2.4}
+couscous: {name: Semoule de couscous, ciqual: 9610, state: dry, aisle: epicerie, allergens: [gluten], cereal: ble, buy: [paquet, 1000], ratio: 2.3}
+quinoa: {name: Quinoa, ciqual: 9340, state: dry, aisle: epicerie, buy: [paquet, 500], ratio: 2.6}
+polenta: {name: Polenta, ciqual: 9614, state: dry, aisle: epicerie, buy: [paquet, 500], ratio: 4}
+oats: {name: Flocons d'avoine, ciqual: 32140, state: dry, aisle: epicerie, allergens: [gluten], cereal: avoine, buy: [paquet, 500]}
+muesli: {name: Muesli nature, ciqual: 32141, state: dry, aisle: epicerie, allergens: [gluten, nuts], cereal: avoine, buy: [paquet, 750]}
+flour: {name: Farine de blé, ciqual: 9435, state: dry, aisle: epicerie, allergens: [gluten], cereal: ble, unit: [c. à soupe, 10], buy: [paquet, 1000]}
+flour_rice: {name: Farine de riz, ciqual: 9520, state: dry, aisle: epicerie, buy: [paquet, 500]}
+baking_powder: {name: Levure chimique, ciqual: 11046, state: dry, aisle: epicerie, unit: [c. à café, 4], buy: ["paquet de sachets", 60]}
+bread_baguette: {name: Baguette, ciqual: 7001, state: ready, aisle: boulangerie, allergens: [gluten], cereal: ble, unit: [morceau, 60], buy: [baguette, 250]}
+bread_country: {name: Pain de campagne, ciqual: 7100, state: ready, aisle: boulangerie, allergens: [gluten], cereal: ble, unit: [tranche, 40], buy: [pain, 500]}
+bread_whole: {name: Pain de mie complet, ciqual: 7111, state: ready, aisle: boulangerie, allergens: [gluten], cereal: ble, unit: [tranche, 30], buy: [paquet, 500]}
+burger_bun: {name: Pain burger complet, ciqual: 7262, state: ready, aisle: boulangerie, allergens: [gluten], cereal: ble, unit: [pain, 70], buy: [paquet de 4, 280]}
+rice_cakes: {name: Galettes de riz soufflé, ciqual: 7352, state: ready, aisle: epicerie, families: [riz], unit: [galette, 8], buy: [paquet, 130]}
+buckwheat_galette: {name: Galette de sarrasin, ciqual: 23801, state: ready, aisle: cremerie, unit: [galette, 55], buy: [paquet de 6, 330]}
+pizza_dough: {name: Pâte à pizza, ciqual: 37001, state: ready, aisle: cremerie, allergens: [gluten], cereal: ble, buy: [pâte, 400]}
+gnocchi: {name: Gnocchis de pomme de terre, ciqual: 25510, state: ready, aisle: cremerie, allergens: [gluten], cereal: ble, buy: [paquet, 500]}
+potato: {name: Pomme de terre, ciqual: 4008, state: raw, aisle: fruits_legumes, unit: [pomme de terre, 150], buy: [filet, 2500]}
+sweet_potato: {name: Patate douce, ciqual: 4101, state: raw, aisle: fruits_legumes, unit: [patate douce, 300], buy: [pièce, 300]}
+freekeh: {name: Frik (blé vert concassé), ciqual: 9690, state: dry, aisle: monde, allergens: [gluten], cereal: ble, approx: "composition approchée par le boulgour", buy: [paquet, 500], ratio: 2.5}
+barley: {name: Orge perlé, ciqual: 9321, state: dry, aisle: epicerie, allergens: [gluten], cereal: orge, buy: [paquet, 500], ratio: 2.8}
+bsissa: {name: Bsissa (mélange de farines grillées), ciqual: 9320, state: dry, aisle: monde, allergens: [gluten], cereal: orge, approx: "composition approchée par l'orge complète", buy: [sachet, 500]}
+breadcrumbs: {name: Chapelure, ciqual: 7500, state: dry, aisle: epicerie, allergens: [gluten], cereal: ble, buy: [boîte, 250]}
+brick: {name: Feuilles de brick, ciqual: 51550, state: ready, aisle: cremerie, allergens: [gluten], cereal: ble, unit: [feuille, 15], buy: [paquet de 10, 150]}
+
+# Vegetables
+tomato: {name: Tomate, ciqual: 20276, state: raw, aisle: fruits_legumes, families: [tomate], unit: [tomate, 120], buy: [kg, 1000]}
+cherry_tomato: {name: Tomates cerises, ciqual: 20172, state: raw, aisle: fruits_legumes, families: [tomate], buy: [barquette, 250]}
+tomato_canned: {name: Tomates pelées au jus, ciqual: 20137, state: canned, aisle: conserves, families: [tomate], buy: [boîte, 400]}
+tomato_passata: {name: Coulis de tomate, ciqual: 20260, state: canned, aisle: conserves, families: [tomate], buy: [bouteille, 500]}
+tomato_paste: {name: Concentré de tomate, ciqual: 20068, state: canned, aisle: conserves, families: [tomate], unit: [c. à soupe, 15], buy: [tube, 150]}
+bell_pepper_red: {name: Poivron rouge, ciqual: 20087, state: raw, aisle: fruits_legumes, families: [poivron], unit: [poivron, 160], buy: [pièce, 160]}
+bell_pepper_green: {name: Poivron vert, ciqual: 20085, state: raw, aisle: fruits_legumes, families: [poivron], unit: [poivron, 160], buy: [pièce, 160]}
+onion: {name: Oignon, ciqual: 20034, state: raw, aisle: fruits_legumes, families: [oignon], unit: [oignon, 100], buy: [filet, 1000]}
+red_onion: {name: Oignon rouge, ciqual: 20238, state: raw, aisle: fruits_legumes, families: [oignon], unit: [oignon rouge, 100], buy: [filet, 500]}
+shallot: {name: Échalote, ciqual: 20097, state: raw, aisle: fruits_legumes, families: [oignon], unit: [échalote, 25], buy: [filet, 250]}
+spring_onion: {name: Oignon nouveau (cébette), ciqual: 20323, state: raw, aisle: fruits_legumes, families: [oignon], approx: "composition de la cébette poêlée sans matière grasse", unit: [tige, 15], buy: [botte, 150]}
+garlic: {name: Ail, ciqual: 11000, state: raw, aisle: fruits_legumes, families: [ail], unit: [gousse, 5], buy: [tête, 50]}
+carrot: {name: Carotte, ciqual: 20009, state: raw, aisle: fruits_legumes, unit: [carotte, 100], buy: [sachet, 1000]}
+zucchini: {name: Courgette, ciqual: 20020, state: raw, aisle: fruits_legumes, families: [courgette], unit: [courgette, 200], buy: [pièce, 200]}
+eggplant: {name: Aubergine, ciqual: 20053, state: raw, aisle: fruits_legumes, families: [aubergine], unit: [aubergine, 300], buy: [pièce, 300]}
+broccoli: {name: Brocoli, ciqual: 20057, state: raw, aisle: fruits_legumes, families: [choux], buy: [tête, 400]}
+spinach: {name: Épinards frais, ciqual: 20059, state: raw, aisle: fruits_legumes, families: [epinard], buy: [sachet, 300]}
+spinach_frozen: {name: Épinards en branches surgelés, ciqual: 20083, state: frozen, aisle: surgeles, families: [epinard], buy: [sachet, 750]}
+savoy_cabbage: {name: Chou vert, ciqual: 20069, state: raw, aisle: fruits_legumes, families: [choux], buy: [pièce, 1000]}
+kale: {name: Chou kale, ciqual: 20346, state: raw, aisle: fruits_legumes, families: [choux], buy: [sachet, 200]}
+leek: {name: Poireau, ciqual: 20039, state: raw, aisle: fruits_legumes, families: [oignon], unit: [poireau, 150], buy: [botte, 600]}
+celery: {name: Céleri branche, ciqual: 20023, state: raw, aisle: fruits_legumes, allergens: [celery], families: [celeri], unit: [branche, 40], buy: [pied, 400]}
+mushroom: {name: Champignons de Paris, ciqual: 20056, state: raw, aisle: fruits_legumes, families: [champignons], buy: [barquette, 250]}
+oyster_mushroom: {name: Pleurotes, ciqual: 20114, state: raw, aisle: fruits_legumes, families: [champignons], buy: [barquette, 200]}
+green_beans: {name: Haricots verts, ciqual: 20061, state: raw, aisle: fruits_legumes, buy: [sachet, 500]}
+peas: {name: Petits pois surgelés, ciqual: 20084, state: frozen, aisle: surgeles, families: [legumineuses], buy: [sachet, 1000]}
+cucumber: {name: Concombre, ciqual: 20019, state: raw, aisle: fruits_legumes, unit: [concombre, 300], buy: [pièce, 300]}
+lettuce: {name: Laitue, ciqual: 20031, state: raw, aisle: fruits_legumes, families: [salade], buy: [pièce, 300]}
+romaine: {name: Laitue romaine, ciqual: 20171, state: raw, aisle: fruits_legumes, families: [salade], buy: [pièce, 400]}
+arugula: {name: Roquette, ciqual: 20217, state: raw, aisle: fruits_legumes, families: [salade], buy: [sachet, 125]}
+beetroot: {name: Betterave cuite, ciqual: 20003, state: cooked, aisle: fruits_legumes, families: [betterave], buy: [paquet, 500]}
+pumpkin: {name: Potiron, ciqual: 20044, state: raw, aisle: fruits_legumes, families: [courge], buy: [tranche, 1000]}
+turnip: {name: Navet, ciqual: 20064, state: raw, aisle: fruits_legumes, buy: [botte, 500]}
+radish: {name: Radis, ciqual: 20045, state: raw, aisle: fruits_legumes, buy: [botte, 250]}
+olives_black: {name: Olives noires, ciqual: 13032, state: ready, aisle: epicerie, families: [olive], buy: [bocal, 150]}
+capers: {name: Câpres, ciqual: 11040, state: ready, aisle: epicerie, buy: [bocal, 60]}
+avocado: {name: Avocat, ciqual: 13004, state: raw, aisle: fruits_legumes, families: [avocat], unit: [avocat, 140], buy: [pièce, 140]}
+lemon_juice: {name: Jus de citron, ciqual: 2028, state: ready, aisle: fruits_legumes, families: [agrumes], unit: [citron, 40], buy: [citron (jus), 40]}
+lime_juice: {name: Jus de citron vert, ciqual: 2030, state: ready, aisle: fruits_legumes, families: [agrumes], unit: [citron vert, 30], buy: [citron vert (jus), 30]}
+nori: {name: Algue nori, ciqual: 20987, state: dry, aisle: monde, unit: [feuille, 3], buy: [paquet de 10, 30]}
+endive: {name: Endive, ciqual: 20026, state: raw, aisle: fruits_legumes, unit: [endive, 120], buy: [sachet, 1000]}
+chili: {name: Piment frais, ciqual: 20151, state: raw, aisle: fruits_legumes, families: [piment], spicy: true, unit: [piment, 10], buy: [barquette, 50]}
+
+# Fruit
+apple: {name: Pomme, ciqual: 13039, state: raw, aisle: fruits_legumes, unit: [pomme, 150], buy: [kg, 1000]}
+banana: {name: Banane, ciqual: 13005, state: raw, aisle: fruits_legumes, families: [banane], unit: [banane, 120], buy: [régime, 1000]}
+orange: {name: Orange, ciqual: 13034, state: raw, aisle: fruits_legumes, families: [agrumes], unit: [orange, 150], buy: [filet, 1500]}
+kiwi: {name: Kiwi, ciqual: 13021, state: raw, aisle: fruits_legumes, families: [kiwi], unit: [kiwi, 75], buy: [barquette, 450]}
+strawberry: {name: Fraises, ciqual: 13014, state: raw, aisle: fruits_legumes, families: [fruits_rouges], buy: [barquette, 250]}
+raspberry: {name: Framboises, ciqual: 13015, state: raw, aisle: fruits_legumes, families: [fruits_rouges], buy: [barquette, 125]}
+blueberry: {name: Myrtilles, ciqual: 13028, state: raw, aisle: fruits_legumes, families: [fruits_rouges], buy: [barquette, 125]}
+berries_frozen: {name: Framboises surgelées, ciqual: 13136, state: frozen, aisle: surgeles, families: [fruits_rouges], buy: [sachet, 500]}
+mango: {name: Mangue, ciqual: 13025, state: raw, aisle: fruits_legumes, families: [fruits_exotiques], unit: [mangue, 300], buy: [pièce, 300]}
+fig: {name: Figue, ciqual: 13012, state: raw, aisle: fruits_legumes, unit: [figue, 50], buy: [barquette, 300]}
+dates: {name: Dattes, ciqual: 13011, state: dry, aisle: epicerie, unit: [datte, 8], buy: [boîte, 250]}
+raisins: {name: Raisins secs, ciqual: 13046, state: dry, aisle: epicerie, buy: [sachet, 250]}
+applesauce: {name: Compote de pommes sans sucres ajoutés, ciqual: 13187, state: ready, aisle: epicerie, unit: [pot, 100], buy: [pack de 4, 400]}
+apricot: {name: Abricot, ciqual: 13000, state: raw, aisle: fruits_legumes, unit: [abricot, 45], buy: [kg, 1000]}
+peach: {name: Pêche, ciqual: 13043, state: raw, aisle: fruits_legumes, unit: [pêche, 150], buy: [kg, 1000]}
+prunes: {name: Pruneaux, ciqual: 13042, state: dry, aisle: epicerie, buy: [sachet, 250]}
+
+# Fats and oils
+olive_oil: {name: Huile d'olive, ciqual: 17270, state: ready, aisle: epicerie, unit: [c. à soupe, 14], buy: [bouteille, 750]}
+rapeseed_oil: {name: Huile de colza, ciqual: 17130, state: ready, aisle: epicerie, unit: [c. à soupe, 14], buy: [bouteille, 1000]}
+sunflower_oil: {name: Huile de tournesol, ciqual: 17440, state: ready, aisle: epicerie, unit: [c. à soupe, 14], buy: [bouteille, 1000]}
+sesame_oil: {name: Huile de sésame, ciqual: 17400, state: ready, aisle: monde, allergens: [sesame], unit: [c. à café, 5], buy: [bouteille, 250]}
+
+# Nuts and seeds
+almonds: {name: Amandes, ciqual: 15000, state: ready, aisle: epicerie, allergens: [nuts], nut: amande, buy: [sachet, 200]}
+walnuts: {name: Cerneaux de noix, ciqual: 15005, state: ready, aisle: epicerie, allergens: [nuts], nut: noix, buy: [sachet, 200]}
+cashews: {name: Noix de cajou, ciqual: 15055, state: ready, aisle: epicerie, allergens: [nuts], nut: cajou, buy: [sachet, 200]}
+pistachios: {name: Pistaches, ciqual: 15044, state: ready, aisle: epicerie, allergens: [nuts], nut: pistache, buy: [sachet, 200]}
+peanut_butter: {name: Beurre de cacahuète, ciqual: 15202, state: ready, aisle: epicerie, allergens: [peanuts], families: [arachide], unit: [c. à soupe, 16], buy: [pot, 350]}
+sesame_seeds: {name: Graines de sésame, ciqual: 15010, state: ready, aisle: epicerie, allergens: [sesame], unit: [c. à soupe, 9], buy: [sachet, 150]}
+tahini: {name: Tahin (purée de sésame), ciqual: 15203, state: ready, aisle: epicerie, allergens: [sesame], unit: [c. à soupe, 15], buy: [pot, 300]}
+chia: {name: Graines de chia, ciqual: 15047, state: ready, aisle: epicerie, unit: [c. à soupe, 12], buy: [sachet, 250]}
+pumpkin_seeds: {name: Graines de courge, ciqual: 15064, state: ready, aisle: epicerie, buy: [sachet, 200]}
+
+# Condiments, sauces and sweet products
+soy_sauce: {name: Sauce soja, ciqual: 11104, state: ready, aisle: monde, allergens: [soy, gluten], cereal: ble, unit: [c. à soupe, 16], buy: [bouteille, 250]}
+miso: {name: Miso, ciqual: 20916, state: ready, aisle: monde, allergens: [soy], families: [soja], unit: [c. à soupe, 18], buy: [pot, 300]}
+vinegar: {name: Vinaigre de vin, ciqual: 11220, state: ready, aisle: epicerie, allergens: [sulphites], unit: [c. à soupe, 15], buy: [bouteille, 500]}
+cider_vinegar: {name: Vinaigre de cidre, ciqual: 11090, state: ready, aisle: epicerie, allergens: [sulphites], unit: [c. à soupe, 15], buy: [bouteille, 500]}
+mustard: {name: Moutarde, ciqual: 11013, state: ready, aisle: epicerie, allergens: [mustard], unit: [c. à café, 5], buy: [pot, 200]}
+honey: {name: Miel, ciqual: 31008, state: ready, aisle: epicerie, animal: honey, unit: [c. à soupe, 20], buy: [pot, 250]}
+maple_syrup: {name: Sirop d'érable, ciqual: 31034, state: ready, aisle: epicerie, unit: [c. à soupe, 20], buy: [bouteille, 250]}
+sugar: {name: Sucre, ciqual: 31016, state: ready, aisle: epicerie, unit: [c. à café, 5], buy: [paquet, 1000]}
+salt: {name: Sel, ciqual: 11058, state: ready, aisle: epices, unit: [pincée, 0.5], buy: [boîte, 500]}
+black_pepper: {name: Poivre noir moulu, ciqual: 11015, state: ready, aisle: epices, unit: [pincée, 0.3], buy: [moulin, 50]}
+ketchup: {name: Ketchup, ciqual: 11008, state: ready, aisle: epicerie, families: [tomate], unit: [c. à soupe, 17], buy: [flacon, 300]}
+harissa: {name: Harissa, ciqual: 11112, state: ready, aisle: monde, families: [piment], spicy: true, unit: [c. à café, 6], buy: [tube, 140]}
+pesto: {name: Pesto au basilic, ciqual: 11179, state: ready, aisle: epicerie, animal: dairy, families: [pignons], unit: [c. à soupe, 15], buy: [pot, 190]}
+stock_veg: {name: Bouillon de légumes déshydraté, ciqual: 11041, state: dry, aisle: epicerie, allergens: [celery], unit: [cube, 10], buy: [boîte de cubes, 100]}
+stock_chicken: {name: Bouillon de volaille déshydraté, ciqual: 11174, state: dry, aisle: epicerie, animal: poultry, allergens: [celery], unit: [cube, 10], buy: [boîte de cubes, 100]}
+wine_red: {name: Vin rouge, ciqual: 5214, state: ready, aisle: epicerie, allergens: [sulphites], alcohol: true, liquid: true, buy: [bouteille, 750]}
+wine_white: {name: Vin blanc sec, ciqual: 5215, state: ready, aisle: epicerie, allergens: [sulphites], alcohol: true, liquid: true, buy: [bouteille, 750]}
+cocoa: {name: Cacao en poudre non sucré, ciqual: 18100, state: ready, aisle: epicerie, families: [chocolat], unit: [c. à soupe, 8], buy: [boîte, 250]}
+dark_chocolate: {name: Chocolat noir 70 %, ciqual: 31074, state: ready, aisle: epicerie, allergens: [milk], families: [chocolat], unit: [carré, 5], buy: [tablette, 100]}
+hummus: {name: Houmous, ciqual: 25621, state: ready, aisle: frais_vegetal, allergens: [sesame], families: [legumineuses], buy: [pot, 200]}
+jam: {name: Confiture de fraise, ciqual: 31024, state: ready, aisle: epicerie, families: [fruits_rouges], unit: [c. à soupe, 20], buy: [pot, 370]}
+
+# Spices and herbs
+cumin: {name: Cumin, ciqual: 11042, state: dry, aisle: epices, unit: [c. à café, 2], buy: [pot, 40]}
+paprika: {name: Paprika, ciqual: 11049, state: dry, aisle: epices, unit: [c. à café, 2], buy: [pot, 40]}
+turmeric: {name: Curcuma, ciqual: 11089, state: dry, aisle: epices, unit: [c. à café, 2], buy: [pot, 40]}
+cinnamon: {name: Cannelle, ciqual: 11025, state: dry, aisle: epices, unit: [c. à café, 2], buy: [pot, 40]}
+cayenne: {name: Piment de Cayenne, ciqual: 11088, state: dry, aisle: epices, families: [piment], spicy: true, unit: [pincée, 0.5], buy: [pot, 40]}
+espelette: {name: Piment d'Espelette, ciqual: 11088, state: dry, aisle: epices, families: [piment], approx: "composition approchée par le piment de Cayenne", unit: [pincée, 0.5], buy: [pot, 40]}
+chili_flakes: {name: Piment en flocons, ciqual: 11088, state: dry, aisle: epices, families: [piment], spicy: true, approx: "composition approchée par le piment de Cayenne", unit: [pincée, 0.5], buy: [pot, 40]}
+cloves: {name: Clous de girofle, ciqual: 11052, state: dry, aisle: epices, unit: [clou, 0.2], buy: [pot, 30]}
+nutmeg: {name: Noix de muscade, ciqual: 11048, state: dry, aisle: epices, unit: [pincée, 0.3], buy: [pot, 30]}
+herbes_provence: {name: Herbes de Provence, ciqual: 11060, state: dry, aisle: epices, unit: [c. à café, 1], buy: [pot, 30]}
+thyme: {name: Thym séché, ciqual: 11038, state: dry, aisle: epices, unit: [c. à café, 1], buy: [pot, 30]}
+bay_leaf: {name: Laurier, ciqual: 11053, state: dry, aisle: epices, unit: [feuille, 0.2], buy: [pot, 10]}
+rosemary: {name: Romarin frais, ciqual: 11068, state: raw, aisle: fruits_legumes, unit: [brin, 2], buy: [botte, 20]}
+basil: {name: Basilic frais, ciqual: 11033, state: raw, aisle: fruits_legumes, unit: [poignée, 10], buy: [botte, 30]}
+parsley: {name: Persil frais, ciqual: 11014, state: raw, aisle: fruits_legumes, unit: [poignée, 10], buy: [botte, 50]}
+cilantro: {name: Coriandre fraîche, ciqual: 11094, state: raw, aisle: fruits_legumes, families: [coriandre], unit: [poignée, 10], buy: [botte, 50]}
+mint: {name: Menthe fraîche, ciqual: 11027, state: raw, aisle: fruits_legumes, families: [menthe], unit: [poignée, 10], buy: [botte, 30]}
+dill: {name: Aneth frais, ciqual: 11093, state: raw, aisle: fruits_legumes, unit: [poignée, 10], buy: [botte, 30]}
+chives: {name: Ciboulette, ciqual: 11003, state: raw, aisle: fruits_legumes, families: [oignon], unit: [poignée, 10], buy: [botte, 30]}
+saffron: {name: Safran, ciqual: 11039, state: dry, aisle: epices, unit: [dose, 0.1], buy: [dose, 0.5]}
+coriander_seeds: {name: Coriandre moulue, ciqual: 11026, state: dry, aisle: epices, unit: [c. à café, 2], buy: [pot, 40]}
+caraway: {name: Carvi moulu, ciqual: 11064, state: dry, aisle: epices, unit: [c. à café, 2], buy: [pot, 40]}
+sage: {name: Sauge séchée, ciqual: 11037, state: dry, aisle: epices, unit: [c. à café, 1], buy: [pot, 15]}

@@ -1,0 +1,394 @@
+# Italy. Quantities for one reference portion.
+
+- id: it_spaghetti_bolognaise
+  title: Spaghetti à la bolognaise
+  meta: {country: IT, slots: [lunch, dinner], time: [20, 60], level: 1, spice: 0, equipment: [cocotte, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[beef_mince, 120, protein], [pasta, 85, starch], [tomato_passata, 150, sauce], [carrot, 50, veg], [onion, 50, veg],
+          [celery, 30, veg], [olive_oil, 8, fat], [garlic, 5, flavor], [parmesan, 10, flavor], [basil, 5, flavor]]
+  steps:
+  - Hacher finement l'oignon, la carotte et le céleri ; les faire revenir 8 minutes dans l'huile avec l'ail.
+  - Ajouter la viande et la faire colorer en l'émiettant.
+  - Verser le coulis de tomate et laisser mijoter 40 minutes à feu doux, à couvert.
+  - Cuire les spaghetti al dente et servir avec la sauce, le parmesan et le basilic.
+
+- id: it_pasta_fagioli
+  title: Pasta e fagioli au romarin
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 35], level: 1, spice: 0, equipment: [cocotte], keeps: 3, freezes: true, leftovers: true}
+  items: [[white_beans, 150, protein], [pasta, 60, starch], [tomato_canned, 120, sauce], [onion, 50, veg], [carrot, 50, veg],
+          [celery, 30, veg], [olive_oil, 10, fat], [garlic, 5, flavor], [rosemary, 2, flavor]]
+  steps:
+  - Faire revenir l'oignon, la carotte, le céleri et l'ail dans l'huile avec le romarin.
+  - Ajouter les tomates, les haricots et 40 cl d'eau ; mijoter 15 minutes.
+  - Écraser une partie des haricots pour épaissir, puis cuire les petites pâtes dans la soupe 10 minutes.
+  - Servir avec un filet d'huile d'olive.
+
+- id: it_risotto_champignons
+  title: Risotto aux champignons et petits pois
+  meta: {country: IT, slots: [lunch, dinner], time: [30, 35], level: 2, spice: 0, equipment: [cocotte, poele], keeps: 1}
+  items: [[parmesan, 20, protein], [rice, 80, starch], [mushroom, 150, veg], [peas, 60, veg], [onion, 40, veg], [wine_white, 40, sauce],
+          [butter, 8, fat], [olive_oil, 5, fat], [stock_veg, 5, flavor], [parsley, 5, flavor]]
+  steps:
+  - Faire sauter les champignons émincés dans l'huile, réserver.
+  - Nacrer le riz avec l'oignon dans la moitié du beurre, puis déglacer au vin blanc.
+  - Ajouter le bouillon chaud louche par louche pendant 18 minutes en remuant, avec les petits pois à mi-cuisson.
+  - Hors du feu, incorporer les champignons, le reste de beurre, le parmesan et le persil.
+
+- id: it_penne_arrabbiata
+  title: Penne all'arrabbiata
+  meta: {country: IT, slots: [lunch, dinner], time: [10, 20], level: 1, spice: 2, equipment: [casserole, poele], keeps: 2}
+  items: [[pasta, 100, starch], [tomato_canned, 200, sauce], [olive_oil, 10, fat], [garlic, 5, flavor], [chili_flakes, 0.5, flavor], [parsley, 5, flavor]]
+  steps:
+  - Faire chauffer l'ail et le piment dans l'huile sans les brûler.
+  - Ajouter les tomates écrasées et laisser réduire 12 minutes.
+  - Cuire les penne al dente, les mélanger à la sauce et parsemer de persil.
+
+- id: it_pollo_cacciatora
+  title: Poulet chasseur à l'italienne et polenta
+  meta: {country: IT, slots: [lunch, dinner], time: [20, 50], level: 1, spice: 0, equipment: [cocotte, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[chicken_thigh, 150, protein], [polenta, 60, starch], [tomato_canned, 150, sauce], [bell_pepper_red, 80, veg], [onion, 50, veg],
+          [olives_black, 15, flavor], [olive_oil, 8, fat], [garlic, 5, flavor], [rosemary, 2, flavor]]
+  steps:
+  - Dorer le poulet dans l'huile, ajouter l'oignon, l'ail, le poivron et le romarin.
+  - Verser les tomates, ajouter les olives et mijoter 30 minutes à couvert.
+  - Cuire la polenta dans quatre fois son volume d'eau salée en remuant 5 à 8 minutes.
+  - Servir le poulet et sa sauce sur la polenta.
+
+- id: it_pesto_genovese
+  title: Trofie au pesto, pommes de terre et haricots verts
+  meta: {country: IT, slots: [lunch, dinner], time: [10, 20], level: 1, spice: 0, equipment: [casserole], keeps: 1}
+  items: [[pasta, 80, starch], [potato, 80, starch], [green_beans, 80, veg], [pesto, 25, sauce], [parmesan, 10, protein]]
+  steps:
+  - Cuire les pommes de terre en petits dés dans l'eau bouillante salée 5 minutes.
+  - Ajouter les pâtes puis les haricots verts coupés, et cuire le tout jusqu'à ce que les pâtes soient al dente.
+  - Égoutter en gardant un peu d'eau de cuisson, mélanger avec le pesto et le parmesan.
+
+- id: it_minestrone
+  title: Minestrone aux haricots blancs
+  meta: {country: IT, slots: [lunch, dinner], time: [20, 45], level: 1, spice: 0, equipment: [cocotte], keeps: 4, freezes: true, leftovers: true}
+  items: [[white_beans, 100, protein], [pasta, 30, starch], [potato, 80, starch], [zucchini, 100, veg], [carrot, 60, veg], [celery, 40, veg],
+          [onion, 50, veg], [savoy_cabbage, 60, veg], [tomato_canned, 100, sauce], [olive_oil, 10, fat], [garlic, 5, flavor], [basil, 5, flavor]]
+  steps:
+  - Faire revenir l'oignon, la carotte et le céleri dans l'huile.
+  - Ajouter les autres légumes en dés, les tomates et 60 cl d'eau ; cuire 25 minutes.
+  - Ajouter les haricots et les petites pâtes, cuire 10 minutes.
+  - Servir parsemé de basilic.
+
+- id: it_merluzzo_livornese
+  title: Cabillaud à la livournaise et pommes de terre
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 30], level: 1, spice: 0, equipment: [poele, casserole], keeps: 1}
+  items: [[cod, 150, protein], [potato, 200, starch], [tomato_canned, 150, sauce], [olives_black, 15, flavor], [capers, 8, flavor],
+          [olive_oil, 8, fat], [garlic, 5, flavor], [parsley, 5, flavor]]
+  steps:
+  - Cuire les pommes de terre à la vapeur.
+  - Faire revenir l'ail dans l'huile, ajouter les tomates, les olives et les câpres ; cuire 10 minutes.
+  - Poser le poisson dans la sauce, couvrir et cuire 8 minutes à feu doux.
+  - Parsemer de persil et servir avec les pommes de terre.
+
+- id: it_lasagne_epinards
+  title: Lasagnes ricotta, épinards et courgettes
+  meta: {country: IT, slots: [lunch, dinner], time: [25, 65], level: 2, spice: 0, equipment: [four, poele], keeps: 3, freezes: true, leftovers: true}
+  items: [[ricotta, 80, protein], [mozzarella, 40, protein], [lasagna_sheets, 70, starch], [spinach_frozen, 150, veg], [zucchini, 100, veg],
+          [tomato_passata, 120, sauce], [parmesan, 10, flavor], [olive_oil, 5, fat], [garlic, 5, flavor], [nutmeg, 0.2, flavor]]
+  steps:
+  - Faire revenir les courgettes en dés avec l'ail dans l'huile, ajouter les épinards décongelés et égouttés.
+  - Mélanger la ricotta avec la muscade et les légumes.
+  - Alterner dans un plat coulis de tomate, feuilles de lasagne et garniture ; finir par la mozzarella et le parmesan.
+  - Cuire 35 minutes au four à 190 °C.
+
+- id: it_pizza_margherita
+  title: Pizza margherita maison et roquette
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 30], level: 1, spice: 0, equipment: [four], keeps: 1}
+  items: [[mozzarella, 80, protein], [pizza_dough, 150, starch], [tomato_passata, 60, sauce], [arugula, 30, veg], [olive_oil, 5, fat], [basil, 5, flavor]]
+  steps:
+  - Préchauffer le four à 250 °C avec la plaque à l'intérieur.
+  - Étaler la pâte finement, la napper de coulis puis de mozzarella en morceaux.
+  - Cuire 10 à 12 minutes sur la plaque très chaude.
+  - Garnir de basilic, de roquette et d'un filet d'huile d'olive.
+
+- id: it_gnocchi_sorrentina
+  title: Gnocchis à la sorrentine
+  meta: {country: IT, slots: [lunch, dinner], time: [10, 25], level: 1, spice: 0, equipment: [casserole, four], keeps: 1}
+  items: [[mozzarella, 40, protein], [gnocchi, 250, starch], [tomato_canned, 150, sauce], [olive_oil, 5, fat], [basil, 5, flavor], [garlic, 5, flavor]]
+  steps:
+  - Cuire une sauce rapide avec l'ail, l'huile et les tomates pendant 10 minutes.
+  - Plonger les gnocchis dans l'eau bouillante et les égoutter dès qu'ils remontent.
+  - Mélanger avec la sauce, couvrir de mozzarella et gratiner 8 minutes au four.
+  - Parsemer de basilic.
+
+- id: it_spaghetti_vongole
+  title: Spaghetti aux palourdes
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 25], level: 2, spice: 1, equipment: [casserole, poele], keeps: 0}
+  items: [[clams, 150, protein], [pasta, 90, starch], [wine_white, 30, sauce], [olive_oil, 10, fat], [garlic, 5, flavor],
+          [chili_flakes, 0.3, flavor], [parsley, 5, flavor]]
+  steps:
+  - Faire tremper les palourdes 30 minutes dans l'eau salée pour retirer le sable.
+  - Chauffer l'ail et le piment dans l'huile, ajouter les palourdes et le vin ; couvrir jusqu'à ouverture.
+  - Cuire les spaghetti al dente et les terminer 2 minutes dans la poêle.
+  - Parsemer de persil.
+
+- id: it_polenta_champignons_oeuf
+  title: Polenta crémeuse, champignons poêlés et œuf poché
+  meta: {country: IT, slots: [lunch, dinner], time: [20, 25], level: 2, spice: 0, equipment: [casserole, poele], keeps: 0, cautions: [pregnancy]}
+  items: [[egg, 50, protein], [parmesan, 20, protein], [polenta, 70, starch], [mushroom, 150, veg], [oyster_mushroom, 100, veg],
+          [olive_oil, 8, fat], [garlic, 5, flavor], [thyme, 0.5, flavor]]
+  steps:
+  - Cuire la polenta dans quatre fois son volume d'eau salée, puis y fondre le parmesan.
+  - Poêler les champignons avec l'huile, l'ail et le thym.
+  - Pocher l'œuf 3 minutes dans une eau frémissante vinaigrée.
+  - Servir la polenta surmontée des champignons et de l'œuf.
+
+- id: it_pasta_ceci
+  title: Pasta e ceci
+  meta: {country: IT, slots: [lunch, dinner], time: [10, 25], level: 1, spice: 0, equipment: [cocotte], keeps: 3, leftovers: true}
+  items: [[chickpeas, 150, protein], [pasta, 60, starch], [onion, 40, veg], [tomato_paste, 15, sauce], [olive_oil, 10, fat],
+          [garlic, 5, flavor], [rosemary, 2, flavor]]
+  steps:
+  - Faire revenir l'oignon, l'ail et le romarin dans l'huile.
+  - Ajouter le concentré de tomate, les pois chiches et 40 cl d'eau ; cuire 10 minutes.
+  - Mixer un tiers des pois chiches pour lier, puis cuire les pâtes dans la soupe.
+  - Servir bien poivré.
+
+- id: it_ricotta_figues
+  title: Tartine de ricotta, figues, miel et pistaches
+  meta: {country: IT, slots: [breakfast], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[ricotta, 100, protein], [bread_country, 60, starch], [fig, 100, fruit], [pistachios, 10, fat], [honey, 8, flavor]]
+  steps:
+  - Faire griller le pain.
+  - Tartiner de ricotta, ajouter les figues en quartiers.
+  - Parsemer de pistaches concassées et arroser de miel.
+
+- id: it_frittata_courgettes
+  title: Frittata aux courgettes et parmesan
+  meta: {country: IT, slots: [breakfast, lunch, dinner], time: [10, 20], level: 1, spice: 0, equipment: [poele, four], keeps: 2}
+  items: [[egg, 150, protein], [parmesan, 10, protein], [bread_country, 50, starch], [zucchini, 150, veg], [olive_oil, 5, fat], [basil, 5, flavor]]
+  steps:
+  - Faire revenir les courgettes en fines rondelles 5 minutes dans l'huile.
+  - Verser les œufs battus avec le parmesan et le basilic.
+  - Cuire 6 minutes à feu doux puis 4 minutes sous le gril du four.
+  - Servir tiède avec le pain.
+
+- id: it_bruschetta
+  title: Bruschetta tomate et basilic
+  meta: {country: IT, slots: [snack], time: [5, 8], level: 1, spice: 0, equipment: [four], keeps: 0}
+  items: [[bread_country, 40, starch], [tomato, 100, veg], [olive_oil, 5, fat], [garlic, 5, flavor], [basil, 5, flavor]]
+  steps:
+  - Griller le pain et le frotter d'ail.
+  - Garnir de tomate en petits dés, de basilic et d'un filet d'huile d'olive.
+
+- id: it_yaourt_figue_noix
+  title: Yaourt à la grecque, figue et noix
+  meta: {country: IT, slots: [snack], time: [2, 2], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[greek_yogurt, 150, protein], [fig, 50, fruit], [walnuts, 10, fat]]
+  steps:
+  - Verser le yaourt dans un bol.
+  - Ajouter la figue coupée et les noix concassées.
+
+- id: it_ossobuco
+  title: Osso buco à la milanaise et risotto au safran
+  meta: {country: IT, slots: [lunch, dinner], time: [35, 120], level: 3, spice: 0, equipment: [cocotte, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[veal_shank, 160, protein], [rice, 70, starch], [carrot, 50, veg], [celery, 40, veg], [onion, 50, veg], [tomato_canned, 100, sauce],
+          [parmesan, 10, flavor], [butter, 8, fat], [olive_oil, 5, fat], [stock_veg, 3, flavor], [saffron, 0.1, flavor], [parsley, 5, flavor],
+          [garlic, 3, flavor], [lemon_juice, 5, flavor]]
+  steps:
+  - Dorer le jarret dans l'huile, en cocotte, puis ajouter l'oignon, la carotte et le céleri en petits dés.
+  - Ajouter les tomates et 30 cl d'eau ; couvrir et mijoter 1 heure 30 à feu doux.
+  - Pour le risotto, nacrer le riz dans le beurre, puis ajouter le bouillon chaud louche par louche avec le safran, pendant 18 minutes.
+  - Hors du feu, lier le risotto avec le parmesan.
+  - Servir la viande parsemée de persil, d'ail haché et de citron, avec le risotto.
+
+- id: it_parmigiana
+  title: Parmigiana d'aubergines et pain de campagne
+  meta: {country: IT, slots: [lunch, dinner], time: [30, 75], level: 2, spice: 0, equipment: [four, poele], keeps: 3, freezes: true, leftovers: true}
+  items: [[mozzarella, 80, protein], [parmesan, 15, protein], [bread_country, 50, starch], [eggplant, 250, veg], [tomato_passata, 150, sauce],
+          [olive_oil, 12, fat], [garlic, 4, flavor], [basil, 3, flavor]]
+  steps:
+  - Couper les aubergines en tranches et les faire dorer à la poêle avec un peu d'huile.
+  - Cuire la sauce tomate 10 minutes avec l'ail et le basilic.
+  - Alterner dans un plat les aubergines, la sauce, la mozzarella et le parmesan.
+  - Cuire 30 minutes au four à 190 °C et servir avec le pain.
+
+- id: it_saltimbocca
+  title: Saltimbocca alla romana, pommes de terre rôties et épinards
+  meta: {country: IT, slots: [lunch, dinner], time: [20, 45], level: 2, spice: 0, equipment: [poele, four], keeps: 0}
+  items: [[veal_escalope, 130, protein], [ham_cured, 20, protein], [potato, 200, starch], [spinach, 120, veg], [flour, 5, flavor],
+          [butter, 8, fat], [olive_oil, 6, fat], [sage, 0.5, flavor], [garlic, 3, flavor]]
+  steps:
+  - Rôtir les pommes de terre en cubes 30 minutes au four à 200 °C avec l'huile.
+  - Couvrir chaque escalope d'une tranche de jambon et de sauge, fixer avec une pique, puis fariner légèrement.
+  - Cuire 2 minutes par face dans le beurre, jusqu'à ce que le jambon soit bien chaud et croustillant.
+  - Faire tomber les épinards dans la même poêle avec l'ail et servir avec les pommes de terre.
+
+- id: it_pasta_norma
+  title: Pasta alla Norma, aubergines et ricotta
+  meta: {country: IT, slots: [lunch, dinner], time: [20, 35], level: 1, spice: 1, equipment: [poele, casserole], keeps: 2, leftovers: true}
+  items: [[ricotta, 50, protein], [pasta, 80, starch], [eggplant, 200, veg], [tomato_passata, 150, sauce], [olive_oil, 12, fat],
+          [garlic, 4, flavor], [basil, 3, flavor], [chili_flakes, 0.3, flavor]]
+  steps:
+  - Faire dorer les aubergines en cubes dans l'huile 10 minutes.
+  - Ajouter l'ail, le piment et la sauce tomate ; cuire 10 minutes.
+  - Cuire les pâtes al dente et les mélanger à la sauce.
+  - Servir avec la ricotta émiettée et le basilic.
+
+- id: it_orecchiette_brocoli
+  title: Orecchiette aux brocolis et à la saucisse
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 25], level: 1, spice: 1, equipment: [casserole, poele], keeps: 1}
+  items: [[sausage, 80, protein], [parmesan, 10, protein], [pasta, 80, starch], [broccoli, 200, veg], [olive_oil, 8, fat],
+          [garlic, 5, flavor], [chili_flakes, 0.3, flavor]]
+  steps:
+  - Cuire les pâtes avec les fleurettes de brocoli dans la même eau salée.
+  - Faire revenir la chair de saucisse émiettée dans l'huile avec l'ail et le piment.
+  - Mélanger les pâtes et les brocolis égouttés à la saucisse, avec un peu d'eau de cuisson.
+  - Servir avec le parmesan.
+
+- id: it_orata_forno
+  title: Dorade au four, pommes de terre, tomates cerises et olives
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 45], level: 1, spice: 0, equipment: [four], keeps: 0}
+  items: [[sea_bream, 160, protein], [potato, 200, starch], [cherry_tomato, 120, veg], [olives_black, 15, flavor], [capers, 5, flavor],
+          [olive_oil, 12, fat], [rosemary, 1, flavor], [garlic, 4, flavor], [lemon_juice, 10, flavor]]
+  steps:
+  - Rôtir les pommes de terre en fines rondelles 20 minutes au four à 200 °C avec la moitié de l'huile et le romarin.
+  - Ajouter le poisson, les tomates cerises, les olives, les câpres et l'ail, puis arroser du reste de l'huile.
+  - Cuire encore 15 minutes et arroser de citron avant de servir.
+
+- id: it_polpette_polenta
+  title: Polpette al sugo et polenta crémeuse
+  meta: {country: IT, slots: [lunch, dinner], time: [30, 50], level: 2, spice: 0, equipment: [cocotte, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[beef_mince, 120, protein], [egg, 25, protein], [parmesan, 10, protein], [polenta, 60, starch], [breadcrumbs, 15, starch],
+          [tomato_passata, 200, sauce], [onion, 30, veg], [olive_oil, 8, fat], [garlic, 4, flavor], [basil, 3, flavor]]
+  steps:
+  - Mélanger la viande, la chapelure, l'œuf, le parmesan et la moitié de l'ail, puis former des boulettes.
+  - Les dorer dans l'huile, ajouter l'oignon, le reste de l'ail et la sauce tomate ; mijoter 20 minutes.
+  - Cuire la polenta dans quatre fois son volume d'eau salée en remuant, 5 à 8 minutes.
+  - Servir les polpette et leur sauce sur la polenta, avec le basilic.
+
+- id: it_ribollita
+  title: Ribollita toscane aux haricots et au chou
+  meta: {country: IT, slots: [lunch, dinner], time: [25, 75], level: 1, spice: 0, equipment: [cocotte], keeps: 3, freezes: true, leftovers: true}
+  items: [[white_beans, 150, protein], [bread_country, 70, starch], [kale, 100, veg], [savoy_cabbage, 80, veg], [carrot, 60, veg], [celery, 40, veg],
+          [onion, 50, veg], [tomato_paste, 15, sauce], [olive_oil, 15, fat], [garlic, 5, flavor], [thyme, 0.5, flavor], [rosemary, 0.5, flavor]]
+  steps:
+  - Faire revenir l'oignon, la carotte et le céleri dans la moitié de l'huile 10 minutes.
+  - Ajouter l'ail, le concentré de tomate, les choux émincés, les herbes et 80 cl d'eau ; mijoter 35 minutes.
+  - Ajouter les haricots et le pain rassis en morceaux ; cuire encore 15 minutes, jusqu'à obtenir une soupe épaisse.
+  - Servir arrosé du reste de l'huile.
+
+- id: it_panzanella
+  title: Panzanella à la mozzarella
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 30], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[mozzarella, 80, protein], [bread_country, 80, starch], [tomato, 200, veg], [cucumber, 100, veg], [red_onion, 30, veg],
+          [olive_oil, 15, fat], [vinegar, 8, flavor], [basil, 4, flavor]]
+  steps:
+  - Couper le pain rassis en cubes et le mélanger avec les tomates en morceaux pour qu'il s'imbibe de leur jus.
+  - Ajouter le concombre, l'oignon rouge émincé, l'huile, le vinaigre et le basilic.
+  - Laisser reposer 15 minutes, puis ajouter la mozzarella en morceaux.
+
+- id: it_insalata_orzo
+  title: Salade d'orge perlé, pois chiches, courgettes et parmesan
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 45], level: 1, spice: 0, equipment: [casserole, poele], keeps: 2, leftovers: true}
+  items: [[chickpeas, 100, protein], [parmesan, 15, protein], [barley, 70, starch], [cherry_tomato, 120, veg], [zucchini, 100, veg],
+          [arugula, 30, veg], [olive_oil, 12, fat], [lemon_juice, 10, flavor], [basil, 3, flavor]]
+  steps:
+  - Cuire l'orge 30 minutes à l'eau salée, puis l'égoutter et la laisser tiédir.
+  - Faire dorer les courgettes en dés avec un peu d'huile.
+  - Mélanger l'orge avec les pois chiches, les courgettes, les tomates cerises, la roquette, le citron et le reste de l'huile.
+  - Parsemer de copeaux de parmesan et de basilic.
+
+- id: it_risotto_zucca
+  title: Risotto à la courge et au parmesan
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 35], level: 2, spice: 0, equipment: [casserole], keeps: 1}
+  items: [[parmesan, 20, protein], [rice, 75, starch], [pumpkin, 200, veg], [onion, 40, veg], [butter, 10, fat],
+          [stock_veg, 3, flavor], [sage, 0.3, flavor]]
+  steps:
+  - Faire fondre l'oignon dans la moitié du beurre, ajouter la courge en petits dés et le riz ; nacrer 2 minutes.
+  - Ajouter le bouillon chaud louche par louche en remuant, pendant 18 minutes.
+  - Hors du feu, ajouter le reste du beurre, le parmesan et la sauge.
+
+- id: it_pollo_limone
+  title: Pollo al limone, haricots verts et pommes de terre rôties
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 40], level: 1, spice: 0, equipment: [poele, four, casserole], keeps: 2, leftovers: true}
+  items: [[chicken_breast, 140, protein], [potato, 200, starch], [green_beans, 120, veg], [flour, 8, flavor], [olive_oil, 10, fat],
+          [butter, 5, fat], [lemon_juice, 20, flavor], [parsley, 4, flavor]]
+  steps:
+  - Rôtir les pommes de terre en cubes 30 minutes au four à 200 °C avec la moitié de l'huile.
+  - Cuire les haricots verts 8 minutes à l'eau salée.
+  - Fariner les escalopes de poulet et les dorer 4 minutes par face dans le reste de l'huile et le beurre.
+  - Déglacer avec le citron et un peu d'eau, parsemer de persil et servir avec les légumes.
+
+- id: it_cotoletta
+  title: Escalope de poulet milanaise, roquette et tomates cerises
+  meta: {country: IT, slots: [lunch, dinner], time: [20, 35], level: 1, spice: 0, equipment: [poele, casserole], keeps: 0}
+  items: [[chicken_breast, 130, protein], [egg, 25, protein], [breadcrumbs, 25, starch], [potato, 150, starch], [arugula, 40, veg],
+          [cherry_tomato, 120, veg], [flour, 8, flavor], [sunflower_oil, 15, fat], [lemon_juice, 10, flavor]]
+  steps:
+  - Cuire les pommes de terre 20 minutes à l'eau salée.
+  - Aplatir le poulet, le passer dans la farine, l'œuf battu puis la chapelure.
+  - Le dorer 3 à 4 minutes par face dans l'huile chaude.
+  - Servir avec la roquette, les tomates cerises, les pommes de terre et un quartier de citron.
+
+- id: it_spaghetti_crevettes
+  title: Spaghetti aglio, olio e peperoncino aux crevettes
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 20], level: 1, spice: 1, equipment: [casserole, poele], keeps: 0}
+  items: [[shrimp, 120, protein], [pasta, 85, starch], [cherry_tomato, 100, veg], [olive_oil, 15, fat], [garlic, 8, flavor],
+          [chili_flakes, 0.5, flavor], [parsley, 6, flavor], [lemon_juice, 10, flavor]]
+  steps:
+  - Cuire les spaghetti al dente dans une grande quantité d'eau salée.
+  - Faire chauffer doucement l'huile avec l'ail émincé et le piment, sans laisser brunir l'ail.
+  - Ajouter les crevettes et les tomates cerises ; cuire 3 minutes.
+  - Mélanger avec les pâtes, un peu d'eau de cuisson, le persil et le citron.
+
+- id: it_caprese
+  title: Salade caprese, roquette et pain de campagne
+  meta: {country: IT, slots: [lunch, dinner], time: [10, 10], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[mozzarella, 100, protein], [bread_country, 70, starch], [tomato, 200, veg], [arugula, 30, veg], [olive_oil, 12, fat],
+          [basil, 4, flavor], [vinegar, 5, flavor]]
+  steps:
+  - Trancher les tomates et la mozzarella et les alterner dans l'assiette.
+  - Ajouter la roquette et le basilic, puis assaisonner d'huile et de vinaigre.
+  - Servir avec le pain.
+
+- id: it_frittata_epinards
+  title: Frittata aux épinards et à la ricotta
+  meta: {country: IT, slots: [breakfast, lunch, dinner], time: [10, 25], level: 1, spice: 0, equipment: [poele, four], keeps: 1}
+  items: [[egg, 150, protein], [ricotta, 50, protein], [bread_country, 50, starch], [spinach, 150, veg], [parmesan, 10, flavor],
+          [olive_oil, 8, fat], [nutmeg, 0.2, flavor]]
+  steps:
+  - Faire tomber les épinards dans l'huile, dans une poêle allant au four.
+  - Battre les œufs avec la ricotta, le parmesan et la muscade, puis verser sur les épinards.
+  - Cuire 5 minutes à feu doux, puis finir 8 minutes au four à 180 °C, jusqu'à ce que la frittata soit bien prise.
+  - Servir avec le pain.
+
+- id: it_tartine_ricotta_peches
+  title: Tartines de ricotta, pêches et miel
+  meta: {country: IT, slots: [breakfast], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[ricotta, 80, protein], [bread_whole, 70, starch], [peach, 150, fruit], [honey, 10, flavor]]
+  steps:
+  - Faire griller le pain si vous le souhaitez, puis le tartiner de ricotta.
+  - Ajouter les pêches en lamelles et un filet de miel.
+
+- id: it_focaccia
+  title: Focaccia au romarin et tomates cerises
+  meta: {country: IT, slots: [snack], time: [10, 30], level: 1, spice: 0, equipment: [four], keeps: 2}
+  items: [[pizza_dough, 80, starch], [cherry_tomato, 50, veg], [olive_oil, 8, fat], [rosemary, 1, flavor]]
+  steps:
+  - Étaler la pâte sur 1,5 cm d'épaisseur et y enfoncer les doigts pour former des creux.
+  - Garnir de tomates cerises coupées en deux et de romarin, puis arroser d'huile.
+  - Cuire 18 minutes au four à 220 °C.
+
+- id: it_pomme_parmesan
+  title: Pomme et copeaux de parmesan
+  meta: {country: IT, slots: [snack], time: [2, 2], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[apple, 150, fruit], [parmesan, 20, protein]]
+  steps:
+  - Couper la pomme en fines tranches.
+  - Accompagner de copeaux de parmesan.
+
+- id: it_polenta_lenticchie
+  title: Polenta et ragoût de lentilles aux légumes
+  meta: {country: IT, slots: [lunch, dinner], time: [20, 45], level: 1, spice: 0, equipment: [cocotte, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[lentils_green, 70, protein], [polenta, 60, starch], [carrot, 70, veg], [celery, 40, veg], [onion, 50, veg], [tomato_passata, 150, sauce],
+          [olive_oil, 12, fat], [garlic, 4, flavor], [rosemary, 0.5, flavor], [bay_leaf, 0.2, flavor]]
+  steps:
+  - Faire revenir l'oignon, la carotte et le céleri en petits dés dans l'huile 8 minutes.
+  - Ajouter l'ail, les lentilles rincées, la sauce tomate, le romarin, le laurier et 50 cl d'eau ; mijoter 30 minutes.
+  - Cuire la polenta dans quatre fois son volume d'eau salée en remuant, 5 à 8 minutes.
+  - Servir le ragoût de lentilles sur la polenta.

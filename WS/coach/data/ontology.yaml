@@ -1,0 +1,161 @@
+# Vocabulary of the food profile.
+#
+# Allergens follow Annex II of Regulation (EU) No 1169/2011.
+# Labels and synonyms are French: labels are shown to users, synonyms are
+# matched against what they type, without accents or case.
+
+allergens:
+  gluten:
+    label: Céréales contenant du gluten
+    synonyms: [gluten, ble, froment, seigle, orge, avoine, epeautre, kamut, celiaque, maladie coeliaque]
+    children:
+      ble: {label: Blé, synonyms: [ble, froment, epeautre, kamut, semoule de ble]}
+      seigle: {label: Seigle, synonyms: [seigle]}
+      orge: {label: Orge, synonyms: [orge]}
+      avoine: {label: Avoine, synonyms: [avoine, flocons d avoine]}
+  crustaceans:
+    label: Crustacés
+    synonyms: [crustace, crustaces, crevette, crevettes, crabe, homard, langouste, langoustine, gambas, ecrevisse]
+  eggs:
+    label: Œufs
+    synonyms: [oeuf, oeufs, egg, eggs, blanc d oeuf, jaune d oeuf]
+  fish:
+    label: Poissons
+    synonyms: [poisson, poissons, fish]
+  peanuts:
+    label: Arachides
+    synonyms: [arachide, arachides, cacahuete, cacahuetes, cacahuette, cacahuettes, cacahouete, cacahouetes, beurre de cacahuete, peanut, peanuts]
+  soy:
+    label: Soja
+    synonyms: [soja, soya, soy, tofu, tempeh, edamame]
+  milk:
+    label: Lait
+    synonyms: [lait, produits laitiers, laitage, laitages, proteines de lait, plv, apl, lait de vache, dairy]
+  nuts:
+    label: Fruits à coque
+    synonyms: [fruits a coque, fruit a coque, noix (toutes), nuts, tree nuts]
+    children:
+      amande: {label: Amande, synonyms: [amande, amandes, poudre d amande, lait d amande]}
+      noisette: {label: Noisette, synonyms: [noisette, noisettes]}
+      noix: {label: Noix, synonyms: [noix, cerneaux de noix, noix de grenoble]}
+      cajou: {label: Noix de cajou, synonyms: [cajou, noix de cajou, anacarde]}
+      pecan: {label: Noix de pécan, synonyms: [pecan, noix de pecan]}
+      bresil: {label: Noix du Brésil, synonyms: [noix du bresil]}
+      pistache: {label: Pistache, synonyms: [pistache, pistaches]}
+      macadamia: {label: Macadamia, synonyms: [macadamia, noix de macadamia]}
+  celery:
+    label: Céleri
+    synonyms: [celeri, celeri branche, celeri rave]
+  mustard:
+    label: Moutarde
+    synonyms: [moutarde]
+  sesame:
+    label: Sésame
+    synonyms: [sesame, tahin, tahini, graines de sesame]
+  sulphites:
+    label: Sulfites
+    synonyms: [sulfite, sulfites, sulphite, sulphites, anhydride sulfureux]
+  lupin:
+    label: Lupin
+    synonyms: [lupin]
+  molluscs:
+    label: Mollusques
+    synonyms: [mollusque, mollusques, moule, moules, huitre, huitres, palourde, palourdes, calamar, calamars, encornet, poulpe, seiche, coquille saint jacques, saint jacques]
+
+# Synonym groups that cover several allergens.
+allergen_groups:
+  fruits_de_mer: {label: Fruits de mer (crustacés et mollusques), synonyms: [fruits de mer, fruit de mer, seafood], allergens: [crustaceans, molluscs]}
+
+# Diets: the animal origins each diet forbids. Flexitarian caps meat meals per week.
+diets:
+  omnivore: {label: Omnivore, forbid: []}
+  flexitarian: {label: Flexitarien, forbid: [], meat_meals_max: 4}
+  pescetarian: {label: Pescétarien, forbid: [poultry, beef, veal, pork, lamb]}
+  vegetarian: {label: Végétarien, forbid: [poultry, beef, veal, pork, lamb, fish, crustacean, mollusc]}
+  vegan: {label: Végétalien (vegan), forbid: [poultry, beef, veal, pork, lamb, fish, crustacean, mollusc, egg, dairy, honey]}
+
+# Religious or medical restrictions. `implies` pulls in other restrictions.
+restrictions:
+  no_pork: {label: Sans porc, synonyms: [sans porc], forbid_animals: [pork]}
+  no_alcohol: {label: Sans alcool en cuisine, synonyms: [sans alcool, alcool], forbid_alcohol: true}
+  halal: {label: Halal, synonyms: [halal, hallal], implies: [no_pork, no_alcohol], note: "Choisissez une viande certifiée halal à l'achat."}
+  kosher: {label: Casher, synonyms: [casher, cacher, kasher, kosher], implies: [no_pork], forbid_animals: [crustacean, mollusc], forbid_meat_with_dairy: true, note: "Choisissez des produits certifiés casher à l'achat."}
+  no_beef: {label: Sans bœuf, synonyms: [sans boeuf], forbid_animals: [beef, veal]}
+  lactose: {label: Intolérance au lactose, synonyms: [lactose, sans lactose, intolerance au lactose, intolerant au lactose], forbid_lactose: true}
+
+# Food-safety precautions derived from the health profile, never typed by users.
+# Source: Manger Bouger (Santé publique France), "Quels aliments éviter et
+# quelles précautions prendre quand on est enceinte ?". Raw, smoked or
+# undercooked dishes carry "cautions: [pregnancy]" in their recipe; this section
+# holds what applies whatever the dish: alcohol, soy-based foods (soy sauce stays
+# allowed) and fish to limit to one meal a week.
+cautions:
+  pregnancy:
+    label: Grossesse
+    forbid_alcohol: true
+    forbid_ingredients: [soy_drink, soy_yogurt, soy_cream, tofu, tofu_silken, tofu_smoked, tempeh, tvp, miso]
+    weekly_max: {ingredients: [tuna_fresh, tuna_canned, sea_bream], meals: 1}
+    note: "Grossesse : ce programme exclut l'alcool, les aliments à base de soja et les plats de poisson cru ou fumé, de charcuterie crue, d'œuf peu cuit ou de crevettes cuites servies froides ; thon et dorade sont limités à un repas par semaine. Choisissez des fromages pasteurisés, râpez-les vous-même et retirez-en la croûte, lavez soigneusement fruits, légumes et herbes, et cuisez bien viandes, poissons et œufs."
+  breastfeeding:
+    label: Allaitement
+    forbid_alcohol: true
+    forbid_ingredients: [soy_drink, soy_yogurt, soy_cream, tofu, tofu_silken, tofu_smoked, tempeh, tvp, miso]
+    note: "Allaitement : pas d'alcool ni d'aliments à base de soja dans ce programme (la sauce soja reste possible de temps en temps)."
+
+# Food families that can be used as dislikes.
+families:
+  viande_rouge: {label: Viande rouge, synonyms: [viande rouge, viandes rouges, boeuf, veau, agneau, mouton, steak]}
+  porc: {label: Porc, synonyms: [porc, cochon, jambon, lardon, lardons, bacon, saucisse, saucisses, chorizo]}
+  charcuterie: {label: Charcuterie, synonyms: [charcuterie, charcuteries]}
+  agneau: {label: Agneau, synonyms: [agneau, mouton]}
+  volaille: {label: Volaille, synonyms: [volaille, volailles, poulet, dinde]}
+  canard: {label: Canard, synonyms: [canard, magret]}
+  poisson: {label: Poisson, synonyms: [poisson, poissons, saumon, thon, cabillaud, sardine, sardines, maquereau]}
+  fruits_de_mer: {label: Fruits de mer, synonyms: [fruits de mer, crevette, crevettes, moule, moules, calamar, calamars, palourdes]}
+  oeuf: {label: Œufs, synonyms: [oeuf, oeufs]}
+  lait: {label: Lait et laitages, synonyms: [lait, laitage, laitages, yaourt, yaourts, fromage blanc, creme]}
+  fromage: {label: Fromage, synonyms: [fromage, fromages]}
+  chevre: {label: Fromage de chèvre, synonyms: [chevre, fromage de chevre]}
+  legumineuses: {label: Légumineuses, synonyms: [legumineuse, legumineuses, legumes secs, lentille, lentilles, pois chiche, pois chiches, haricots secs, feves]}
+  soja: {label: Soja et tofu, synonyms: [tofu, tempeh]}
+  champignons: {label: Champignons, synonyms: [champignon, champignons, champi, champis, shiitake, pleurote, pleurotes, cepe, cepes]}
+  oignon: {label: Oignon, synonyms: [oignon, oignons, echalote, echalotes, poireau, poireaux, oignon cru]}
+  ail: {label: Ail, synonyms: [ail]}
+  piment: {label: Piment et plats épicés, synonyms: [piment, piments, epice, epices, epicee, epicees, piquant, plats epices, harissa]}
+  coriandre: {label: Coriandre, synonyms: [coriandre, coriandre fraiche, cilantro]}
+  menthe: {label: Menthe, synonyms: [menthe]}
+  tomate: {label: Tomate, synonyms: [tomate, tomates]}
+  poivron: {label: Poivron, synonyms: [poivron, poivrons]}
+  aubergine: {label: Aubergine, synonyms: [aubergine, aubergines]}
+  courgette: {label: Courgette, synonyms: [courgette, courgettes]}
+  courge: {label: Courges, synonyms: [courge, courges, potiron, butternut, citrouille, potimarron]}
+  olive: {label: Olives, synonyms: [olive, olives]}
+  choux: {label: Choux, synonyms: [chou, choux, brocoli, brocolis, chou fleur, choux de bruxelles, kale]}
+  epinard: {label: Épinards, synonyms: [epinard, epinards]}
+  betterave: {label: Betterave, synonyms: [betterave, betteraves]}
+  celeri: {label: Céleri, synonyms: [celeri]}
+  fenouil: {label: Fenouil, synonyms: [fenouil]}
+  avocat: {label: Avocat, synonyms: [avocat, avocats]}
+  banane: {label: Banane, synonyms: [banane, bananes]}
+  coco: {label: Noix de coco, synonyms: [coco, noix de coco, lait de coco]}
+  agrumes: {label: Agrumes, synonyms: [agrume, agrumes, citron, orange, pamplemousse]}
+  fruits_rouges: {label: Fruits rouges, synonyms: [fruits rouges, fraise, fraises, framboise, framboises, myrtille, myrtilles]}
+  fruits_exotiques: {label: Fruits exotiques, synonyms: [fruits exotiques, mangue, ananas, papaye]}
+  kiwi: {label: Kiwi, synonyms: [kiwi, kiwis]}
+  chocolat: {label: Chocolat, synonyms: [chocolat, cacao]}
+  salade: {label: Salade verte, synonyms: [salade verte, laitue, roquette]}
+  riz: {label: Riz, synonyms: [riz]}
+  pignons: {label: Pignons de pin, synonyms: [pignon, pignons, pignons de pin]}
+  arachide: {label: Cacahuète, synonyms: [cacahuete, cacahuetes]}
+
+# Cuisine regions, then countries: `words` are the adjectives people type.
+regions:
+  europe: Europe
+  afrique: Afrique
+  ameriques: Amériques
+
+countries:
+  FR: {label: France, region: europe, words: [francais]}
+  IT: {label: Italie, region: europe, words: [italien]}
+  TN: {label: Tunisie, region: afrique, words: [tunisien]}
+  US: {label: États-Unis, region: ameriques, words: [americain]}
