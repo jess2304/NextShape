@@ -1,0 +1,139 @@
+# United States. Quantities for one reference portion.
+
+- id: us_poke_saumon
+  title: Poke bowl au saumon
+  meta: {country: US, slots: [lunch, dinner], time: [20, 30], level: 1, spice: 0, equipment: [casserole], keeps: 0, cautions: [pregnancy]}
+  items: [[salmon, 120, protein], [rice, 65, starch], [cucumber, 60, veg], [carrot, 40, veg], [spring_onion, 10, veg], [avocado, 50, fat],
+          [soy_sauce, 15, sauce], [sesame_oil, 3, fat], [sesame_seeds, 3, fat], [nori, 1.5, flavor]]
+  steps:
+  - Cuire le riz et le laisser tiédir.
+  - Couper le saumon extra-frais en cubes et le mariner 10 minutes dans la sauce soja et l'huile de sésame.
+  - Disposer riz, saumon, concombre, carotte râpée et avocat.
+  - Parsemer de cébette, de sésame et de nori.
+  tip: Achetez un poisson labellisé pour consommation crue, ou saisissez-le rapidement.
+
+- id: us_turkey_burger
+  title: Burger de dinde et frites de patate douce au four
+  meta: {country: US, slots: [lunch, dinner], time: [20, 40], level: 1, spice: 0, equipment: [four, poele], keeps: 0}
+  items: [[turkey_breast, 130, protein], [burger_bun, 70, starch], [sweet_potato, 200, starch], [lettuce, 30, veg], [tomato, 50, veg],
+          [red_onion, 15, veg], [cheddar, 15, protein], [olive_oil, 8, fat], [mustard, 5, flavor], [ketchup, 10, sauce]]
+  steps:
+  - Couper la patate douce en frites, les enrober d'huile et cuire 30 minutes à 220 °C.
+  - Hacher la dinde, former un steak et le cuire 5 minutes par face.
+  - Poser le cheddar en fin de cuisson.
+  - Garnir le pain de salade, tomate, oignon, moutarde et ketchup.
+
+- id: us_chili_con_carne
+  title: Chili con carne et riz
+  meta: {country: US, slots: [lunch, dinner], time: [15, 50], level: 1, spice: 2, equipment: [cocotte, casserole], keeps: 4, freezes: true, leftovers: true}
+  items: [[beef_mince, 110, protein], [kidney_beans, 120, protein], [rice, 60, starch], [tomato_canned, 150, sauce], [onion, 50, veg],
+          [bell_pepper_red, 50, veg], [olive_oil, 5, fat], [garlic, 5, flavor], [cumin, 1, flavor], [paprika, 2, flavor], [chili_flakes, 0.3, flavor]]
+  steps:
+  - Faire revenir l'oignon, l'ail et le poivron dans l'huile, ajouter la viande et la colorer.
+  - Ajouter les épices, les tomates et les haricots ; mijoter 30 minutes.
+  - Servir avec le riz.
+
+- id: us_cobb_salad
+  title: Cobb salad au poulet, œuf et avocat
+  meta: {country: US, slots: [lunch, dinner], time: [20, 25], level: 1, spice: 0, equipment: [poele, casserole], keeps: 0}
+  items: [[chicken_breast, 120, protein], [egg, 50, protein], [bread_whole, 30, starch], [romaine, 100, veg], [tomato, 80, veg], [avocado, 50, fat],
+          [bacon, 15, flavor], [cheddar, 20, protein], [olive_oil, 8, fat], [cider_vinegar, 10, flavor], [mustard, 5, flavor]]
+  steps:
+  - Cuire l'œuf 9 minutes et griller le poulet ; dorer les lardons à sec.
+  - Faire des croûtons avec le pain.
+  - Disposer en lignes la salade, le poulet, l'œuf, la tomate, l'avocat, les lardons et le fromage.
+  - Arroser d'une vinaigrette huile, vinaigre et moutarde.
+
+- id: us_jambalaya
+  title: Jambalaya au poulet, crevettes et saucisse
+  meta: {country: US, slots: [lunch, dinner], time: [20, 45], level: 2, spice: 2, equipment: [cocotte], keeps: 2, leftovers: true}
+  items: [[chicken_thigh, 90, protein], [shrimp, 60, protein], [sausage, 40, protein], [rice, 65, starch], [bell_pepper_green, 60, veg],
+          [onion, 50, veg], [celery, 40, veg], [tomato_canned, 120, sauce], [olive_oil, 5, fat], [paprika, 2, flavor],
+          [cayenne, 0.3, flavor], [thyme, 0.5, flavor]]
+  steps:
+  - Dorer la saucisse en rondelles et le poulet en morceaux dans l'huile.
+  - Ajouter l'oignon, le poivron et le céleri, puis les épices et le riz.
+  - Verser les tomates et 25 cl d'eau, cuire 18 minutes à couvert.
+  - Ajouter les crevettes 5 minutes avant la fin.
+
+- id: us_mac_cheese_brocoli
+  title: Mac and cheese au brocoli
+  meta: {country: US, slots: [lunch, dinner], time: [15, 30], level: 1, spice: 0, equipment: [casserole, four], keeps: 2}
+  items: [[cheddar, 35, protein], [pasta, 80, starch], [broccoli, 150, veg], [milk, 120, sauce], [flour, 8, flavor], [butter, 6, fat], [mustard, 3, flavor]]
+  steps:
+  - Cuire les pâtes et ajouter le brocoli en fleurettes 3 minutes avant la fin.
+  - Faire une sauce avec le beurre, la farine et le lait, puis y fondre le cheddar et la moutarde.
+  - Mélanger avec les pâtes et le brocoli ; gratiner 8 minutes au four si vous le souhaitez.
+
+- id: us_buddha_bowl
+  title: Buddha bowl, quinoa, pois chiches rôtis et sauce tahini
+  meta: {country: US, slots: [lunch, dinner], time: [20, 35], level: 1, spice: 0, equipment: [four, casserole], keeps: 2}
+  items: [[chickpeas, 120, protein], [quinoa, 60, starch], [sweet_potato, 150, starch], [kale, 50, veg], [carrot, 50, veg],
+          [avocado, 50, fat], [tahini, 15, sauce], [lemon_juice, 10, flavor], [paprika, 1, flavor]]
+  steps:
+  - Rôtir la patate douce en cubes et les pois chiches au paprika 25 minutes à 210 °C.
+  - Cuire le quinoa 12 minutes.
+  - Masser le chou kale avec un peu de citron.
+  - Composer le bol et napper de tahin détendu au citron et à l'eau.
+
+- id: us_pancakes_myrtilles
+  title: Pancakes aux myrtilles et fromage blanc
+  meta: {country: US, slots: [breakfast], time: [15, 20], level: 1, spice: 0, equipment: [poele], keeps: 2}
+  items: [[fromage_blanc, 100, protein], [egg, 50, protein], [flour, 50, starch], [milk, 100, sauce], [blueberry, 80, fruit],
+          [baking_powder, 4, flavor], [butter, 3, fat], [maple_syrup, 15, flavor]]
+  steps:
+  - Mélanger la farine et la levure, puis l'œuf et le lait.
+  - Cuire de petits pancakes dans une poêle à peine beurrée, en ajoutant quelques myrtilles sur chacun.
+  - Servir avec le fromage blanc, le reste des myrtilles et le sirop d'érable.
+
+- id: us_avocado_toast
+  title: Avocado toast et œufs pochés
+  meta: {country: US, slots: [breakfast, lunch], time: [10, 12], level: 1, spice: 0, equipment: [casserole], keeps: 0, cautions: [pregnancy]}
+  items: [[egg, 100, protein], [bread_country, 70, starch], [avocado, 70, fat], [lemon_juice, 5, flavor], [chili_flakes, 0.3, flavor]]
+  steps:
+  - Griller le pain.
+  - Écraser l'avocat avec le citron et le tartiner.
+  - Pocher les œufs 3 minutes et les poser dessus ; finir avec le piment.
+
+- id: us_overnight_oats_pb
+  title: Overnight oats banane et beurre de cacahuète
+  meta: {country: US, slots: [breakfast], time: [5, 480], level: 1, spice: 0, equipment: [aucun], keeps: 2}
+  items: [[soy_drink, 150, protein], [oats, 50, starch], [banana, 80, fruit], [chia, 10, fat], [peanut_butter, 16, fat]]
+  steps:
+  - Mélanger les flocons, les graines de chia et la boisson au soja dans un bocal.
+  - Laisser une nuit au réfrigérateur.
+  - Servir avec la banane en rondelles et le beurre de cacahuète.
+
+- id: us_smoothie_bowl
+  title: Smoothie bowl aux fruits rouges
+  meta: {country: US, slots: [breakfast], time: [5, 5], level: 1, spice: 0, equipment: [mixeur], keeps: 0}
+  items: [[soy_yogurt, 150, protein], [oats, 30, starch], [berries_frozen, 100, fruit], [banana, 80, fruit], [chia, 10, fat], [almonds, 10, fat]]
+  steps:
+  - Mixer le yaourt au soja avec les fruits rouges surgelés et la moitié de la banane.
+  - Verser dans un bol et garnir du reste de banane, des flocons, du chia et des amandes.
+
+- id: us_tofu_scramble
+  title: Tofu brouillé aux légumes et pain complet
+  meta: {country: US, slots: [breakfast, lunch, dinner], time: [10, 15], level: 1, spice: 0, equipment: [poele], keeps: 1}
+  items: [[tofu, 180, protein], [bread_whole, 60, starch], [bell_pepper_red, 60, veg], [spinach, 50, veg], [onion, 30, veg],
+          [olive_oil, 6, fat], [turmeric, 0.5, flavor]]
+  steps:
+  - Faire revenir l'oignon et le poivron dans l'huile.
+  - Émietter le tofu dans la poêle avec le curcuma, ajouter les épinards.
+  - Cuire 5 minutes et servir avec le pain grillé.
+
+- id: us_pomme_beurre_cacahuete
+  title: Pomme et beurre de cacahuète
+  meta: {country: US, slots: [snack], time: [2, 2], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[apple, 150, fruit], [peanut_butter, 16, fat]]
+  steps:
+  - Couper la pomme en tranches.
+  - Les tremper dans le beurre de cacahuète.
+
+- id: us_trail_mix
+  title: Mélange noix, raisins secs et chocolat noir
+  meta: {country: US, slots: [snack], time: [1, 1], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[almonds, 10, fat], [cashews, 10, fat], [raisins, 15, fruit], [dark_chocolate, 5, flavor]]
+  steps:
+  - Mélanger les fruits à coque, les raisins secs et le chocolat concassé.
+  - Préparer plusieurs portions à l'avance dans de petites boîtes.

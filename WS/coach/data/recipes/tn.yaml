@@ -1,0 +1,270 @@
+# Tunisia. Quantities for one reference portion.
+
+- id: tn_chakchouka
+  title: Chakchouka tunisienne
+  meta: {country: TN, slots: [breakfast, lunch, dinner], time: [15, 30], level: 1, spice: 2, equipment: [poele], keeps: 0, cautions: [pregnancy]}
+  items: [[egg, 100, protein], [bread_baguette, 60, starch], [bell_pepper_green, 120, veg], [bell_pepper_red, 80, veg], [tomato, 200, veg],
+          [onion, 60, veg], [olive_oil, 10, fat], [garlic, 5, flavor], [harissa, 6, flavor], [cumin, 1, flavor]]
+  steps:
+  - Faire revenir l'oignon et les poivrons en lanières dans l'huile 10 minutes.
+  - Ajouter l'ail, les tomates, la harissa et le cumin ; cuire 10 minutes.
+  - Casser les œufs dans la sauce, couvrir et cuire 5 minutes.
+  - Servir avec le pain.
+
+- id: tn_lablabi
+  title: Lablabi, soupe de pois chiches au cumin
+  meta: {country: TN, slots: [breakfast, lunch, dinner], time: [10, 20], level: 1, spice: 2, equipment: [casserole], keeps: 2, cautions: [pregnancy]}
+  items: [[chickpeas, 200, protein], [egg, 50, protein], [bread_baguette, 50, starch], [olive_oil, 10, fat], [garlic, 5, flavor],
+          [cumin, 2, flavor], [harissa, 6, flavor], [lemon_juice, 10, flavor]]
+  steps:
+  - Chauffer les pois chiches dans 40 cl d'eau avec l'ail et le cumin 10 minutes.
+  - Disposer le pain rassis en morceaux au fond d'un bol, verser la soupe dessus.
+  - Ajouter l'œuf poché ou mollet, la harissa, le citron et l'huile.
+
+- id: tn_couscous_poisson
+  title: Couscous au poisson à la tunisienne
+  meta: {country: TN, slots: [lunch, dinner], time: [25, 50], level: 2, spice: 2, equipment: [cocotte], keeps: 1}
+  items: [[sea_bream, 140, protein], [couscous, 70, starch], [carrot, 60, veg], [zucchini, 80, veg], [onion, 40, veg],
+          [tomato_paste, 15, sauce], [olive_oil, 10, fat], [harissa, 6, flavor], [cumin, 1, flavor]]
+  steps:
+  - Faire revenir l'oignon dans l'huile avec le concentré de tomate, la harissa et le cumin.
+  - Ajouter 50 cl d'eau, les carottes puis les courgettes ; cuire 20 minutes.
+  - Pocher le poisson 8 minutes dans ce bouillon.
+  - Préparer la semoule à l'eau bouillante et la servir arrosée de bouillon.
+
+- id: tn_couscous_agneau
+  title: Couscous tunisien à l'agneau et aux légumes
+  meta: {country: TN, slots: [lunch, dinner], time: [30, 90], level: 2, spice: 2, equipment: [cocotte], keeps: 3, freezes: true, leftovers: true}
+  items: [[lamb_shoulder, 120, protein], [chickpeas, 50, protein], [couscous, 75, starch], [carrot, 70, veg], [turnip, 60, veg], [zucchini, 80, veg],
+          [pumpkin, 70, veg], [onion, 40, veg], [tomato_paste, 20, sauce], [olive_oil, 10, fat], [harissa, 8, flavor], [coriander_seeds, 1, flavor],
+          [caraway, 1, flavor]]
+  steps:
+  - Faire revenir l'agneau en morceaux et l'oignon émincé dans l'huile, en cocotte, 5 minutes.
+  - Ajouter le concentré de tomate, la harissa, la coriandre et le carvi, puis 80 cl d'eau ; mijoter 45 minutes à couvert.
+  - Ajouter les carottes et les navets, puis 15 minutes plus tard la courge, les courgettes et les pois chiches ; cuire encore 20 minutes.
+  - Verser la semoule dans le même volume d'eau bouillante salée, couvrir 5 minutes, puis l'égrainer à la fourchette.
+  - Servir la semoule arrosée de bouillon, avec la viande et les légumes.
+  tip: Encore meilleur le lendemain ; préparez la semoule au dernier moment.
+
+- id: tn_couscous_legumes
+  title: Couscous aux légumes et aux pois chiches
+  meta: {country: TN, slots: [lunch, dinner], time: [20, 50], level: 1, spice: 2, equipment: [cocotte], keeps: 3, leftovers: true}
+  items: [[chickpeas, 130, protein], [couscous, 80, starch], [carrot, 70, veg], [turnip, 60, veg], [zucchini, 80, veg], [pumpkin, 80, veg],
+          [onion, 40, veg], [tomato_paste, 20, sauce], [olive_oil, 12, fat], [harissa, 8, flavor], [coriander_seeds, 1, flavor], [caraway, 1, flavor]]
+  steps:
+  - Faire revenir l'oignon dans l'huile avec le concentré de tomate, la harissa, la coriandre et le carvi.
+  - Ajouter 70 cl d'eau, les carottes et les navets ; cuire 15 minutes.
+  - Ajouter la courge, les courgettes et les pois chiches ; cuire encore 15 minutes.
+  - Préparer la semoule à l'eau bouillante salée et la servir arrosée de bouillon, avec les légumes.
+
+- id: tn_mermez
+  title: Mermez d'agneau aux pois chiches
+  meta: {country: TN, slots: [lunch, dinner], time: [20, 75], level: 1, spice: 2, equipment: [cocotte], keeps: 3, freezes: true, leftovers: true}
+  items: [[lamb_shoulder, 130, protein], [chickpeas, 80, protein], [bread_country, 60, starch], [bell_pepper_green, 80, veg], [onion, 60, veg],
+          [tomato_paste, 25, sauce], [olive_oil, 10, fat], [garlic, 5, flavor], [paprika, 2, flavor], [cumin, 1, flavor], [harissa, 5, flavor]]
+  steps:
+  - Faire dorer l'agneau en morceaux dans l'huile avec l'oignon émincé.
+  - Ajouter l'ail, le paprika, le cumin, la harissa et le concentré de tomate dilué dans 50 cl d'eau.
+  - Couvrir et mijoter 40 minutes, puis ajouter le poivron en lanières et les pois chiches ; cuire encore 15 minutes.
+  - Servir la sauce bien réduite avec le pain.
+
+- id: tn_marqa_jelbana
+  title: Marqa jelbana, ragoût de petits pois à l'agneau
+  meta: {country: TN, slots: [lunch, dinner], time: [20, 70], level: 1, spice: 1, equipment: [cocotte], keeps: 3, freezes: true, leftovers: true}
+  items: [[lamb_shoulder, 110, protein], [potato, 160, starch], [peas, 150, veg], [onion, 50, veg], [tomato_paste, 20, sauce],
+          [olive_oil, 10, fat], [garlic, 5, flavor], [turmeric, 1, flavor], [coriander_seeds, 1, flavor], [harissa, 4, flavor]]
+  steps:
+  - Faire revenir l'agneau et l'oignon dans l'huile avec l'ail, le curcuma et la coriandre.
+  - Ajouter le concentré de tomate, la harissa et 50 cl d'eau ; mijoter 30 minutes à couvert.
+  - Ajouter les pommes de terre en morceaux et les petits pois ; cuire encore 20 minutes.
+  - Laisser réduire la sauce quelques minutes avant de servir.
+
+- id: tn_loubia
+  title: Loubia, haricots blancs à la tomate et au cumin
+  meta: {country: TN, slots: [lunch, dinner], time: [10, 30], level: 1, spice: 2, equipment: [casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[white_beans, 220, protein], [bread_country, 70, starch], [bell_pepper_green, 60, veg], [onion, 50, veg], [tomato_paste, 25, sauce],
+          [olive_oil, 12, fat], [garlic, 6, flavor], [cumin, 2, flavor], [harissa, 6, flavor], [bay_leaf, 0.2, flavor]]
+  steps:
+  - Faire revenir l'oignon et le poivron dans l'huile, puis ajouter l'ail, le cumin et la harissa.
+  - Ajouter le concentré de tomate dilué dans 30 cl d'eau et le laurier ; cuire 10 minutes.
+  - Ajouter les haricots égouttés et laisser mijoter 10 minutes, jusqu'à ce que la sauce nappe.
+  - Servir avec le pain.
+
+- id: tn_kamounia
+  title: Kamounia, bœuf mijoté au cumin, riz et salade
+  meta: {country: TN, slots: [lunch, dinner], time: [20, 90], level: 1, spice: 1, equipment: [cocotte, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[beef_stew, 130, protein], [rice, 65, starch], [tomato, 100, veg], [cucumber, 100, veg], [onion, 60, veg], [tomato_paste, 20, sauce],
+          [olive_oil, 10, fat], [garlic, 8, flavor], [cumin, 3, flavor], [parsley, 5, flavor], [harissa, 4, flavor]]
+  steps:
+  - Faire revenir le bœuf en cubes dans la moitié de l'huile avec l'oignon et l'ail.
+  - Ajouter le cumin, la harissa, le concentré de tomate et 60 cl d'eau ; mijoter 70 minutes à couvert, jusqu'à ce que la sauce épaississe.
+  - Cuire le riz et préparer une salade de tomates et de concombre assaisonnée du reste de l'huile.
+  - Servir le bœuf parsemé de persil, avec le riz et la salade.
+
+- id: tn_makrouna_salsa
+  title: Makrouna bel salsa, pâtes au poulet et sauce tomate épicée
+  meta: {country: TN, slots: [lunch, dinner], time: [15, 45], level: 1, spice: 2, equipment: [cocotte, casserole], keeps: 2, leftovers: true}
+  items: [[chicken_thigh, 120, protein], [pasta, 80, starch], [tomato_passata, 150, sauce], [bell_pepper_green, 60, veg], [onion, 50, veg],
+          [olive_oil, 10, fat], [garlic, 6, flavor], [harissa, 8, flavor], [paprika, 2, flavor], [bay_leaf, 0.2, flavor]]
+  steps:
+  - Faire dorer le poulet en morceaux dans l'huile avec l'oignon et le poivron.
+  - Ajouter l'ail, la harissa, le paprika, la sauce tomate, le laurier et 30 cl d'eau ; mijoter 25 minutes.
+  - Cuire les pâtes 2 minutes de moins que le temps indiqué, puis les finir 2 minutes dans la sauce.
+  - Servir bien chaud.
+
+- id: tn_ojja_merguez
+  title: Ojja aux merguez
+  meta: {country: TN, slots: [lunch, dinner], time: [15, 30], level: 1, spice: 2, equipment: [poele], keeps: 0}
+  items: [[merguez, 100, protein], [egg, 100, protein], [bread_baguette, 60, starch], [tomato, 200, veg], [bell_pepper_green, 100, veg],
+          [onion, 40, veg], [olive_oil, 5, fat], [garlic, 5, flavor], [harissa, 6, flavor], [caraway, 0.5, flavor]]
+  steps:
+  - Faire revenir les merguez en tronçons dans l'huile, puis l'oignon et le poivron en lanières.
+  - Ajouter l'ail, les tomates concassées, la harissa et le carvi ; cuire 10 minutes.
+  - Casser les œufs dans la sauce, les brouiller légèrement et cuire jusqu'à ce qu'ils soient bien pris.
+  - Servir avec le pain.
+
+- id: tn_ojja_crevettes
+  title: Ojja aux crevettes
+  meta: {country: TN, slots: [lunch, dinner], time: [15, 25], level: 1, spice: 2, equipment: [poele], keeps: 0}
+  items: [[shrimp, 120, protein], [egg, 100, protein], [bread_baguette, 60, starch], [tomato, 200, veg], [bell_pepper_red, 80, veg],
+          [olive_oil, 8, fat], [garlic, 6, flavor], [harissa, 6, flavor], [cumin, 1, flavor], [parsley, 3, flavor]]
+  steps:
+  - Faire revenir le poivron dans l'huile, puis ajouter l'ail, la harissa, le cumin et les tomates concassées ; cuire 8 minutes.
+  - Ajouter les crevettes et cuire 3 minutes.
+  - Casser les œufs dans la sauce et cuire à couvert jusqu'à ce qu'ils soient bien pris.
+  - Parsemer de persil et servir avec le pain.
+
+- id: tn_tajine_poulet
+  title: Tajine tunisien au poulet et au fromage, salade verte
+  meta: {country: TN, slots: [lunch, dinner], time: [20, 55], level: 2, spice: 0, equipment: [poele, four, casserole], keeps: 2, leftovers: true}
+  items: [[egg, 100, protein], [chicken_breast, 80, protein], [emmental, 25, protein], [potato, 120, starch], [onion, 50, veg],
+          [lettuce, 60, veg], [tomato, 80, veg], [olive_oil, 12, fat], [parsley, 8, flavor], [turmeric, 1, flavor]]
+  steps:
+  - Faire revenir le poulet en petits dés et l'oignon dans une partie de l'huile avec le curcuma.
+  - Cuire les pommes de terre en petits cubes 10 minutes à l'eau.
+  - Battre les œufs avec le fromage et le persil, puis mélanger avec le poulet et les pommes de terre.
+  - Verser dans un plat huilé et cuire 25 minutes au four à 180 °C, jusqu'à ce que le tajine soit bien pris.
+  - Servir tiède avec la salade et les tomates assaisonnées du reste de l'huile.
+
+- id: tn_salade_mechouia
+  title: Salade méchouia, thon et œuf dur
+  meta: {country: TN, slots: [lunch, dinner], time: [20, 50], level: 1, spice: 2, equipment: [four, casserole], keeps: 2}
+  items: [[tuna_canned, 80, protein], [egg, 50, protein], [bread_country, 70, starch], [bell_pepper_green, 150, veg], [tomato, 150, veg],
+          [onion, 40, veg], [chili, 10, flavor], [olive_oil, 12, fat], [garlic, 4, flavor], [caraway, 0.5, flavor], [lemon_juice, 10, flavor]]
+  steps:
+  - Griller au four les poivrons, les tomates, l'oignon et le piment jusqu'à ce que la peau noircisse, environ 25 minutes.
+  - Cuire l'œuf 10 minutes à l'eau bouillante, puis le refroidir.
+  - Peler les légumes et les hacher finement avec l'ail, le carvi, le citron et l'huile.
+  - Servir la salade avec le thon, l'œuf dur en quartiers et le pain.
+
+- id: tn_chorba_frik
+  title: Chorba frik à l'agneau
+  meta: {country: TN, slots: [lunch, dinner], time: [20, 75], level: 1, spice: 2, equipment: [cocotte], keeps: 3, freezes: true, leftovers: true}
+  items: [[lamb_shoulder, 90, protein], [chickpeas, 60, protein], [freekeh, 50, starch], [bread_baguette, 40, starch], [onion, 50, veg],
+          [celery, 40, veg], [tomato_paste, 20, sauce], [olive_oil, 10, fat], [harissa, 5, flavor], [mint, 3, flavor], [lemon_juice, 10, flavor]]
+  steps:
+  - Faire revenir l'agneau en petits dés, l'oignon et le céleri dans l'huile.
+  - Ajouter le concentré de tomate, la harissa et 1 litre d'eau ; mijoter 40 minutes.
+  - Ajouter le frik rincé et les pois chiches ; cuire encore 20 minutes en remuant de temps en temps.
+  - Servir avec la menthe ciselée, un filet de citron et le pain.
+
+- id: tn_doulma_courgettes
+  title: Doulma, courgettes farcies à la viande hachée
+  meta: {country: TN, slots: [lunch, dinner], time: [30, 70], level: 2, spice: 0, equipment: [cocotte], keeps: 2, freezes: true, leftovers: true}
+  items: [[beef_mince, 110, protein], [egg, 25, protein], [rice, 40, starch], [zucchini, 250, veg], [onion, 40, veg],
+          [tomato_paste, 20, sauce], [olive_oil, 8, fat], [parsley, 6, flavor], [turmeric, 1, flavor], [cinnamon, 0.5, flavor]]
+  steps:
+  - Évider les courgettes coupées en tronçons.
+  - Mélanger la viande, le riz cru, l'œuf, l'oignon haché, le persil, le curcuma et la cannelle.
+  - Farcir les courgettes et les ranger dans la cocotte avec l'huile.
+  - Couvrir de concentré de tomate dilué dans 40 cl d'eau et mijoter 40 minutes à couvert.
+
+- id: tn_rouz_jerbi
+  title: Riz djerbien au poulet et aux épinards
+  meta: {country: TN, slots: [lunch, dinner], time: [25, 65], level: 2, spice: 0, equipment: [vapeur], keeps: 2, leftovers: true}
+  items: [[chicken_thigh, 120, protein], [chickpeas, 40, protein], [rice, 70, starch], [spinach, 120, veg], [onion, 50, veg],
+          [tomato_paste, 15, sauce], [olive_oil, 10, fat], [parsley, 6, flavor], [mint, 3, flavor], [turmeric, 1, flavor], [cumin, 1, flavor]]
+  steps:
+  - Couper le poulet en petits morceaux et hacher l'oignon, les épinards, le persil et la menthe.
+  - Mélanger tous les ingrédients avec le riz rincé, le concentré de tomate, l'huile et les épices.
+  - Cuire à la vapeur 40 minutes dans le panier d'un couscoussier, en remuant à mi-cuisson.
+  - Servir bien chaud.
+
+- id: tn_daurade_grillee
+  title: Dorade grillée, salade tunisienne et pommes de terre
+  meta: {country: TN, slots: [lunch, dinner], time: [20, 35], level: 1, spice: 0, equipment: [plancha, casserole], keeps: 0}
+  items: [[sea_bream, 160, protein], [potato, 200, starch], [tomato, 120, veg], [cucumber, 80, veg], [onion, 30, veg],
+          [olive_oil, 12, fat], [lemon_juice, 15, flavor], [mint, 3, flavor], [cumin, 1, flavor]]
+  steps:
+  - Cuire les pommes de terre 20 minutes à l'eau salée.
+  - Couper finement les tomates, le concombre et l'oignon ; assaisonner avec la menthe, la moitié de l'huile et un peu de citron.
+  - Griller le poisson 3 à 4 minutes par face avec le cumin et le reste de l'huile.
+  - Servir avec la salade, les pommes de terre et le reste du citron.
+
+- id: tn_brik_thon
+  title: Brik au thon et à l'œuf, salade verte
+  meta: {country: TN, slots: [lunch, dinner], time: [20, 35], level: 2, spice: 0, equipment: [poele, casserole], keeps: 0, cautions: [pregnancy]}
+  items: [[tuna_canned, 60, protein], [egg, 50, protein], [brick, 30, starch], [potato, 100, starch], [lettuce, 60, veg], [tomato, 100, veg],
+          [sunflower_oil, 15, fat], [parsley, 5, flavor], [capers, 5, flavor], [lemon_juice, 10, flavor]]
+  steps:
+  - Cuire la pomme de terre à l'eau, puis l'écraser avec le thon, le persil et les câpres.
+  - Poser la farce au centre de deux feuilles de brick superposées et casser l'œuf au milieu.
+  - Plier en triangle et dorer 1 à 2 minutes par face dans l'huile chaude ; le jaune reste coulant.
+  - Servir aussitôt avec la salade, les tomates et le citron.
+
+- id: tn_poulet_harissa
+  title: Poulet rôti à la harissa, pommes de terre et poivrons
+  meta: {country: TN, slots: [lunch, dinner], time: [15, 55], level: 1, spice: 2, equipment: [four], keeps: 2, leftovers: true}
+  items: [[chicken_thigh, 150, protein], [potato, 200, starch], [bell_pepper_red, 100, veg], [onion, 50, veg], [olive_oil, 10, fat],
+          [harissa, 10, flavor], [garlic, 5, flavor], [caraway, 1, flavor], [lemon_juice, 10, flavor]]
+  steps:
+  - Mélanger la harissa, l'huile, l'ail, le carvi et le citron, puis en enrober le poulet.
+  - Disposer le poulet avec les pommes de terre en quartiers, le poivron et l'oignon dans un plat.
+  - Cuire 40 minutes au four à 200 °C, en retournant à mi-cuisson.
+
+- id: tn_marqa_adas
+  title: Marqa adas, lentilles mijotées au cumin
+  meta: {country: TN, slots: [lunch, dinner], time: [15, 45], level: 1, spice: 2, equipment: [casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[lentils_green, 80, protein], [bread_country, 60, starch], [carrot, 70, veg], [onion, 50, veg], [tomato_paste, 20, sauce],
+          [olive_oil, 12, fat], [garlic, 5, flavor], [cumin, 2, flavor], [harissa, 5, flavor], [bay_leaf, 0.2, flavor]]
+  steps:
+  - Faire revenir l'oignon et l'ail dans l'huile avec le cumin et la harissa.
+  - Ajouter le concentré de tomate, les lentilles rincées, les carottes en rondelles, le laurier et 70 cl d'eau.
+  - Mijoter 30 minutes, jusqu'à ce que les lentilles soient tendres et la sauce épaisse.
+  - Servir avec le pain.
+
+- id: tn_bsissa
+  title: Bsissa au lait, aux dattes et à l'huile d'olive
+  meta: {country: TN, slots: [breakfast], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[milk, 200, protein], [bsissa, 50, starch], [dates, 30, fruit], [olive_oil, 8, fat]]
+  steps:
+  - Délayer la bsissa dans le lait en fouettant pour éviter les grumeaux.
+  - Ajouter l'huile d'olive et les dattes dénoyautées coupées en morceaux.
+  tip: La bsissa se trouve dans les épiceries orientales ; elle se mange aussi en pâte, avec l'huile seule.
+
+- id: tn_dattes_amandes
+  title: Dattes fourrées aux amandes
+  meta: {country: TN, slots: [snack], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 5}
+  items: [[dates, 40, fruit], [almonds, 15, fat]]
+  steps:
+  - Ouvrir les dattes sur la longueur et retirer le noyau.
+  - Glisser une amande dans chaque datte.
+
+- id: tn_salade_oranges
+  title: Salade d'oranges à la cannelle et aux dattes
+  meta: {country: TN, slots: [snack], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 1}
+  items: [[orange, 200, fruit], [dates, 20, fruit], [cinnamon, 0.5, flavor], [mint, 2, flavor]]
+  steps:
+  - Peler les oranges à vif et les couper en rondelles.
+  - Parsemer de dattes en morceaux, de cannelle et de menthe ciselée.
+
+- id: tn_salade_pois_chiches
+  title: Salade de pois chiches et pommes de terre à la tunisienne
+  meta: {country: TN, slots: [lunch, dinner], time: [15, 30], level: 1, spice: 2, equipment: [casserole], keeps: 2, leftovers: true}
+  items: [[chickpeas, 180, protein], [potato, 180, starch], [tomato, 150, veg], [cucumber, 100, veg], [onion, 40, veg],
+          [olive_oil, 15, fat], [lemon_juice, 15, flavor], [harissa, 6, flavor], [cumin, 1, flavor], [parsley, 6, flavor]]
+  steps:
+  - Cuire les pommes de terre en cubes 15 minutes à l'eau salée, puis les laisser tiédir.
+  - Couper les tomates, le concombre et l'oignon en petits dés.
+  - Mélanger l'huile, le citron, la harissa et le cumin, puis en assaisonner les pois chiches, les pommes de terre et les légumes.
+  - Parsemer de persil et servir à température ambiante.

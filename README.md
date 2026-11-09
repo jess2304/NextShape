@@ -1,5 +1,7 @@
 # NextShape
 
+[![CI](https://github.com/jess2304/NextShape/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/jess2304/NextShape/actions/workflows/ci.yml)
+
 <p align="center">
 <img src="UI/public/App.png" alt="APP">
 </p>
@@ -18,7 +20,7 @@ NextShape est une application web de suivi de forme physique, qui permet à un u
 - Historique dynamique avec tableau et modale responsive
 - Mise à jour et suppression des enregistrements
 - Envoi de codes par email via SMTP (Brevo)
-- Pipeline CI/CD avec test et déploiement Render (dev/prod)
+- Intégration continue GitHub Actions : lint, tests backend et frontend, build de l'image Docker
 
 Les calculs enregistrés conservent l'âge et le genre saisis dans la calculatrice.
 Une modification de l'historique réutilise ces paramètres, même si le profil
@@ -40,7 +42,8 @@ L'application est réalisée avec :
 - **Frontend** : Vue 3, TypeScript, PrimeVue, Pinia, Vite
 - **Backend** : Django, Django REST Framework, JWT par cookie HttpOnly
 - **Base de données** : PostgreSQL
-- **CI/CD** : Docker, docker-compose, Render, GitHub Actions
+- **Intégration continue** : GitHub Actions
+- **Conteneurs** : Docker, docker-compose
 
 <p align="center">
 <img src="UI/public/Architecture.PNG" alt="Architecture Front-Back-BDD" width="500">
@@ -48,19 +51,34 @@ L'application est réalisée avec :
 
 ## Installation
 
-### Tests et migrations de déploiement
+### Tests et intégration continue
 
-Les tests frontend se lancent avec `npm test` depuis `UI`. La construction Docker
-exécute ces tests avant la compilation du frontend. Les tests backend se lancent
-avec `python -m pytest api/tests` depuis `WS`, avec l'environnement Python et la
-base de test configurés ; Jenkins les exécute avec `docker-compose.ci.yml`.
+Les tests frontend se lancent avec `npm test` depuis `UI` ; la construction Docker
+les exécute aussi avant de compiler le frontend. Les tests backend (applications
+`api` et `coach`) se lancent avec `python -m pytest` depuis `WS`, avec
+l'environnement Python et une base PostgreSQL de test configurés.
 
-Pour un déploiement staging, le pipeline Jenkins applique les migrations Django,
-puis vérifie avec `python manage.py migrate token_blacklist --check --noinput`
-que les migrations de révocation des jetons sont appliquées. Un échec empêche
-le déclenchement du déploiement Render. Pour un déploiement manuel, exécuter
-`python manage.py migrate --noinput` puis cette vérification avec la configuration
-de la base cible avant de démarrer la nouvelle version.
+GitHub Actions (`.github/workflows/ci.yml`) vérifie chaque pull request vers
+`develop` avec quatre jobs :
+
+- **Lint** : les hooks pre-commit (black, isort, flake8, mypy, etc.) sur les
+  fichiers modifiés par la pull request ;
+- **Backend** : pytest sur PostgreSQL 17 ;
+- **Frontend** : `npm test`, puis `npm run build` ;
+- **Docker** : construction de l'image de production, sans publication.
+
+Les jobs backend, frontend et Docker tournent aussi à chaque push sur `develop`.
+
+### Migrations de déploiement
+
+Avant de démarrer une nouvelle version, appliquer les migrations avec la
+configuration de la base cible, puis vérifier que les migrations de révocation
+des jetons sont appliquées :
+
+```bash
+python manage.py migrate --noinput
+python manage.py migrate token_blacklist --check --noinput
+```
 
 ### Prérequis
 

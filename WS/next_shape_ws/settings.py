@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
     "api",
+    "coach",
 ]
 
 MIDDLEWARE = [
@@ -146,7 +147,7 @@ else:
     if IS_PRODUCTION_LIKE:
         raise ImproperlyConfigured(
             "DJANGO_CACHE_URL is required outside local/test for shared throttling. "
-            "Use a Redis URL in Render or Jenkins-managed environments."
+            "Use a Redis URL in deployed environments."
         )
 
 

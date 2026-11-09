@@ -1,0 +1,510 @@
+# France. Original NextShape recipes; quantities for one reference portion.
+#
+# Format shared by every file in this folder:
+#   id, title (French, shown to users)
+#   meta: country, slots, time [active, total] in minutes, level (1 to 3),
+#         spice (0 to 3), equipment, keeps (days), freezes, leftovers
+#   items: [ingredient, grams, role]; roles (protein, starch, veg, fruit,
+#          fat, sauce, flavor) drive the portion calculation
+#   steps (French), optional tip and cautions
+
+- id: fr_poulet_basquaise
+  title: Poulet basquaise et riz
+  meta: {country: FR, slots: [lunch, dinner], time: [20, 50], level: 1, spice: 1, equipment: [cocotte, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[chicken_thigh, 150, protein], [rice, 70, starch], [bell_pepper_red, 120, veg], [bell_pepper_green, 60, veg],
+          [tomato_canned, 150, sauce], [onion, 60, veg], [garlic, 5, flavor], [olive_oil, 10, fat], [espelette, 0.5, flavor], [thyme, 0.5, flavor]]
+  steps:
+  - Couper le poulet en morceaux et le faire dorer 5 minutes dans l'huile, en cocotte.
+  - Ajouter l'oignon et l'ail émincés, puis les poivrons en lanières ; laisser fondre 8 minutes.
+  - Verser les tomates, le thym et le piment d'Espelette. Couvrir et mijoter 25 minutes.
+  - Pendant ce temps, cuire le riz. Servir le poulet et sa sauce sur le riz.
+  tip: Encore meilleur réchauffé le lendemain, idéal en batch cooking.
+
+- id: fr_boeuf_bourguignon
+  title: Bœuf bourguignon et pommes de terre vapeur
+  meta: {country: FR, slots: [lunch, dinner], time: [30, 180], level: 2, spice: 0, equipment: [cocotte], keeps: 4, freezes: true, leftovers: true}
+  items: [[beef_stew, 150, protein], [potato, 250, starch], [carrot, 120, veg], [mushroom, 80, veg], [onion, 60, veg],
+          [bacon, 15, flavor], [wine_red, 80, sauce], [flour, 5, flavor], [olive_oil, 6, fat], [garlic, 5, flavor], [thyme, 0.5, flavor], [bay_leaf, 0.2, flavor]]
+  steps:
+  - Couper le bœuf en gros cubes. Le faire dorer avec les lardons dans l'huile, puis saupoudrer de farine.
+  - Ajouter l'oignon, l'ail, les carottes en rondelles, le thym et le laurier.
+  - Mouiller avec le vin et de l'eau à hauteur. Couvrir et mijoter 2 h 30 à feu doux.
+  - Ajouter les champignons 20 minutes avant la fin. Servir avec les pommes de terre cuites à la vapeur.
+  tip: Le vin s'évapore en grande partie à la cuisson ; remplacez-le par du bouillon pour une version sans alcool.
+
+- id: fr_hachis_parmentier
+  title: Hachis parmentier aux carottes
+  meta: {country: FR, slots: [lunch, dinner], time: [25, 55], level: 1, spice: 0, equipment: [four, casserole, poele], keeps: 3, freezes: true, leftovers: true}
+  items: [[beef_mince, 130, protein], [potato, 280, starch], [carrot, 60, veg], [onion, 60, veg], [milk, 60, sauce],
+          [butter, 8, fat], [tomato_paste, 15, flavor], [emmental, 15, flavor], [nutmeg, 0.2, flavor]]
+  steps:
+  - Cuire les pommes de terre à l'eau 20 minutes, puis les écraser avec le lait chaud, le beurre et la muscade.
+  - Faire revenir l'oignon et la carotte râpée, ajouter la viande et le concentré de tomate ; cuire 8 minutes.
+  - Étaler la viande dans un plat, couvrir de purée et parsemer d'emmental.
+  - Gratiner 20 minutes au four à 200 °C.
+
+- id: fr_saumon_poireaux
+  title: Saumon, fondue de poireaux et pommes de terre
+  meta: {country: FR, slots: [lunch, dinner], time: [20, 35], level: 1, spice: 0, equipment: [poele, casserole], keeps: 2}
+  items: [[salmon, 130, protein], [potato, 250, starch], [leek, 200, veg], [cream, 30, sauce], [butter, 5, fat],
+          [lemon_juice, 10, flavor], [dill, 5, flavor]]
+  steps:
+  - Cuire les pommes de terre à la vapeur 20 minutes.
+  - Émincer les poireaux et les faire fondre 12 minutes au beurre avec un peu d'eau, puis ajouter la crème.
+  - Saisir le saumon 3 minutes côté peau et 2 minutes de l'autre côté.
+  - Servir le saumon sur les poireaux, arrosé de citron et parsemé d'aneth.
+
+- id: fr_salade_nicoise
+  title: Salade niçoise au thon
+  meta: {country: FR, slots: [lunch, dinner], time: [20, 30], level: 1, spice: 0, equipment: [casserole], keeps: 1, cautions: [pregnancy]}
+  items: [[tuna_canned, 110, protein], [egg, 50, protein], [potato, 180, starch], [green_beans, 120, veg], [tomato, 120, veg],
+          [lettuce, 50, veg], [red_onion, 20, veg], [olives_black, 20, flavor], [anchovies, 8, flavor], [olive_oil, 10, fat], [vinegar, 5, flavor]]
+  steps:
+  - Cuire les pommes de terre 20 minutes et l'œuf 9 minutes ; cuire les haricots verts 8 minutes.
+  - Couper les tomates, l'oignon, les pommes de terre et l'œuf.
+  - Disposer la salade, les légumes, le thon, les olives et les anchois.
+  - Arroser d'une vinaigrette huile d'olive et vinaigre.
+
+- id: fr_lentilles_vinaigrette
+  title: Lentilles vertes aux légumes, vinaigrette moutardée
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 35], level: 1, spice: 0, equipment: [casserole], keeps: 4, leftovers: true}
+  items: [[lentils_green, 80, protein], [bread_country, 40, starch], [carrot, 100, veg], [onion, 60, veg], [celery, 40, veg],
+          [olive_oil, 10, fat], [mustard, 5, flavor], [vinegar, 5, flavor], [parsley, 5, flavor], [bay_leaf, 0.2, flavor], [thyme, 0.5, flavor]]
+  steps:
+  - Cuire les lentilles 25 minutes dans l'eau avec les carottes en dés, l'oignon, le céleri, le thym et le laurier.
+  - Mélanger l'huile, la moutarde et le vinaigre.
+  - Égoutter les lentilles, les arroser de vinaigrette tiède et parsemer de persil.
+  - Servir avec une tranche de pain de campagne.
+  tip: Se mange chaud ou froid ; parfait dans une boîte pour le déjeuner.
+
+- id: fr_ratatouille_oeufs
+  title: Ratatouille et œufs cocotte
+  meta: {country: FR, slots: [lunch, dinner], time: [25, 60], level: 1, spice: 0, equipment: [cocotte], keeps: 4, freezes: true, leftovers: true, cautions: [pregnancy]}
+  items: [[egg, 100, protein], [bread_country, 60, starch], [zucchini, 150, veg], [eggplant, 150, veg], [bell_pepper_red, 100, veg],
+          [tomato, 150, veg], [onion, 60, veg], [garlic, 5, flavor], [olive_oil, 12, fat], [herbes_provence, 1, flavor]]
+  steps:
+  - Couper tous les légumes en dés.
+  - Faire revenir l'oignon et l'ail dans l'huile, ajouter aubergine, poivron, courgette puis tomates et herbes.
+  - Mijoter 35 minutes à couvert.
+  - Creuser deux puits, y casser les œufs et cuire 6 minutes à couvert. Servir avec le pain.
+
+- id: fr_soupe_pistou
+  title: Soupe au pistou
+  meta: {country: FR, slots: [lunch, dinner], time: [25, 50], level: 1, spice: 0, equipment: [casserole, mixeur], keeps: 3, freezes: true, leftovers: true}
+  items: [[white_beans, 120, protein], [pasta, 30, starch], [potato, 120, starch], [zucchini, 120, veg], [green_beans, 80, veg],
+          [carrot, 80, veg], [tomato, 100, veg], [olive_oil, 10, fat], [basil, 10, flavor], [garlic, 5, flavor], [parmesan, 10, flavor]]
+  steps:
+  - Couper les légumes en petits dés et les cuire 20 minutes dans 50 cl d'eau salée.
+  - Ajouter les haricots blancs et les petites pâtes ; cuire encore 10 minutes.
+  - Mixer le basilic, l'ail, l'huile et le parmesan pour obtenir le pistou.
+  - Servir la soupe chaude avec une cuillère de pistou.
+
+- id: fr_galette_complete
+  title: Galettes de sarrasin complètes, salade verte
+  meta: {country: FR, slots: [lunch, dinner], time: [10, 15], level: 1, spice: 0, equipment: [poele], keeps: 0, cautions: [pregnancy]}
+  items: [[ham, 45, protein], [egg, 50, protein], [buckwheat_galette, 110, starch], [lettuce, 60, veg], [emmental, 25, flavor],
+          [butter, 5, fat], [olive_oil, 5, fat]]
+  steps:
+  - Faire chauffer une galette dans une poêle beurrée.
+  - Casser l'œuf au centre, ajouter le jambon et l'emmental.
+  - Replier les bords quand le blanc est pris ; faire de même avec la seconde galette garnie de fromage.
+  - Servir avec la salade assaisonnée d'huile d'olive.
+
+- id: fr_cabillaud_papillote
+  title: Cabillaud en papillote, julienne de légumes et riz
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 35], level: 1, spice: 0, equipment: [four, casserole], keeps: 1}
+  items: [[cod, 150, protein], [rice, 70, starch], [zucchini, 120, veg], [carrot, 80, veg], [cherry_tomato, 80, veg],
+          [olive_oil, 10, fat], [lemon_juice, 10, flavor], [thyme, 0.5, flavor]]
+  steps:
+  - Tailler la courgette et la carotte en fine julienne, couper les tomates en deux.
+  - Déposer les légumes puis le poisson sur une feuille de papier cuisson, arroser d'huile et de citron, parsemer de thym.
+  - Fermer la papillote et cuire 18 minutes à 200 °C.
+  - Servir avec le riz cuit pendant ce temps.
+
+- id: fr_pot_au_feu
+  title: Pot-au-feu et légumes du bouillon
+  meta: {country: FR, slots: [lunch, dinner], time: [25, 200], level: 1, spice: 0, equipment: [cocotte], keeps: 4, freezes: true, leftovers: true}
+  items: [[beef_stew, 160, protein], [potato, 200, starch], [carrot, 120, veg], [leek, 100, veg], [turnip, 100, veg],
+          [celery, 30, veg], [onion, 50, veg], [mustard, 5, flavor], [cloves, 0.2, flavor], [bay_leaf, 0.2, flavor], [thyme, 0.5, flavor]]
+  steps:
+  - Mettre la viande dans une grande cocotte d'eau froide, porter à ébullition et écumer.
+  - Ajouter l'oignon piqué de clous de girofle, le thym et le laurier ; cuire 2 heures à petits frémissements.
+  - Ajouter carottes, poireaux, navets et céleri, puis les pommes de terre ; cuire 40 minutes.
+  - Servir la viande et les légumes avec la moutarde ; garder le bouillon pour une soupe.
+
+- id: fr_poulet_roti_haricots
+  title: Poulet rôti à l'ail, pommes de terre et haricots verts
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 45], level: 1, spice: 0, equipment: [four, casserole], keeps: 3, leftovers: true}
+  items: [[chicken_breast, 150, protein], [potato, 250, starch], [green_beans, 200, veg], [olive_oil, 10, fat],
+          [garlic, 5, flavor], [rosemary, 2, flavor]]
+  steps:
+  - Couper les pommes de terre en quartiers, les mélanger avec la moitié de l'huile et le romarin, enfourner 35 minutes à 210 °C.
+  - Après 15 minutes, ajouter le poulet frotté d'ail et du reste d'huile.
+  - Cuire les haricots verts 10 minutes à l'eau bouillante salée.
+  - Trancher le poulet et servir avec les légumes.
+
+- id: fr_veloute_potiron
+  title: Velouté de potiron et tartines au chèvre et aux noix
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 35], level: 1, spice: 0, equipment: [casserole, mixeur, four], keeps: 3, freezes: true}
+  items: [[goat_cheese, 40, protein], [bread_country, 60, starch], [potato, 100, starch], [pumpkin, 300, veg], [onion, 60, veg],
+          [cream, 20, sauce], [olive_oil, 5, fat], [walnuts, 10, fat], [nutmeg, 0.2, flavor]]
+  steps:
+  - Faire suer l'oignon dans l'huile, ajouter le potiron et la pomme de terre en cubes, couvrir d'eau.
+  - Cuire 20 minutes puis mixer avec la crème et la muscade.
+  - Tartiner le pain de chèvre, parsemer de noix concassées et passer 4 minutes sous le gril.
+  - Servir le velouté bien chaud avec les tartines.
+
+- id: fr_moules_marinieres
+  title: Moules marinières et pommes de terre rôties
+  meta: {country: FR, slots: [lunch, dinner], time: [20, 40], level: 1, spice: 0, equipment: [cocotte, four], keeps: 0}
+  items: [[mussels, 200, protein], [potato, 250, starch], [shallot, 25, veg], [wine_white, 50, sauce], [butter, 8, fat],
+          [olive_oil, 8, fat], [parsley, 5, flavor]]
+  steps:
+  - Rôtir les pommes de terre en quartiers avec l'huile 30 minutes à 210 °C.
+  - Gratter et rincer les moules, jeter celles qui restent ouvertes.
+  - Faire suer l'échalote au beurre, ajouter le vin puis les moules ; couvrir et cuire 5 minutes en remuant.
+  - Parsemer de persil et servir aussitôt avec les pommes de terre.
+
+- id: fr_blanquette_dinde
+  title: Blanquette de dinde aux champignons et riz
+  meta: {country: FR, slots: [lunch, dinner], time: [20, 50], level: 2, spice: 0, equipment: [cocotte, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[turkey_breast, 150, protein], [rice, 65, starch], [carrot, 100, veg], [mushroom, 100, veg], [onion, 50, veg],
+          [cream, 40, sauce], [flour, 8, flavor], [butter, 5, fat], [lemon_juice, 5, flavor], [stock_chicken, 5, flavor], [bay_leaf, 0.2, flavor]]
+  steps:
+  - Couper la dinde en cubes et la pocher 25 minutes avec les carottes, l'oignon, le laurier et le bouillon dans 40 cl d'eau.
+  - Faire revenir les champignons au beurre, saupoudrer de farine et mouiller avec 25 cl du bouillon de cuisson.
+  - Ajouter la crème et le citron, puis la viande et les carottes égouttées.
+  - Servir avec le riz.
+
+- id: fr_croque_monsieur
+  title: Croque-monsieur au pain complet et salade
+  meta: {country: FR, slots: [lunch, dinner], time: [10, 20], level: 1, spice: 0, equipment: [four], keeps: 0}
+  items: [[ham, 45, protein], [bread_whole, 90, starch], [lettuce, 80, veg], [emmental, 25, flavor], [milk, 30, sauce],
+          [butter, 5, fat], [olive_oil, 5, fat], [mustard, 3, flavor]]
+  steps:
+  - Tartiner le pain d'une fine couche de moutarde et de beurre.
+  - Garnir de jambon et d'emmental, refermer et napper d'un filet de lait mêlé au reste de fromage.
+  - Cuire 10 minutes au four à 220 °C.
+  - Servir avec la salade assaisonnée d'huile d'olive.
+
+- id: fr_steak_pommes_four
+  title: Steak, pommes de terre au four et salade à l'échalote
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 40], level: 1, spice: 0, equipment: [four, poele], keeps: 0, cautions: [pregnancy]}
+  items: [[beef_steak, 140, protein], [potato, 280, starch], [lettuce, 80, veg], [shallot, 15, veg], [olive_oil, 10, fat],
+          [mustard, 5, flavor], [vinegar, 5, flavor]]
+  steps:
+  - Couper les pommes de terre en frites épaisses, les enrober de la moitié de l'huile et cuire 30 minutes à 220 °C.
+  - Saisir le steak 2 à 3 minutes de chaque côté.
+  - Préparer une vinaigrette moutarde, vinaigre, échalote ciselée et reste d'huile.
+  - Servir le steak avec les pommes de terre et la salade.
+
+- id: fr_magret_patate_douce
+  title: Magret de canard au miel, patate douce et haricots verts
+  meta: {country: FR, slots: [lunch, dinner], time: [20, 40], level: 2, spice: 0, equipment: [poele, four], keeps: 0}
+  items: [[duck_breast, 110, protein], [sweet_potato, 200, starch], [green_beans, 150, veg], [honey, 5, flavor], [thyme, 0.5, flavor]]
+  steps:
+  - Rôtir la patate douce en cubes 30 minutes à 200 °C.
+  - Inciser la peau du magret et le cuire côté peau 8 minutes à feu moyen ; jeter la graisse fondue.
+  - Retourner 4 minutes, badigeonner de miel et laisser reposer 5 minutes.
+  - Cuire les haricots verts à l'eau et servir avec le magret tranché.
+  tip: Retirer la peau avant de manger allège nettement le plat.
+
+- id: fr_tartines_fromage_blanc
+  title: Tartines de campagne, fromage blanc, fraises et miel
+  meta: {country: FR, slots: [breakfast], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[fromage_blanc, 150, protein], [bread_country, 80, starch], [strawberry, 100, fruit], [honey, 10, flavor]]
+  steps:
+  - Faire griller le pain si vous le souhaitez.
+  - Tartiner généreusement de fromage blanc.
+  - Ajouter les fraises en lamelles et un filet de miel.
+
+- id: fr_omelette_fines_herbes
+  title: Omelette aux fines herbes, tomates cerises et pain
+  meta: {country: FR, slots: [breakfast, lunch, dinner], time: [10, 10], level: 1, spice: 0, equipment: [poele], keeps: 0, cautions: [pregnancy]}
+  items: [[egg, 150, protein], [bread_country, 60, starch], [cherry_tomato, 100, veg], [butter, 5, fat], [chives, 5, flavor], [parsley, 5, flavor]]
+  steps:
+  - Battre les œufs avec les herbes ciselées, saler et poivrer.
+  - Cuire l'omelette au beurre à feu moyen en la gardant baveuse.
+  - Servir avec les tomates cerises et le pain.
+
+- id: fr_porridge_pomme
+  title: Porridge pomme-cannelle aux noix
+  meta: {country: FR, slots: [breakfast], time: [8, 10], level: 1, spice: 0, equipment: [casserole], keeps: 0}
+  items: [[milk, 200, protein], [oats, 50, starch], [apple, 120, fruit], [walnuts, 10, fat], [honey, 8, flavor], [cinnamon, 1, flavor]]
+  steps:
+  - Porter le lait et les flocons à frémissement, cuire 4 minutes en remuant.
+  - Ajouter la pomme râpée et la cannelle.
+  - Servir avec les noix concassées et le miel.
+
+- id: fr_crepes_fromage_blanc
+  title: Crêpes, fromage blanc et myrtilles
+  meta: {country: FR, slots: [breakfast], time: [15, 20], level: 1, spice: 0, equipment: [poele], keeps: 2}
+  items: [[fromage_blanc, 100, protein], [egg, 50, protein], [flour, 50, starch], [milk, 120, sauce], [blueberry, 80, fruit],
+          [butter, 4, fat], [honey, 8, flavor]]
+  steps:
+  - Fouetter la farine, l'œuf et le lait jusqu'à obtenir une pâte lisse.
+  - Cuire deux à trois crêpes fines dans une poêle à peine beurrée.
+  - Garnir de fromage blanc et de myrtilles, ajouter un filet de miel.
+
+- id: fr_bol_muesli
+  title: Bol de fromage blanc, muesli et framboises
+  meta: {country: FR, slots: [breakfast], time: [3, 3], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[fromage_blanc, 200, protein], [muesli, 40, starch], [raspberry, 80, fruit]]
+  steps:
+  - Verser le fromage blanc dans un bol.
+  - Ajouter le muesli et les framboises au moment de servir.
+
+- id: fr_pain_perdu
+  title: Pain perdu aux fraises
+  meta: {country: FR, slots: [breakfast], time: [10, 15], level: 1, spice: 0, equipment: [poele], keeps: 0}
+  items: [[egg, 50, protein], [bread_country, 80, starch], [milk, 80, sauce], [strawberry, 120, fruit], [butter, 5, fat],
+          [sugar, 5, flavor], [cinnamon, 0.5, flavor]]
+  steps:
+  - Battre l'œuf avec le lait, le sucre et la cannelle.
+  - Tremper les tranches de pain des deux côtés.
+  - Les dorer 3 minutes par face dans le beurre et servir avec les fraises.
+
+- id: fr_fromage_blanc_fruits_rouges
+  title: Fromage blanc aux framboises
+  meta: {country: FR, slots: [snack], time: [2, 2], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[fromage_blanc, 150, protein], [raspberry, 80, fruit], [honey, 5, flavor]]
+  steps:
+  - Verser le fromage blanc dans un bol.
+  - Ajouter les framboises et un filet de miel.
+
+- id: fr_pomme_amandes
+  title: Pomme et amandes
+  meta: {country: FR, slots: [snack], time: [1, 1], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[apple, 150, fruit], [almonds, 20, fat]]
+  steps:
+  - Couper la pomme en quartiers.
+  - Accompagner d'une poignée d'amandes.
+
+- id: fr_tartine_chevre
+  title: Tartine de chèvre frais et tomates cerises
+  meta: {country: FR, slots: [snack], time: [3, 3], level: 1, spice: 0, equipment: [aucun], keeps: 0, cautions: [pregnancy]}
+  items: [[goat_cheese, 30, protein], [bread_whole, 30, starch], [cherry_tomato, 60, veg], [black_pepper, 0.1, flavor]]
+  steps:
+  - Tartiner le pain de chèvre frais.
+  - Ajouter les tomates cerises coupées en deux et un tour de moulin à poivre.
+
+- id: fr_compote_yaourt
+  title: Yaourt, compote de pommes et flocons d'avoine
+  meta: {country: FR, slots: [snack], time: [2, 2], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[yogurt, 125, protein], [oats, 15, starch], [applesauce, 100, fruit]]
+  steps:
+  - Verser le yaourt dans un bol et ajouter la compote.
+  - Parsemer de flocons d'avoine.
+
+- id: fr_oeuf_radis
+  title: Œufs durs, radis et pain complet
+  meta: {country: FR, slots: [snack], time: [10, 12], level: 1, spice: 0, equipment: [casserole], keeps: 2}
+  items: [[egg, 100, protein], [bread_whole, 30, starch], [radish, 100, veg], [salt, 0.3, flavor]]
+  steps:
+  - Cuire les œufs 9 minutes dans l'eau bouillante, puis les refroidir.
+  - Servir avec les radis, une pincée de sel et le pain.
+
+- id: fr_coq_au_vin
+  title: Coq au vin et pommes vapeur
+  meta: {country: FR, slots: [lunch, dinner], time: [30, 100], level: 2, spice: 0, equipment: [cocotte, vapeur], keeps: 3, freezes: true, leftovers: true}
+  items: [[chicken_thigh, 150, protein], [potato, 220, starch], [mushroom, 80, veg], [carrot, 60, veg], [onion, 50, veg], [wine_red, 100, sauce],
+          [bacon, 15, flavor], [flour, 5, flavor], [olive_oil, 6, fat], [garlic, 5, flavor], [thyme, 0.5, flavor], [bay_leaf, 0.2, flavor]]
+  steps:
+  - Dorer le poulet et les lardons dans l'huile, en cocotte, puis saupoudrer de farine.
+  - Ajouter l'oignon, l'ail, les carottes, le thym et le laurier, puis mouiller avec le vin et un peu d'eau.
+  - Couvrir et mijoter 50 minutes, en ajoutant les champignons 15 minutes avant la fin.
+  - Cuire les pommes de terre à la vapeur et les servir avec le poulet et sa sauce.
+  tip: Le vin s'évapore en grande partie à la cuisson ; remplacez-le par du bouillon pour une version sans alcool.
+
+- id: fr_endives_jambon
+  title: Endives au jambon gratinées et pommes de terre
+  meta: {country: FR, slots: [lunch, dinner], time: [25, 60], level: 1, spice: 0, equipment: [four, casserole], keeps: 2, leftovers: true}
+  items: [[ham, 60, protein], [emmental, 25, protein], [potato, 150, starch], [endive, 240, veg], [milk, 150, sauce],
+          [flour, 12, flavor], [butter, 8, fat], [nutmeg, 0.2, flavor]]
+  steps:
+  - Cuire les endives 15 minutes à l'eau, puis bien les égoutter.
+  - Préparer une béchamel avec le beurre, la farine et le lait, assaisonnée de muscade.
+  - Rouler chaque endive dans une tranche de jambon, napper de béchamel et parsemer d'emmental.
+  - Gratiner 20 minutes au four à 200 °C et servir avec les pommes de terre cuites à l'eau.
+
+- id: fr_saucisse_lentilles
+  title: Saucisses aux lentilles et aux carottes
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 45], level: 1, spice: 0, equipment: [casserole, poele], keeps: 3, freezes: true, leftovers: true}
+  items: [[sausage, 100, protein], [lentils_green, 70, protein], [carrot, 80, veg], [onion, 50, veg], [olive_oil, 5, fat],
+          [garlic, 4, flavor], [mustard, 5, flavor], [thyme, 0.5, flavor], [bay_leaf, 0.2, flavor]]
+  steps:
+  - Cuire les lentilles 25 minutes dans trois fois leur volume d'eau avec l'oignon, l'ail, les carottes, le thym et le laurier.
+  - Dorer les saucisses à la poêle dans l'huile 15 minutes à feu moyen.
+  - Égoutter les lentilles, les assaisonner avec la moutarde et servir avec les saucisses.
+
+- id: fr_brandade_morue
+  title: Brandade de morue et salade verte
+  meta: {country: FR, slots: [lunch, dinner], time: [30, 60], level: 2, spice: 0, equipment: [four, casserole], keeps: 2, freezes: true, leftovers: true}
+  items: [[salt_cod, 70, protein], [potato, 200, starch], [lettuce, 70, veg], [milk, 80, sauce], [olive_oil, 15, fat],
+          [garlic, 6, flavor], [parsley, 4, flavor]]
+  steps:
+  - Faire dessaler la morue 24 heures à l'avance en changeant l'eau trois ou quatre fois.
+  - Pocher la morue 10 minutes dans le lait frémissant, puis l'effeuiller.
+  - Cuire les pommes de terre et les écraser avec la morue, l'ail, le persil, l'huile et le lait de cuisson.
+  - Gratiner 15 minutes au four à 200 °C et servir avec la salade.
+  tip: Pensez à mettre la morue à dessaler la veille.
+
+- id: fr_quiche_lorraine
+  title: Quiche lorraine et salade verte
+  meta: {country: FR, slots: [lunch, dinner], time: [25, 70], level: 2, spice: 0, equipment: [four, poele], keeps: 2, freezes: true, leftovers: true}
+  items: [[egg, 75, protein], [bacon, 40, protein], [flour, 50, starch], [lettuce, 70, veg], [butter, 25, fat], [cream, 50, sauce],
+          [milk, 50, sauce], [nutmeg, 0.2, flavor]]
+  steps:
+  - Mélanger la farine, le beurre en dés, une pincée de sel et 2 cuillères à soupe d'eau froide ; laisser reposer la pâte 20 minutes.
+  - Étaler la pâte dans un moule et faire revenir les lardons à sec.
+  - Battre les œufs avec la crème, le lait et la muscade, puis verser sur les lardons répartis dans le fond de tarte.
+  - Cuire 35 minutes au four à 180 °C, jusqu'à ce que la quiche soit bien prise, et servir avec la salade.
+
+- id: fr_poulet_moutarde
+  title: Poulet à la moutarde, riz et haricots verts
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 30], level: 1, spice: 0, equipment: [poele, casserole], keeps: 2, leftovers: true}
+  items: [[chicken_breast, 140, protein], [rice, 70, starch], [green_beans, 150, veg], [onion, 30, veg], [cream, 40, sauce],
+          [mustard, 15, flavor], [olive_oil, 5, fat], [thyme, 0.5, flavor]]
+  steps:
+  - Cuire le riz et les haricots verts à l'eau salée.
+  - Dorer le poulet en lanières dans l'huile avec l'oignon émincé et le thym.
+  - Ajouter la crème et la moutarde, laisser réduire 3 minutes et servir avec le riz et les haricots.
+
+- id: fr_filet_mignon_pruneaux
+  title: Filet mignon aux pruneaux et purée maison
+  meta: {country: FR, slots: [lunch, dinner], time: [20, 50], level: 2, spice: 0, equipment: [cocotte, casserole], keeps: 2, leftovers: true}
+  items: [[pork_tenderloin, 140, protein], [potato, 220, starch], [prunes, 30, fruit], [onion, 40, veg], [milk, 60, sauce],
+          [butter, 8, fat], [olive_oil, 5, fat], [thyme, 0.5, flavor]]
+  steps:
+  - Dorer le filet mignon sur toutes ses faces dans l'huile, en cocotte, avec l'oignon.
+  - Ajouter les pruneaux, le thym et 15 cl d'eau ; couvrir et cuire 25 minutes à feu doux.
+  - Cuire les pommes de terre à l'eau et les écraser avec le lait chaud et le beurre.
+  - Trancher la viande et la servir avec la purée et la sauce aux pruneaux.
+
+- id: fr_hachis_lentilles
+  title: Hachis parmentier végétal aux lentilles
+  meta: {country: FR, slots: [lunch, dinner], time: [25, 60], level: 1, spice: 0, equipment: [four, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[lentils_green, 70, protein], [potato, 250, starch], [carrot, 80, veg], [onion, 60, veg], [tomato_paste, 15, sauce],
+          [olive_oil, 15, fat], [garlic, 4, flavor], [thyme, 0.5, flavor], [nutmeg, 0.2, flavor]]
+  steps:
+  - Cuire les lentilles 25 minutes avec les carottes en dés, l'oignon, l'ail et le thym, puis les égoutter.
+  - Mélanger les lentilles avec le concentré de tomate.
+  - Cuire les pommes de terre et les écraser avec l'huile, un peu d'eau de cuisson et la muscade.
+  - Étaler les lentilles dans un plat, couvrir de purée et gratiner 20 minutes au four à 200 °C.
+
+- id: fr_truite_amandes
+  title: Truite aux amandes, pommes vapeur et haricots verts
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 30], level: 1, spice: 0, equipment: [poele, vapeur], keeps: 0}
+  items: [[trout, 140, protein], [potato, 200, starch], [green_beans, 120, veg], [almonds, 15, fat], [butter, 8, fat],
+          [lemon_juice, 10, flavor], [parsley, 4, flavor]]
+  steps:
+  - Cuire les pommes de terre et les haricots verts à la vapeur, 20 minutes.
+  - Dorer la truite 3 minutes par face dans le beurre.
+  - Faire griller les amandes effilées dans la même poêle, puis ajouter le citron et le persil.
+  - Napper la truite des amandes et servir avec les légumes.
+
+- id: fr_chou_farci
+  title: Chou farci au bœuf et au riz
+  meta: {country: FR, slots: [lunch, dinner], time: [40, 100], level: 2, spice: 0, equipment: [cocotte, casserole], keeps: 3, freezes: true, leftovers: true}
+  items: [[beef_mince, 100, protein], [egg, 25, protein], [rice, 40, starch], [savoy_cabbage, 200, veg], [carrot, 60, veg], [onion, 40, veg],
+          [tomato_passata, 100, sauce], [olive_oil, 6, fat], [thyme, 0.5, flavor], [nutmeg, 0.2, flavor]]
+  steps:
+  - Blanchir les grandes feuilles de chou 5 minutes à l'eau bouillante, puis les égoutter.
+  - Mélanger la viande, le riz cru, l'œuf, l'oignon haché, le thym et la muscade.
+  - Garnir les feuilles de farce, les rouler et les ranger serrées dans la cocotte avec les carottes.
+  - Ajouter l'huile, la sauce tomate et 30 cl d'eau ; couvrir et cuire 50 minutes à feu doux.
+
+- id: fr_salade_lyonnaise
+  title: Salade lyonnaise, œuf poché, lardons et croûtons
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 20], level: 2, spice: 0, equipment: [poele, casserole], keeps: 0, cautions: [pregnancy]}
+  items: [[egg, 100, protein], [bacon, 40, protein], [bread_country, 50, starch], [lettuce, 100, veg], [shallot, 15, veg],
+          [olive_oil, 10, fat], [vinegar, 8, flavor], [mustard, 5, flavor]]
+  steps:
+  - Faire dorer les lardons à sec, puis les croûtons de pain dans la graisse rendue.
+  - Préparer la vinaigrette avec la moutarde, le vinaigre, l'huile et l'échalote hachée.
+  - Pocher les œufs 3 minutes dans une eau frémissante vinaigrée.
+  - Dresser la salade avec les lardons, les croûtons et les œufs pochés, le jaune encore coulant.
+
+- id: fr_piperade
+  title: Piperade aux œufs brouillés et pommes de terre sautées
+  meta: {country: FR, slots: [lunch, dinner], time: [20, 45], level: 1, spice: 1, equipment: [poele, cocotte], keeps: 1}
+  items: [[egg, 100, protein], [ham, 40, protein], [potato, 180, starch], [bell_pepper_red, 120, veg], [bell_pepper_green, 100, veg],
+          [tomato, 150, veg], [onion, 60, veg], [olive_oil, 12, fat], [garlic, 5, flavor], [espelette, 0.5, flavor]]
+  steps:
+  - Faire fondre l'oignon et les poivrons en lanières dans une partie de l'huile, en cocotte, 15 minutes.
+  - Ajouter l'ail, les tomates concassées et le piment d'Espelette ; cuire 10 minutes.
+  - Faire sauter les pommes de terre en cubes dans le reste de l'huile et réchauffer le jambon.
+  - Brouiller les œufs dans la piperade jusqu'à ce qu'ils soient bien cuits, puis servir avec les pommes de terre et le jambon.
+
+- id: fr_salade_chevre_chaud
+  title: Salade de chèvre chaud, noix et miel
+  meta: {country: FR, slots: [lunch, dinner], time: [10, 15], level: 1, spice: 0, equipment: [four], keeps: 0}
+  items: [[goat_cheese, 60, protein], [bread_country, 60, starch], [lettuce, 80, veg], [cherry_tomato, 80, veg], [walnuts, 15, fat],
+          [olive_oil, 8, fat], [honey, 8, flavor], [vinegar, 5, flavor]]
+  steps:
+  - Poser le chèvre sur les tranches de pain et ajouter un filet de miel.
+  - Passer 6 minutes au four à 200 °C, jusqu'à ce que le fromage soit chaud et doré.
+  - Assaisonner la salade et les tomates avec l'huile et le vinaigre, puis ajouter les noix et les tartines chaudes.
+
+- id: fr_tian_quinoa
+  title: Tian provençal au chèvre et quinoa
+  meta: {country: FR, slots: [lunch, dinner], time: [20, 65], level: 1, spice: 0, equipment: [four, casserole], keeps: 3, leftovers: true}
+  items: [[goat_cheese, 40, protein], [quinoa, 60, starch], [zucchini, 150, veg], [eggplant, 120, veg], [tomato, 150, veg], [onion, 40, veg],
+          [olive_oil, 12, fat], [garlic, 4, flavor], [herbes_provence, 1, flavor]]
+  steps:
+  - Couper les légumes en rondelles fines et les disposer en rangs serrés dans un plat, sur l'oignon émincé.
+  - Arroser d'huile, parsemer d'ail et d'herbes de Provence ; cuire 45 minutes au four à 180 °C.
+  - Cuire le quinoa 12 minutes à l'eau salée.
+  - Émietter le chèvre sur le tian 5 minutes avant la fin et servir avec le quinoa.
+
+- id: fr_navarin_agneau
+  title: Navarin d'agneau aux légumes nouveaux
+  meta: {country: FR, slots: [lunch, dinner], time: [25, 90], level: 2, spice: 0, equipment: [cocotte], keeps: 3, freezes: true, leftovers: true}
+  items: [[lamb_shoulder, 130, protein], [potato, 180, starch], [carrot, 80, veg], [turnip, 60, veg], [peas, 60, veg], [onion, 40, veg],
+          [tomato_paste, 15, sauce], [flour, 5, flavor], [olive_oil, 6, fat], [thyme, 0.5, flavor], [bay_leaf, 0.2, flavor]]
+  steps:
+  - Dorer l'agneau en morceaux dans l'huile, puis saupoudrer de farine.
+  - Ajouter l'oignon, le concentré de tomate, le thym, le laurier et 50 cl d'eau ; mijoter 40 minutes à couvert.
+  - Ajouter les carottes, les navets et les pommes de terre ; cuire 25 minutes.
+  - Ajouter les petits pois 5 minutes avant la fin.
+
+- id: fr_tartines_confiture
+  title: Tartines beurre-confiture et bol de lait
+  meta: {country: FR, slots: [breakfast], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[milk, 250, protein], [bread_baguette, 80, starch], [butter, 10, fat], [jam, 25, flavor]]
+  steps:
+  - Couper la baguette en deux dans l'épaisseur.
+  - Tartiner de beurre et de confiture, puis servir avec le lait chaud ou froid.
+
+- id: fr_oeufs_brouilles
+  title: Œufs brouillés, tartine de pain complet et tomate
+  meta: {country: FR, slots: [breakfast], time: [10, 10], level: 1, spice: 0, equipment: [poele], keeps: 0}
+  items: [[egg, 100, protein], [bread_whole, 60, starch], [tomato, 100, veg], [butter, 5, fat], [chives, 2, flavor]]
+  steps:
+  - Battre les œufs et les cuire à feu doux dans le beurre en remuant, jusqu'à ce qu'ils soient bien pris.
+  - Parsemer de ciboulette et servir avec le pain grillé et la tomate en tranches.
+
+- id: fr_clafoutis_abricots
+  title: Clafoutis aux abricots
+  meta: {country: FR, slots: [snack], time: [10, 45], level: 1, spice: 0, equipment: [four], keeps: 2}
+  items: [[apricot, 120, fruit], [egg, 30, protein], [milk, 60, sauce], [flour, 15, starch], [sugar, 10, flavor]]
+  steps:
+  - Fouetter l'œuf avec le sucre, puis ajouter la farine et le lait.
+  - Disposer les abricots coupés en deux dans un petit plat et verser la pâte.
+  - Cuire 30 minutes au four à 180 °C.
+
+- id: fr_porridge_quinoa
+  title: Porridge de quinoa au lait d'amande et fruits rouges
+  meta: {country: FR, slots: [breakfast], time: [5, 20], level: 1, spice: 0, equipment: [casserole], keeps: 2}
+  items: [[quinoa, 50, starch], [almond_drink, 250, sauce], [berries_frozen, 100, fruit], [almonds, 10, fat], [maple_syrup, 10, flavor]]
+  steps:
+  - Rincer le quinoa et le cuire 15 minutes à feu doux dans la boisson aux amandes, en remuant de temps en temps.
+  - Servir tiède avec les fruits rouges, les amandes concassées et le sirop d'érable.
+
+- id: fr_yaourt_grec_fruits_noix
+  title: Yaourt à la grecque, pomme, noix et miel
+  meta: {country: FR, slots: [breakfast], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[greek_yogurt, 150, protein], [apple, 120, fruit], [walnuts, 15, fat], [honey, 10, flavor]]
+  steps:
+  - Couper la pomme en petits dés.
+  - Servir sur le yaourt avec les noix concassées et un filet de miel.

@@ -1,0 +1,30 @@
+# Simple complements the solver may add to a meal to close an energy or protein
+# gap, the way a dietitian would. Labels are French: they are shown to users.
+# At lunch and dinner, only neutral desserts (fruit, dairy, compote, chocolate):
+# bread next to a bowl of noodles would make no sense.
+# max: maximum number of units per meal (1 by default).
+
+fruit_apple: {ingredient: apple, grams: 150, label: "1 pomme", slots: [breakfast, lunch, dinner, snack]}
+fruit_banana: {ingredient: banana, grams: 120, label: "1 banane", slots: [breakfast, snack]}
+fruit_orange: {ingredient: orange, grams: 150, label: "1 orange", slots: [breakfast, lunch, dinner, snack]}
+fruit_kiwi: {ingredient: kiwi, grams: 150, label: "2 kiwis", slots: [breakfast, lunch, dinner, snack]}
+applesauce: {ingredient: applesauce, grams: 100, label: "1 compote sans sucres ajoutés", slots: [lunch, dinner, snack]}
+fromage_blanc: {ingredient: fromage_blanc, grams: 100, label: "1 pot de fromage blanc 0 % (100 g)", slots: [breakfast, lunch, dinner, snack], max: 2}
+yogurt: {ingredient: yogurt, grams: 125, label: "1 yaourt nature", slots: [breakfast, lunch, dinner, snack]}
+greek_yogurt: {ingredient: greek_yogurt, grams: 150, label: "1 yaourt à la grecque", slots: [breakfast, snack]}
+soy_yogurt: {ingredient: soy_yogurt, grams: 100, label: "1 yaourt au soja nature", slots: [breakfast, lunch, dinner, snack], max: 2}
+milk: {ingredient: milk, grams: 250, label: "1 verre de lait demi-écrémé (25 cl)", slots: [breakfast, snack]}
+soy_drink: {ingredient: soy_drink, grams: 250, label: "1 verre de boisson au soja (25 cl)", slots: [breakfast, snack]}
+bread_whole: {ingredient: bread_whole, grams: 30, label: "1 tranche de pain complet", slots: [breakfast], max: 2}
+almonds: {ingredient: almonds, grams: 20, label: "1 poignée d'amandes (20 g)", slots: [breakfast, snack]}
+walnuts: {ingredient: walnuts, grams: 15, label: "4 cerneaux de noix", slots: [breakfast, snack]}
+peanut_butter: {ingredient: peanut_butter, grams: 16, label: "1 c. à soupe de beurre de cacahuète", slots: [breakfast, snack]}
+egg_boiled: {ingredient: egg, grams: 50, label: "1 œuf dur", slots: [breakfast, lunch, snack]}
+comte: {ingredient: comte, grams: 30, label: "1 portion de comté (30 g)", slots: [snack]}
+dark_chocolate: {ingredient: dark_chocolate, grams: 10, label: "2 carrés de chocolat noir 70 %", slots: [lunch, dinner, snack]}
+dates: {ingredient: dates, grams: 24, label: "3 dattes", slots: [breakfast, snack]}
+hummus: {ingredient: hummus, grams: 50, label: "2 c. à soupe de houmous", slots: [snack]}
+oats: {ingredient: oats, grams: 30, label: "30 g de flocons d'avoine", slots: [breakfast]}
+rice_cakes: {ingredient: rice_cakes, grams: 16, label: "2 galettes de riz soufflé", slots: [snack]}
+oil_drizzle: {ingredient: rapeseed_oil, grams: 10, label: "1 c. à soupe d'huile en filet, d'olive, de colza ou de sésame selon le plat", slots: [lunch, dinner]}
+avocado_half: {ingredient: avocado, grams: 70, label: "½ avocat", slots: [breakfast, lunch, snack]}

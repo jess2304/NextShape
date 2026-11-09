@@ -1,0 +1,219 @@
+# Batch written to fill coverage gaps: gluten-free, vegan and nut-free
+# breakfasts and snacks, and gluten-free vegan dishes.
+
+- id: us_chia_pudding_mangue
+  title: Pudding de chia au lait de soja et mangue
+  meta: {country: US, slots: [breakfast], time: [5, 240], level: 1, spice: 0, equipment: [aucun], keeps: 3}
+  items: [[soy_drink, 200, protein], [chia, 25, fat], [mango, 120, fruit], [maple_syrup, 8, flavor]]
+  steps:
+  - Mélanger les graines de chia avec la boisson au soja et le sirop d'érable.
+  - Laisser prendre au moins 4 heures au réfrigérateur, en remuant une fois après 10 minutes.
+  - Servir avec la mangue en dés.
+
+- id: fr_chia_amande_fruits_rouges
+  title: Pudding de chia au lait d'amande et framboises
+  meta: {country: FR, slots: [breakfast], time: [5, 240], level: 1, spice: 0, equipment: [aucun], keeps: 3}
+  items: [[almond_drink, 200, protein], [chia, 25, fat], [raspberry, 100, fruit], [pumpkin_seeds, 10, fat], [maple_syrup, 8, flavor]]
+  steps:
+  - Mélanger les graines de chia avec la boisson à l'amande et le sirop d'érable.
+  - Laisser prendre au moins 4 heures au réfrigérateur.
+  - Servir avec les framboises et les graines de courge.
+
+- id: fr_galette_sarrasin_oeuf
+  title: Galette de sarrasin à l'œuf et aux tomates
+  meta: {country: FR, slots: [breakfast], time: [10, 10], level: 1, spice: 0, equipment: [poele], keeps: 0, cautions: [pregnancy]}
+  items: [[egg, 100, protein], [buckwheat_galette, 55, starch], [cherry_tomato, 100, veg], [butter, 4, fat], [chives, 5, flavor]]
+  steps:
+  - Chauffer la galette dans une poêle légèrement beurrée.
+  - Casser les œufs au centre, couvrir 3 minutes.
+  - Replier les bords et servir avec les tomates cerises et la ciboulette.
+
+- id: us_tofu_patate_douce
+  title: Tofu brouillé et patate douce rôtie
+  meta: {country: US, slots: [breakfast, lunch, dinner], time: [10, 30], level: 1, spice: 0, equipment: [four, poele], keeps: 2}
+  items: [[tofu, 150, protein], [sweet_potato, 150, starch], [spinach, 50, veg], [olive_oil, 6, fat], [turmeric, 0.5, flavor], [paprika, 1, flavor]]
+  steps:
+  - Rôtir la patate douce en cubes avec la moitié de l'huile et le paprika 25 minutes à 210 °C.
+  - Émietter le tofu dans le reste d'huile avec le curcuma, ajouter les épinards.
+  - Servir ensemble.
+
+- id: fr_bol_yaourt_soja
+  title: Bol de yaourt au soja, framboises, banane et graines
+  meta: {country: FR, slots: [breakfast], time: [3, 3], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[soy_yogurt, 200, protein], [raspberry, 80, fruit], [banana, 60, fruit], [pumpkin_seeds, 15, fat], [maple_syrup, 5, flavor]]
+  steps:
+  - Verser le yaourt au soja dans un bol.
+  - Ajouter les fruits, les graines de courge et un filet de sirop d'érable.
+
+- id: us_smoothie_proteine
+  title: Smoothie soja, banane et beurre de cacahuète
+  meta: {country: US, slots: [breakfast], time: [3, 3], level: 1, spice: 0, equipment: [mixeur], keeps: 0}
+  items: [[soy_drink, 250, protein], [banana, 100, fruit], [peanut_butter, 16, fat], [chia, 10, fat]]
+  steps:
+  - Mixer tous les ingrédients avec quelques glaçons.
+  - Servir aussitôt.
+
+- id: us_pancakes_banane_riz
+  title: Pancakes banane à la farine de riz
+  meta: {country: US, slots: [breakfast], time: [10, 15], level: 1, spice: 0, equipment: [poele], keeps: 1}
+  items: [[egg, 100, protein], [flour_rice, 30, starch], [banana, 100, fruit], [blueberry, 60, fruit], [sunflower_oil, 3, fat], [maple_syrup, 10, flavor]]
+  steps:
+  - Écraser la banane, ajouter les œufs puis la farine de riz.
+  - Cuire de petits pancakes dans une poêle légèrement huilée, 2 minutes par face.
+  - Servir avec les myrtilles et le sirop d'érable.
+
+- id: fr_fromage_blanc_fraises_graines
+  title: Fromage blanc, fraises et graines de courge
+  meta: {country: FR, slots: [breakfast], time: [3, 3], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[fromage_blanc, 200, protein], [strawberry, 150, fruit], [pumpkin_seeds, 15, fat], [honey, 8, flavor]]
+  steps:
+  - Verser le fromage blanc dans un bol.
+  - Ajouter les fraises coupées, les graines de courge et le miel.
+
+- id: us_tartine_houmous_avocat
+  title: Tartine de houmous, avocat et graines
+  meta: {country: US, slots: [breakfast], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[hummus, 60, protein], [bread_whole, 60, starch], [avocado, 50, fat], [pumpkin_seeds, 10, fat], [lemon_juice, 5, flavor]]
+  steps:
+  - Griller le pain et le tartiner de houmous.
+  - Ajouter l'avocat en lamelles, le citron et les graines de courge.
+
+- id: us_tartine_beurre_cacahuete
+  title: Pain complet, beurre de cacahuète et banane
+  meta: {country: US, slots: [breakfast], time: [3, 3], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[soy_drink, 200, protein], [bread_whole, 60, starch], [peanut_butter, 20, fat], [banana, 100, fruit]]
+  steps:
+  - Griller le pain et le tartiner de beurre de cacahuète.
+  - Ajouter la banane en rondelles ; servir avec un verre de boisson au soja.
+
+- id: us_chili_patate_douce
+  title: Chili de patate douce et haricots noirs
+  meta: {country: US, slots: [lunch, dinner], time: [15, 40], level: 1, spice: 2, equipment: [cocotte], keeps: 4, freezes: true, leftovers: true}
+  items: [[black_beans, 180, protein], [sweet_potato, 200, starch], [tomato_canned, 150, sauce], [onion, 50, veg], [bell_pepper_red, 60, veg],
+          [olive_oil, 8, fat], [cumin, 1, flavor], [paprika, 2, flavor], [chili_flakes, 0.3, flavor], [lime_juice, 10, flavor], [cilantro, 5, flavor]]
+  steps:
+  - Faire revenir l'oignon et le poivron dans l'huile avec les épices.
+  - Ajouter la patate douce en cubes, les tomates et 15 cl d'eau ; mijoter 20 minutes.
+  - Ajouter les haricots, cuire 10 minutes.
+  - Finir avec le citron vert et la coriandre.
+
+- id: fr_salade_lentilles_betterave
+  title: Salade de lentilles, betterave, noix et roquette
+  meta: {country: FR, slots: [lunch, dinner], time: [15, 35], level: 1, spice: 0, equipment: [casserole], keeps: 3, leftovers: true}
+  items: [[lentils_green, 70, protein], [potato, 150, starch], [beetroot, 150, veg], [arugula, 40, veg], [red_onion, 20, veg], [walnuts, 15, fat],
+          [olive_oil, 8, fat], [cider_vinegar, 10, flavor], [mustard, 5, flavor]]
+  steps:
+  - Cuire les lentilles 25 minutes et les pommes de terre en cubes 15 minutes.
+  - Préparer une vinaigrette moutarde, vinaigre et huile.
+  - Mélanger lentilles, pommes de terre, betterave en dés, oignon et roquette.
+  - Parsemer de noix concassées.
+
+- id: it_risotto_quinoa_champignons
+  title: Quinoa crémeux aux champignons et petits pois
+  meta: {country: IT, slots: [lunch, dinner], time: [15, 25], level: 1, spice: 0, equipment: [casserole, poele], keeps: 2}
+  items: [[peas, 100, protein], [white_beans, 100, protein], [quinoa, 65, starch], [mushroom, 200, veg], [onion, 40, veg],
+          [olive_oil, 10, fat], [garlic, 5, flavor], [thyme, 0.5, flavor], [parsley, 5, flavor]]
+  steps:
+  - Cuire le quinoa 12 minutes avec l'oignon haché.
+  - Poêler les champignons avec l'ail et le thym dans l'huile.
+  - Écraser la moitié des haricots blancs avec un peu d'eau chaude pour faire une crème.
+  - Mélanger quinoa, crème de haricots, haricots entiers, petits pois et champignons ; parsemer de persil.
+
+- id: fr_ratatouille_quinoa
+  title: Ratatouille aux pois chiches et quinoa
+  meta: {country: FR, slots: [lunch, dinner], time: [25, 60], level: 1, spice: 0, equipment: [cocotte, casserole], keeps: 4, freezes: true, leftovers: true}
+  items: [[chickpeas, 150, protein], [quinoa, 55, starch], [zucchini, 150, veg], [eggplant, 150, veg], [bell_pepper_red, 100, veg], [tomato, 150, veg],
+          [onion, 60, veg], [olive_oil, 10, fat], [garlic, 5, flavor], [herbes_provence, 1, flavor]]
+  steps:
+  - Faire revenir l'oignon et l'ail dans l'huile, ajouter les légumes en dés et les herbes.
+  - Mijoter 35 minutes à couvert, ajouter les pois chiches 10 minutes avant la fin.
+  - Servir avec le quinoa.
+
+# Snacks
+- id: fr_pomme_comte
+  title: Pomme et comté
+  meta: {country: FR, slots: [snack], time: [1, 1], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[comte, 30, protein], [apple, 150, fruit]]
+  steps:
+  - Couper la pomme en quartiers et le comté en lamelles.
+  - Les déguster ensemble.
+
+- id: fr_yaourt_soja_myrtilles
+  title: Yaourt au soja, myrtilles et graines de courge
+  meta: {country: FR, slots: [snack], time: [2, 2], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[soy_yogurt, 125, protein], [blueberry, 80, fruit], [pumpkin_seeds, 10, fat]]
+  steps:
+  - Verser le yaourt dans un bol.
+  - Ajouter les myrtilles et les graines.
+
+- id: us_galettes_riz_cacahuete
+  title: Galettes de riz, beurre de cacahuète et banane
+  meta: {country: US, slots: [snack], time: [3, 3], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[rice_cakes, 16, starch], [peanut_butter, 16, fat], [banana, 60, fruit]]
+  steps:
+  - Tartiner les galettes de beurre de cacahuète.
+  - Ajouter la banane en rondelles.
+
+- id: fr_banane_yaourt
+  title: Yaourt nature et banane
+  meta: {country: FR, slots: [snack], time: [2, 2], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[yogurt, 125, protein], [banana, 100, fruit]]
+  steps:
+  - Couper la banane en rondelles sur le yaourt.
+  - Saupoudrer de cannelle si vous le souhaitez.
+
+- id: fr_lait_banane_cacao
+  title: Lait frappé banane et cacao
+  meta: {country: FR, slots: [snack], time: [3, 3], level: 1, spice: 0, equipment: [mixeur], keeps: 0}
+  items: [[milk, 200, protein], [banana, 100, fruit], [cocoa, 5, flavor]]
+  steps:
+  - Mixer le lait, la banane et le cacao.
+  - Servir bien frais.
+
+- id: fr_oeufs_tomates_cerises
+  title: Œufs durs et tomates cerises
+  meta: {country: FR, slots: [snack], time: [10, 12], level: 1, spice: 0, equipment: [casserole], keeps: 2}
+  items: [[egg, 100, protein], [cherry_tomato, 100, veg], [salt, 0.3, flavor]]
+  steps:
+  - Cuire les œufs 9 minutes, les refroidir et les écaler.
+  - Servir avec les tomates cerises et une pincée de sel.
+
+- id: fr_concombre_thon
+  title: Bouchées de concombre au thon
+  meta: {country: FR, slots: [snack], time: [5, 5], level: 1, spice: 0, equipment: [aucun], keeps: 1}
+  items: [[tuna_canned, 60, protein], [cucumber, 120, veg], [olive_oil, 3, fat], [lemon_juice, 5, flavor], [chives, 5, flavor]]
+  steps:
+  - Émietter le thon avec l'huile, le citron et la ciboulette.
+  - Le déposer sur des rondelles épaisses de concombre.
+
+- id: fr_salade_fruits
+  title: Salade de fruits frais
+  meta: {country: FR, slots: [snack], time: [8, 8], level: 1, spice: 0, equipment: [aucun], keeps: 1}
+  items: [[orange, 100, fruit], [kiwi, 75, fruit], [strawberry, 100, fruit], [mint, 5, flavor]]
+  steps:
+  - Peler l'orange et le kiwi, couper tous les fruits en morceaux.
+  - Mélanger avec la menthe ciselée.
+
+- id: fr_compote_amandes
+  title: Compote de pommes et amandes
+  meta: {country: FR, slots: [snack], time: [1, 1], level: 1, spice: 0, equipment: [aucun], keeps: 0}
+  items: [[applesauce, 100, fruit], [almonds, 15, fat]]
+  steps:
+  - Verser la compote dans un bol.
+  - Ajouter les amandes entières ou concassées.
+
+- id: fr_pomme_four_noix
+  title: Pomme au four à la cannelle et aux noix
+  meta: {country: FR, slots: [snack], time: [5, 30], level: 1, spice: 0, equipment: [four], keeps: 2}
+  items: [[apple, 200, fruit], [walnuts, 10, fat], [cinnamon, 0.5, flavor]]
+  steps:
+  - Évider la pomme, la garnir de noix concassées et de cannelle.
+  - Cuire 25 minutes à 180 °C.
+
+- id: us_chips_kale
+  title: Chips de chou kale et graines de courge
+  meta: {country: US, slots: [snack], time: [5, 20], level: 1, spice: 0, equipment: [four], keeps: 2}
+  items: [[kale, 60, veg], [pumpkin_seeds, 15, fat], [olive_oil, 4, fat], [salt, 0.3, flavor]]
+  steps:
+  - Effeuiller le chou kale, l'enrober d'huile et de sel.
+  - Cuire 12 minutes à 150 °C avec les graines de courge.

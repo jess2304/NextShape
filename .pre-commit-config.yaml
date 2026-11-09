@@ -21,7 +21,8 @@ repos:
         additional_dependencies: ['prettier@2.7.1']
         args: ['--write','--no-semi']
         files: '\.(ts|vue|css|scss|json|md)$'
-        exclude: 'node_modules'
+        # Never reformat coach/data: the catalogue version is a hash of these bytes.
+        exclude: 'node_modules|^WS/coach/data/'
 
   # For the Backend
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -50,6 +51,8 @@ repos:
     rev: v0.982
     hooks:
       - id: mypy
+        # Type stubs for the YAML loader used by the coach catalogue.
+        additional_dependencies: [types-PyYAML==6.0.12]
 
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.10.1

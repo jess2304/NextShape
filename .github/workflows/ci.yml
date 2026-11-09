@@ -1,0 +1,129 @@
+# Continuous integration. A pull request to develop runs four jobs: lint,
+# backend, frontend and docker. After a merge, every job but lint runs again
+# on develop. There is no deployment job yet.
+name: CI
+
+on:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [develop]
+  workflow_dispatch: # manual run from the Actions tab
+
+# Read-only token: no job writes to the repository.
+permissions:
+  contents: read
+
+# A new push cancels the run still going on the same branch or pull request.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint (pre-commit)
+    # Replays the commit hooks on the files changed by the pull request.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # full history, to diff the pull request against its base
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.10" # the black hook requires python3.10
+      # Hook environments take minutes to install: keep them between runs.
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+      - run: pip install pre-commit==4.1.0
+      - run: >-
+          pre-commit run --show-diff-on-failure --color always
+          --from-ref ${{ github.event.pull_request.base.sha }}
+          --to-ref ${{ github.event.pull_request.head.sha }}
+
+  backend:
+    name: Backend (pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Throwaway PostgreSQL; pytest-django creates its test database inside it.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test_user -d test_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    # Test settings: no real secret, no AI key, e-mails kept in memory.
+    env:
+      ENV: test
+      DJANGO_SECRET_KEY: ci-only-not-a-secret
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_NAME: test_db
+      DATABASE_USER: test_user
+      DATABASE_PASSWORD: test_pass
+      DATABASE_HOST: localhost
+      DATABASE_PORT: "5432"
+      EMAIL_BACKEND: django.core.mail.backends.locmem.EmailBackend
+      AI_LANGUAGE: FR
+    defaults:
+      run:
+        working-directory: WS
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11" # same as the production image
+          cache: pip
+          cache-dependency-path: WS/requirements*.txt
+      - run: pip install -r requirements-dev.txt
+      - run: python -m pytest -q
+
+  frontend:
+    name: Frontend (tests, build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: UI
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "20" # same as the production image
+          cache: npm
+          cache-dependency-path: UI/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build # type-checks with vue-tsc, then bundles with Vite
+        env:
+          VITE_API_URL: /api/
+
+  docker:
+    name: Docker (production image)
+    # Proves the production image still builds; nothing is pushed anywhere.
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: WS/Dockerfile
+          target: production
+          build-args: VITE_API_URL=/api/
+          push: false
+          # Reuse the image layers of previous runs (GitHub Actions cache).
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
