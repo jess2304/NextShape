@@ -163,6 +163,7 @@ class Ingredient:
     approx: str | None
     buy_factor: float
     per100: dict  # nutrients per 100 g, keys of nutrients.ALL; None means unknown
+    step: float
     computed_kcal: bool = False  # energy recomputed from the macros
 
 
@@ -395,6 +396,7 @@ def _load_ingredients(raw: dict, ciqual: dict, ontology: dict) -> dict[str, Ingr
             approx=spec.get("approx"),
             buy_factor=float(spec.get("buy_factor", 1.0)),
             per100=per100,
+            step=_step(ident, spec),
             computed_kcal=computed,
         )
     return result
