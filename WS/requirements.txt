@@ -12,3 +12,4 @@ certifi==2025.4.26
 python-certifi-win32==1.6.1; sys_platform == "win32"
 redis==7.4.0
 PyYAML==6.0.3
+numpy==2.2.6

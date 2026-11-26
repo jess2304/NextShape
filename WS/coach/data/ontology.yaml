@@ -130,7 +130,7 @@ families:
   courgette: {label: Courgette, synonyms: [courgette, courgettes]}
   courge: {label: Courges, synonyms: [courge, courges, potiron, butternut, citrouille, potimarron]}
   olive: {label: Olives, synonyms: [olive, olives]}
-  choux: {label: Choux, synonyms: [chou, choux, brocoli, brocolis, chou fleur, choux de bruxelles, kale]}
+  choux: {label: Choux, synonyms: [chou, choux, brocoli, brocolis, kale]}
   epinard: {label: Épinards, synonyms: [epinard, epinards]}
   betterave: {label: Betterave, synonyms: [betterave, betteraves]}
   celeri: {label: Céleri, synonyms: [celeri]}
